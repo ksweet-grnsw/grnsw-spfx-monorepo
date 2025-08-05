@@ -24,8 +24,8 @@ export interface IRaceMeetingsState {
   error: string | null;
   currentView: CalendarView;
   currentDate: Date;
-  selectedAuthorities: string[];
-  selectedTrackIds: string[];
+  selectedAuthority: string;
+  selectedTrackId: string;
   tracks: Array<{trackId: string, trackName: string}>;
   selectedMeeting: IRaceMeeting | null;
   isPanelOpen: boolean;
@@ -42,8 +42,8 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
       error: null,
       currentView: props.defaultView || 'month',
       currentDate: new Date(),
-      selectedAuthorities: props.selectedAuthority ? [props.selectedAuthority] : [],
-      selectedTrackIds: props.selectedTrackId ? [props.selectedTrackId] : [],
+      selectedAuthority: props.selectedAuthority || '',
+      selectedTrackId: props.selectedTrackId || '',
       tracks: [],
       selectedMeeting: null,
       isPanelOpen: false
@@ -53,8 +53,8 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
 
   public componentDidMount(): void {
     this.loadMeetings();
-    if (this.state.selectedAuthorities.length > 0) {
-      this.loadTracksByAuthorities(this.state.selectedAuthorities);
+    if (this.state.selectedAuthority) {
+      this.loadTracksByAuthority(this.state.selectedAuthority);
     }
   }
 
@@ -62,12 +62,12 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
     if (prevProps.selectedAuthority !== this.props.selectedAuthority ||
         prevProps.selectedTrackId !== this.props.selectedTrackId) {
       this.setState({
-        selectedAuthorities: this.props.selectedAuthority ? [this.props.selectedAuthority] : [],
-        selectedTrackIds: this.props.selectedTrackId ? [this.props.selectedTrackId] : []
+        selectedAuthority: this.props.selectedAuthority || '',
+        selectedTrackId: this.props.selectedTrackId || ''
       }, () => {
         this.loadMeetings();
         if (this.props.selectedAuthority) {
-          this.loadTracksByAuthorities([this.props.selectedAuthority]);
+          this.loadTracksByAuthority(this.props.selectedAuthority);
         }
       });
     }
@@ -83,15 +83,15 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
         view: this.state.currentView,
-        authorities: this.state.selectedAuthorities,
-        tracks: this.state.selectedTrackIds
+        authority: this.state.selectedAuthority,
+        track: this.state.selectedTrackId
       });
       
       const meetings = await this.raceMeetingService.getRaceMeetingsByDateRange(
         startDate,
         endDate,
-        this.state.selectedAuthorities.length > 0 ? this.state.selectedAuthorities : undefined,
-        this.state.selectedTrackIds.length > 0 ? this.state.selectedTrackIds : undefined
+        this.state.selectedAuthority ? [this.state.selectedAuthority] : undefined,
+        this.state.selectedTrackId ? [this.state.selectedTrackId] : undefined
       );
 
       console.log(`Loaded ${meetings.length} meetings:`, meetings);
@@ -126,6 +126,18 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         error: `Failed to load race meetings: ${errorMessage}`,
         loading: false 
       });
+    }
+  }
+
+  private async loadTracksByAuthority(authority: string): Promise<void> {
+    try {
+      console.log(`Loading tracks for authority: ${authority}`);
+      const tracks = await this.raceMeetingService.getTracksByAuthority(authority);
+      console.log(`Loaded ${tracks.length} tracks:`, tracks);
+      this.setState({ tracks });
+    } catch (error) {
+      console.error('Error loading tracks:', error);
+      this.setState({ tracks: [] });
     }
   }
 
@@ -202,59 +214,52 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
     this.setState({ currentDate: newDate }, () => this.loadMeetings());
   };
 
-  private onAuthorityChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number): void => {
+  private onAuthorityChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {
-      const selectedAuthorities = [...this.state.selectedAuthorities];
-      const key = option.key as string;
-      
-      if (option.selected) {
-        // Add to selection
-        if (selectedAuthorities.indexOf(key) === -1 && key !== '') {
-          selectedAuthorities.push(key);
-        }
-      } else {
-        // Remove from selection
-        const idx = selectedAuthorities.indexOf(key);
-        if (idx > -1) {
-          selectedAuthorities.splice(idx, 1);
-        }
-      }
-      
+      const authority = option.key as string;
       this.setState({ 
-        selectedAuthorities,
-        selectedTrackIds: [], // Reset track selection when authorities change
-        tracks: []
+        selectedAuthority: authority,
+        selectedTrackId: '' // Reset track when authority changes
       }, () => {
         this.loadMeetings();
-        if (selectedAuthorities.length > 0) {
-          this.loadTracksByAuthorities(selectedAuthorities);
+        if (authority) {
+          this.loadTracksByAuthority(authority);
+        } else {
+          this.setState({ tracks: [] });
+        }
+        // Call the callback to persist the selection
+        if (this.props.onUpdateFilters) {
+          this.props.onUpdateFilters(authority, '');
         }
       });
     }
   };
 
-  private onTrackChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number): void => {
+  private onTrackChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {
-      const selectedTrackIds = [...this.state.selectedTrackIds];
-      const key = option.key as string;
-      
-      if (option.selected) {
-        // Add to selection
-        if (selectedTrackIds.indexOf(key) === -1 && key !== '') {
-          selectedTrackIds.push(key);
+      const trackId = option.key as string;
+      this.setState({ selectedTrackId: trackId }, () => {
+        this.loadMeetings();
+        // Call the callback to persist the selection
+        if (this.props.onUpdateFilters) {
+          this.props.onUpdateFilters(this.state.selectedAuthority, trackId);
         }
-      } else {
-        // Remove from selection
-        const idx = selectedTrackIds.indexOf(key);
-        if (idx > -1) {
-          selectedTrackIds.splice(idx, 1);
-        }
-      }
-      
-      this.setState({ 
-        selectedTrackIds
-      }, () => this.loadMeetings());
+      });
     }
+  };
+
+  private onClearFilters = (): void => {
+    this.setState({ 
+      selectedAuthority: '',
+      selectedTrackId: '',
+      tracks: []
+    }, () => {
+      this.loadMeetings();
+      // Call the callback to persist the cleared selection
+      if (this.props.onUpdateFilters) {
+        this.props.onUpdateFilters('', '');
+      }
+    });
   };
 
   private getAuthorityColor(authority: string): string {
@@ -341,11 +346,10 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         <Stack horizontal tokens={{ childrenGap: 10 }} className={styles.filters}>
           <Stack.Item grow>
             <Dropdown
-              placeholder="Filter by Authority (Ctrl+Click for multiple)"
+              placeholder="Filter by Authority"
               options={authorityOptions}
-              selectedKeys={this.state.selectedAuthorities}
+              selectedKey={this.state.selectedAuthority}
               onChange={this.onAuthorityChange}
-              multiSelect
               styles={{ 
                 dropdown: { minWidth: 200 },
                 title: { fontSize: 13 }
@@ -354,18 +358,26 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
           </Stack.Item>
           <Stack.Item grow>
             <Dropdown
-              placeholder="Filter by Track (Ctrl+Click for multiple)"
+              placeholder="Filter by Track"
               options={trackOptions}
-              selectedKeys={this.state.selectedTrackIds}
+              selectedKey={this.state.selectedTrackId}
               onChange={this.onTrackChange}
-              disabled={this.state.tracks.length === 0}
-              multiSelect
+              disabled={this.state.tracks.length === 0 && !this.state.selectedAuthority}
               styles={{ 
                 dropdown: { minWidth: 200 },
                 title: { fontSize: 13 }
               }}
             />
           </Stack.Item>
+          {(this.state.selectedAuthority || this.state.selectedTrackId) && (
+            <Stack.Item>
+              <DefaultButton
+                text="Clear Filters"
+                onClick={this.onClearFilters}
+                iconProps={{ iconName: 'Clear' }}
+              />
+            </Stack.Item>
+          )}
         </Stack>
       </div>
     );

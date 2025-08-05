@@ -4,6 +4,7 @@ import type { ITrackConditionsProps } from './ITrackConditionsProps';
 import { IDataverseWeatherData } from '../../../models/IDataverseWeatherData';
 import { DataverseService } from '../../../services/DataverseService';
 import { Icon } from '@fluentui/react/lib/Icon';
+import { degreesToCardinal } from '../../../utils/windUtils';
 
 export interface ITrackConditionsState {
   weatherData: IDataverseWeatherData | null;
@@ -195,7 +196,8 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
     const strokeWidth = 8;
     const normalizedRadius = radius - strokeWidth * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
-    const strokeDashoffset = circumference * (value / 100);
+    // Fixed: Calculate offset to show completed portion in color
+    const strokeDashoffset = circumference - (circumference * value / 100);
 
     return (
       <div className={styles.gauge}>
@@ -218,7 +220,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
             cx={radius}
             cy={radius}
           />
-          <text x="50%" y="50%" textAnchor="middle" dy=".3em" className={styles.gaugeValue} style={{ transform: 'rotate(180deg)', transformOrigin: '50% 50%' }}>
+          <text x="50%" y="50%" textAnchor="middle" dy=".3em" className={styles.gaugeValue}>
             {value}%
           </text>
         </svg>
@@ -357,7 +359,9 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
               </div>
               <div>
                 <span className={styles.label}>Direction:</span>
-                <span className={styles.value}>{Math.round(weatherData.cr4cc_wind_dir_scalar_avg_last_10_min || 0)}°</span>
+                <span className={styles.value}>
+                  {degreesToCardinal(weatherData.cr4cc_wind_dir_scalar_avg_last_10_min || 0)} ({Math.round(weatherData.cr4cc_wind_dir_scalar_avg_last_10_min || 0)}°)
+                </span>
               </div>
             </div>
           </div>

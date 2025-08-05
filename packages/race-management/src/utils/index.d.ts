@@ -1,3 +1,3 @@
 export { ErrorHandler, ErrorType, IError } from './ErrorHandler';
 export { Logger, LogLevel } from './Logger';
-export { degreesToCardinal, formatWindDirection } from './windUtils';
+//# sourceMappingURL=index.d.ts.map

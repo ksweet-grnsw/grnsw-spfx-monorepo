@@ -46,11 +46,21 @@ export default class RaceMeetingsWebPart extends BaseClientSideWebPart<IRaceMeet
         selectedAuthority: this.properties.selectedAuthority,
         selectedTrackId: this.properties.selectedTrackId,
         showPastMeetings: this.properties.showPastMeetings,
-        showFutureMeetings: this.properties.showFutureMeetings
+        showFutureMeetings: this.properties.showFutureMeetings,
+        onUpdateFilters: this.updateFilters.bind(this)
       }
     );
 
     ReactDom.render(element, this.domElement);
+  }
+
+  private updateFilters(authority: string, trackId: string): void {
+    this.properties.selectedAuthority = authority;
+    this.properties.selectedTrackId = trackId;
+    // Refresh the property pane to show updated values
+    this.context.propertyPane.refresh();
+    // Re-render to ensure consistency
+    this.render();
   }
 
   protected onInit(): Promise<void> {

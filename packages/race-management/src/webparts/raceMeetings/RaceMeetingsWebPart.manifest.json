@@ -24,5 +24,19 @@
       "showPastMeetings": true,
       "showFutureMeetings": true
     }
+  },
+  {
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+    "group": { "default": "Advanced" },
+    "title": { "default": "Race Meetings Calendar (Track Filtered)" },
+    "description": { "default": "Pre-configured for specific track pages - set track filter in web part properties" },
+    "officeFabricIconFontName": "CalendarMirrored",
+    "properties": {
+      "defaultView": "month",
+      "selectedAuthority": "",
+      "selectedTrackId": "",
+      "showPastMeetings": false,
+      "showFutureMeetings": true
+    }
   }]
 }

@@ -12,4 +12,5 @@ export interface IRaceMeetingsProps {
   selectedTrackId: string;
   showPastMeetings: boolean;
   showFutureMeetings: boolean;
+  onUpdateFilters?: (authority: string, trackId: string) => void;
 }

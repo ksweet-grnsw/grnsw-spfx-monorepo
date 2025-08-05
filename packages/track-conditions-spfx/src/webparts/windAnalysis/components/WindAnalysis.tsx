@@ -4,6 +4,7 @@ import type { IWindAnalysisProps } from './IWindAnalysisProps';
 import { DataverseService, TrackService } from '../../../services';
 import { IDataverseWeatherData } from '../../../models/IDataverseWeatherData';
 import { Logger, ErrorHandler } from '../../../utils';
+import { degreesToCardinal } from '../../../utils/windUtils';
 import { Icon } from '@fluentui/react/lib/Icon';
 import {
   Chart as ChartJS,
@@ -145,11 +146,6 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
     });
   }
 
-  private getCardinalDirection(degrees: number): string {
-    const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-    const index = Math.round(degrees / 22.5) % 16;
-    return directions[index];
-  }
 
   private getSpeedCategory(speed: number): keyof WindRoseData['speedCategories'] {
     if (speed >= 32) return '32+';
@@ -182,7 +178,7 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
     // Process wind data
     this.state.windData.forEach(data => {
       if (data.cr4cc_wind_dir_last !== null && data.cr4cc_wind_speed_kmh !== null) {
-        const direction = this.getCardinalDirection(data.cr4cc_wind_dir_last);
+        const direction = degreesToCardinal(data.cr4cc_wind_dir_last);
         const speedCategory = this.getSpeedCategory(data.cr4cc_wind_speed_kmh);
         const current = windRoseMap.get(direction)!;
         current[speedCategory]++;
@@ -300,7 +296,7 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
       return <div className={styles.noData}>Loading...</div>;
     }
 
-    const windDirection = latestData.cr4cc_wind_direction_cardinal || this.getCardinalDirection(latestData.cr4cc_wind_dir_last || 0);
+    const windDirection = latestData.cr4cc_wind_direction_cardinal || degreesToCardinal(latestData.cr4cc_wind_dir_last || 0);
     const windSpeed = latestData.cr4cc_wind_speed_kmh || 0;
     const gustSpeed = latestData.cr4cc_wind_speed_hi_kmh || windSpeed;
     const windChill = latestData.cr4cc_wind_chill;
@@ -326,7 +322,7 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
           <div className={styles.mainStat}>
             <div className={styles.statValue}>{windSpeed.toFixed(1)}</div>
             <div className={styles.statLabel}>km/h</div>
-            <div className={styles.statDirection}>{windDirection}</div>
+            <div className={styles.statDirection}>{windDirection} ({Math.round(latestData.cr4cc_wind_dir_last || 0)}°)</div>
           </div>
 
           <div className={styles.secondaryStats}>
