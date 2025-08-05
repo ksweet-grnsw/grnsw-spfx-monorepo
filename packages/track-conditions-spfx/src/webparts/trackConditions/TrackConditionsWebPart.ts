@@ -3,8 +3,8 @@ import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
-  PropertyPaneDropdown,
-  PropertyPaneLabel
+  PropertyPaneLabel,
+  PropertyPaneDropdown
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -12,7 +12,7 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as strings from 'TrackConditionsWebPartStrings';
 import TrackConditions from './components/TrackConditions';
 import { ITrackConditionsProps } from './components/ITrackConditionsProps';
-import { TrackService, ITrack } from '../../services/TrackService';
+import { trackOptions } from '../shared/trackOptions';
 
 const packageSolution = require('../../../config/package-solution.json');
 
@@ -21,31 +21,20 @@ export interface ITrackConditionsWebPartProps {
 }
 
 export default class TrackConditionsWebPart extends BaseClientSideWebPart<ITrackConditionsWebPartProps> {
-
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
-  private tracks: ITrack[] = [];
-  private trackService: TrackService;
 
   public render(): void {
-    let trackName = 'Track';
-    for (const track of this.tracks) {
-      if (track.trackId === this.properties.selectedTrackId) {
-        trackName = track.trackName;
-        break;
-      }
-    }
-    
     const element: React.ReactElement<ITrackConditionsProps> = React.createElement(
       TrackConditions,
       {
+        selectedTrackId: this.properties.selectedTrackId || 'wentworth-park',
+        selectedTrackName: this.getTrackName(this.properties.selectedTrackId),
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName,
-        context: this.context,
-        selectedTrackId: this.properties.selectedTrackId,
-        selectedTrackName: trackName
+        context: this.context
       }
     );
 
@@ -53,48 +42,42 @@ export default class TrackConditionsWebPart extends BaseClientSideWebPart<ITrack
   }
 
   protected onInit(): Promise<void> {
-    this.trackService = new TrackService(this.context as any);
-    
     return this._getEnvironmentMessage().then(message => {
       this._environmentMessage = message;
-      return this.loadTracks();
     });
   }
 
-  private async loadTracks(): Promise<void> {
-    try {
-      this.tracks = await this.trackService.getAvailableTracks();
-      if (!this.tracks || this.tracks.length === 0) {
-        this.tracks = [{trackId: 'default', trackName: 'Default Track'}];
+  private getTrackName(trackId: string): string {
+    if (!trackId) return 'All Tracks';
+    
+    for (let i = 0; i < trackOptions.length; i++) {
+      if (trackOptions[i].key === trackId) {
+        return trackOptions[i].text;
       }
-      this.context.propertyPane.refresh();
-    } catch (error) {
-      console.error('Error loading tracks:', error);
     }
+    
+    return 'Unknown Track';
   }
 
-
-
   private _getEnvironmentMessage(): Promise<string> {
-    if (!!this.context.sdks.microsoftTeams) { // running in Teams, office.com or Outlook
+    if (!!this.context.sdks.microsoftTeams) {
       return this.context.sdks.microsoftTeams.teamsJs.app.getContext()
         .then(context => {
           let environmentMessage: string = '';
           switch (context.app.host.name) {
-            case 'Office': // running in Office
+            case 'Office':
               environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOffice : strings.AppOfficeEnvironment;
               break;
-            case 'Outlook': // running in Outlook
+            case 'Outlook':
               environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOutlook : strings.AppOutlookEnvironment;
               break;
-            case 'Teams': // running in Teams
+            case 'Teams':
             case 'TeamsModern':
               environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentTeams : strings.AppTeamsTabEnvironment;
               break;
             default:
               environmentMessage = strings.UnknownEnvironment;
           }
-
           return environmentMessage;
         });
     }
@@ -117,7 +100,6 @@ export default class TrackConditionsWebPart extends BaseClientSideWebPart<ITrack
       this.domElement.style.setProperty('--link', semanticColors.link || null);
       this.domElement.style.setProperty('--linkHovered', semanticColors.linkHovered || null);
     }
-
   }
 
   protected onDispose(): void {
@@ -141,10 +123,7 @@ export default class TrackConditionsWebPart extends BaseClientSideWebPart<ITrack
               groupFields: [
                 PropertyPaneDropdown('selectedTrackId', {
                   label: 'Select Track',
-                  options: this.tracks.map(track => ({
-                    key: track.trackId || 'default',
-                    text: track.trackName || 'Default Track'
-                  })),
+                  options: trackOptions,
                   selectedKey: this.properties.selectedTrackId
                 })
               ]

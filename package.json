@@ -8,10 +8,11 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "build:track": "npm run build -w @grnsw/track-conditions-spfx",
-    "build:race": "npm run build -w @grnsw/race-management-spfx",
-    "build:health": "npm run build -w @grnsw/greyhound-health-spfx",
-    "build:gap": "npm run build -w @grnsw/gap-spfx",
+    "build:shared": "npm run build -w @grnsw/shared",
+    "build:track": "npm run build:shared && npm run build -w @grnsw/track-conditions-spfx",
+    "build:race": "npm run build:shared && npm run build -w @grnsw/race-management-spfx",
+    "build:health": "npm run build:shared && npm run build -w @grnsw/greyhound-health-spfx",
+    "build:gap": "npm run build:shared && npm run build -w @grnsw/gap-spfx",
     "clean": "npm run clean --workspaces",
     "serve": "echo 'Choose a specific package to serve' && exit 1",
     "serve:track": "npm run serve -w @grnsw/track-conditions-spfx",
@@ -24,11 +25,14 @@
     "version:track": "cd packages/track-conditions-spfx && npm version",
     "version:race": "cd packages/race-management-spfx && npm version",
     "version:health": "cd packages/greyhound-health-spfx && npm version",
-    "version:gap": "cd packages/gap-spfx && npm version"
+    "version:gap": "cd packages/gap-spfx && npm version",
+    "fix-builds": "node scripts/fix-spfx-builds.js",
+    "setup": "npm install && npm run fix-builds && npm run build:shared"
   },
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.21.1",
     "@microsoft/eslint-plugin-spfx": "1.21.1",
+    "@microsoft/rush-stack-compiler-4.7": "^0.1.1",
     "@microsoft/rush-stack-compiler-5.3": "0.1.0",
     "@microsoft/sp-build-web": "1.21.1",
     "@microsoft/sp-module-interfaces": "1.21.1",

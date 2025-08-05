@@ -1,21 +1,21 @@
 
 require("./WeatherDashboard.module.css");
 const styles = {
-  weatherDashboard: 'weatherDashboard_076fdf34',
-  teams: 'teams_076fdf34',
-  dark: 'dark_076fdf34',
-  weatherCard: 'weatherCard_076fdf34',
-  header: 'header_076fdf34',
-  controls: 'controls_076fdf34',
-  error: 'error_076fdf34',
-  loading: 'loading_076fdf34',
-  spinner: 'spinner_076fdf34',
-  spin: 'spin_076fdf34',
-  noData: 'noData_076fdf34',
-  weatherGrid: 'weatherGrid_076fdf34',
-  weatherDetails: 'weatherDetails_076fdf34',
-  stationInfo: 'stationInfo_076fdf34',
-  timestamp: 'timestamp_076fdf34'
+  weatherDashboard: 'weatherDashboard_d2accaa0',
+  teams: 'teams_d2accaa0',
+  dark: 'dark_d2accaa0',
+  weatherCard: 'weatherCard_d2accaa0',
+  header: 'header_d2accaa0',
+  controls: 'controls_d2accaa0',
+  error: 'error_d2accaa0',
+  loading: 'loading_d2accaa0',
+  spinner: 'spinner_d2accaa0',
+  spin: 'spin_d2accaa0',
+  noData: 'noData_d2accaa0',
+  weatherGrid: 'weatherGrid_d2accaa0',
+  weatherDetails: 'weatherDetails_d2accaa0',
+  stationInfo: 'stationInfo_d2accaa0',
+  timestamp: 'timestamp_d2accaa0'
 };
 
 export default styles;

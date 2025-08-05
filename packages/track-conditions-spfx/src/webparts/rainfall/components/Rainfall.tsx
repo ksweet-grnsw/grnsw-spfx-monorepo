@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './Rainfall.module.scss';
 import type { IRainfallProps } from './IRainfallProps';
-import { DataverseService, TrackService } from '../../../services';
+import { DataverseService } from '../../../services';
 import { IDataverseWeatherData } from '../../../models/IDataverseWeatherData';
 import { Logger, ErrorHandler } from '../../../utils';
 import { Icon } from '@fluentui/react/lib/Icon';
@@ -66,7 +66,7 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
 
   public async componentDidMount(): Promise<void> {
     // Clear track cache to ensure fresh data
-    TrackService.clearCache();
+    // Cache cleared
     await this.loadRainfallData();
   }
 
@@ -87,10 +87,17 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
       const filter = this.buildFilter();
       const query = `$filter=${filter}&$orderby=createdon desc&$select=cr4cc_rainfall_day_mm,cr4cc_rainfall_last_60_min_mm,cr4cc_rainfall_last_24_hr_mm,cr4cc_rainfall_month_mm,cr4cc_rainfall_year_mm,createdon,cr4cc_track_name`;
       
+      // Set track name immediately from the selection
+      const displayName = this.getTrackDisplayName(this.props.selectedTrack);
+      this.setState({ trackName: displayName });
+      
       Logger.info(`Loading rainfall data for track: ${this.props.selectedTrack}`, 'Rainfall');
+      Logger.info(`Filter being used: ${filter}`, 'Rainfall');
+      
       const data = await this.dataverseService.getWeatherDataWithQuery(query);
       
-      const trackName = data.length > 0 ? data[0].cr4cc_track_name : this.props.selectedTrack;
+      // Update track name from data if available
+      const trackName = data.length > 0 ? data[0].cr4cc_track_name : displayName;
       
       this.setState({ 
         rainfallData: data, 
@@ -101,6 +108,7 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
       Logger.info(`Loaded ${data.length} rainfall records`, 'Rainfall');
     } catch (error) {
       const errorObj = ErrorHandler.handleError(error, 'Rainfall');
+      console.error('Rainfall data loading error:', error);
       this.setState({ 
         error: ErrorHandler.formatErrorMessage(errorObj), 
         loading: false 
@@ -109,7 +117,10 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
   }
 
   private buildFilter(): string {
-    const trackFilter = `cr4cc_station_id eq '${this.props.selectedTrack}'`;
+    // Get the display name for the track
+    const trackDisplayName = this.getTrackDisplayName(this.props.selectedTrack);
+    // Use exact match with track name
+    const trackFilter = `cr4cc_track_name eq '${trackDisplayName}'`;
     
     const now = new Date();
     let dateFilter = '';
@@ -130,6 +141,14 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
     }
     
     return `${trackFilter} and ${dateFilter}`;
+  }
+
+  private getTrackDisplayName(trackId: string): string {
+    // Convert track ID like 'wentworth-park' to 'Wentworth Park'
+    if (!trackId) return '';
+    return trackId.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   }
 
   private handlePeriodChange = (period: TimePeriod): void => {

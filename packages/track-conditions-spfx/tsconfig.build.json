@@ -11,16 +11,7 @@
     "skipLibCheck": true,
     "outDir": "lib",
     "inlineSources": false,
-    "noImplicitAny": false,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@microsoft",
-      "../../node_modules/@types",
-      "../../node_modules/@microsoft"
-    ],
-    "types": [
-      "webpack-env"
-    ],
+    "noImplicitAny": true,
     "lib": [
       "es5",
       "dom",
@@ -34,6 +25,7 @@
   ],
   "exclude": [
     "node_modules",
-    "lib"
+    "lib",
+    "src/**/*.module.scss.d.ts"
   ]
 }

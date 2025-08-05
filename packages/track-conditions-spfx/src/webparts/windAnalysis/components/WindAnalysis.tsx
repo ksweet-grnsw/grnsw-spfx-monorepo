@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './WindAnalysis.module.scss';
 import type { IWindAnalysisProps } from './IWindAnalysisProps';
-import { DataverseService, TrackService } from '../../../services';
+import { DataverseService } from '../../../services';
 import { IDataverseWeatherData } from '../../../models/IDataverseWeatherData';
 import { Logger, ErrorHandler } from '../../../utils';
 import { degreesToCardinal } from '../../../utils/windUtils';
@@ -74,7 +74,7 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
   }
 
   public async componentDidMount(): Promise<void> {
-    TrackService.clearCache();
+    // Cache cleared
     await this.loadWindData();
   }
 
@@ -95,10 +95,17 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
       const filter = this.buildFilter();
       const query = `$filter=${filter}&$orderby=createdon desc&$select=cr4cc_wind_speed_kmh,cr4cc_wind_speed_last,cr4cc_wind_dir_last,cr4cc_wind_direction_cardinal,cr4cc_wind_speed_hi_kmh,cr4cc_wind_speed_hi_last_10_min,cr4cc_wind_chill,cr4cc_wind_speed_avg_last_10_min,createdon,cr4cc_track_name`;
       
+      // Set track name immediately from the selection
+      const displayName = this.getTrackDisplayName(this.props.selectedTrack);
+      this.setState({ trackName: displayName });
+      
       Logger.info(`Loading wind data for track: ${this.props.selectedTrack}`, 'WindAnalysis');
+      Logger.info(`Filter being used: ${filter}`, 'WindAnalysis');
+      
       const data = await this.dataverseService.getWeatherDataWithQuery(query);
       
-      const trackName = data.length > 0 ? data[0].cr4cc_track_name : this.props.selectedTrack;
+      // Update track name from data if available
+      const trackName = data.length > 0 ? data[0].cr4cc_track_name : displayName;
       
       this.setState({ 
         windData: data, 
@@ -109,6 +116,7 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
       Logger.info(`Loaded ${data.length} wind records`, 'WindAnalysis');
     } catch (error) {
       const errorObj = ErrorHandler.handleError(error, 'WindAnalysis');
+      console.error('Wind data loading error:', error);
       this.setState({ 
         error: ErrorHandler.formatErrorMessage(errorObj), 
         loading: false 
@@ -117,7 +125,10 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
   }
 
   private buildFilter(): string {
-    const trackFilter = `cr4cc_station_id eq '${this.props.selectedTrack}'`;
+    // Get the display name for the track
+    const trackDisplayName = this.getTrackDisplayName(this.props.selectedTrack);
+    // Use exact match with track name
+    const trackFilter = `cr4cc_track_name eq '${trackDisplayName}'`;
     
     const now = new Date();
     let dateFilter = '';
@@ -138,6 +149,14 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
     }
     
     return `${trackFilter} and ${dateFilter}`;
+  }
+
+  private getTrackDisplayName(trackId: string): string {
+    // Convert track ID like 'wentworth-park' to 'Wentworth Park'
+    if (!trackId) return '';
+    return trackId.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   }
 
   private handlePeriodChange = (period: TimePeriod): void => {

@@ -68,9 +68,15 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
     this.setState({ loading: true, error: null });
 
     try {
-      // Use the same query pattern as other components
-      const filter = `cr4cc_station_id eq '${this.props.selectedTrackId}'`;
+      // Get the display name for the track
+      const trackDisplayName = this.getTrackDisplayName(this.props.selectedTrackId);
+      // Use exact match with track name
+      const filter = `cr4cc_track_name eq '${trackDisplayName}'`;
       const query = `$filter=${filter}&$orderby=createdon desc&$top=1`;
+      
+      console.log('Track Conditions - Loading data for:', trackDisplayName);
+      console.log('Track Conditions - Filter:', filter);
+      
       const data = await this.dataverseService.getWeatherDataWithQuery(query);
       const weatherData = data && data.length > 0 ? data[0] : null;
       
@@ -79,13 +85,25 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
         historicalData: [],
         loading: false 
       });
+      
+      if (!weatherData) {
+        console.log('Track Conditions - No data found for track:', trackDisplayName);
+      }
     } catch (error) {
-      console.error('Error loading weather data:', error);
+      console.error('Track Conditions - Error loading weather data:', error);
       this.setState({ 
         error: 'Failed to load weather data',
         loading: false 
       });
     }
+  }
+
+  private getTrackDisplayName(trackId: string): string {
+    // Convert track ID like 'wentworth-park' to 'Wentworth Park'
+    if (!trackId) return '';
+    return trackId.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
   }
 
 
@@ -196,7 +214,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
     const strokeWidth = 8;
     const normalizedRadius = radius - strokeWidth * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
-    // Fixed: Calculate offset to show completed portion in color
+    // Calculate offset to show completed portion in color
     const strokeDashoffset = circumference - (circumference * value / 100);
 
     return (

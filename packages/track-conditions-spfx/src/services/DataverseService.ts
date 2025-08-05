@@ -44,6 +44,9 @@ export class DataverseService {
       const headers = this.authService.getHeaders(accessToken);
       
       const url = `${dataverseConfig.environment}/api/data/${dataverseConfig.apiVersion}/${dataverseConfig.tableName}?${query}`;
+      
+      console.log('Dataverse API URL:', url);
+      console.log('Query:', query);
 
       const response = await fetch(url, {
         method: 'GET',
@@ -51,7 +54,10 @@ export class DataverseService {
       });
 
       if (!response.ok) {
-        throw new Error(`Error fetching weather data: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        console.error('API Status:', response.status);
+        throw new Error(`Error fetching weather data: ${response.statusText} - Status: ${response.status}`);
       }
 
       const data = await response.json();

@@ -1,3 +1,3 @@
 export { AuthService } from './AuthService';
 export { DataverseService } from './DataverseService';
-export { TrackService, ITrack } from './TrackService';
+export { WeatherDataService } from './WeatherDataService';

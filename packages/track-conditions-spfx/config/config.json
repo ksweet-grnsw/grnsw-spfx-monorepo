@@ -41,14 +41,6 @@
           "manifest": "./src/webparts/trackConditions/TrackConditionsWebPart.manifest.json"
         }
       ]
-    },
-    "race-meetings-web-part": {
-      "components": [
-        {
-          "entrypoint": "./lib/webparts/raceMeetings/RaceMeetingsWebPart.js",
-          "manifest": "./src/webparts/raceMeetings/RaceMeetingsWebPart.manifest.json"
-        }
-      ]
     }
   },
   "externals": {},
@@ -57,7 +49,6 @@
     "TemperatureWebPartStrings": "lib/webparts/temperature/loc/{locale}.js",
     "RainfallWebPartStrings": "lib/webparts/rainfall/loc/{locale}.js",
     "WindAnalysisWebPartStrings": "lib/webparts/windAnalysis/loc/{locale}.js",
-    "TrackConditionsWebPartStrings": "lib/webparts/trackConditions/loc/{locale}.js",
-    "RaceMeetingsWebPartStrings": "lib/webparts/raceMeetings/loc/{locale}.js"
+    "TrackConditionsWebPartStrings": "lib/webparts/trackConditions/loc/{locale}.js"
   }
 }
