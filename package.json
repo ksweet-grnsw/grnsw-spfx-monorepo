@@ -19,7 +19,12 @@
     "serve:health": "npm run serve -w @grnsw/greyhound-health-spfx",
     "serve:gap": "npm run serve -w @grnsw/gap-spfx",
     "test": "npm run test --workspaces",
-    "package-all": "npm run package-solution --workspaces"
+    "package-all": "npm run package-solution --workspaces",
+    "release": "node scripts/release.js",
+    "version:track": "cd packages/track-conditions-spfx && npm version",
+    "version:race": "cd packages/race-management-spfx && npm version",
+    "version:health": "cd packages/greyhound-health-spfx && npm version",
+    "version:gap": "cd packages/gap-spfx && npm version"
   },
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.21.1",

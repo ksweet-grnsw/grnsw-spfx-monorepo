@@ -56,3 +56,9 @@ packages/*/dist/
 packages/*/lib/
 packages/*/temp/
 packages/*/sharepoint/solution/
+
+# Keep release artifacts
+!releases/**/*.sppkg
+
+# Windows special files
+nul
