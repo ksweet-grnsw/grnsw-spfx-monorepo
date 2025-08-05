@@ -7,8 +7,9 @@ export const dataverseConfig = {
 
 // Table names for different domains
 export const dataverseTables = {
-  // Weather tables
+  // Track conditions tables (formerly weather)
   weatherData: 'cr4cc_weatherdatas',
+  trackConditions: 'cr4cc_trackconditions',
   
   // Race management tables
   raceMeetings: 'cr4cc_racemeetings',
@@ -20,5 +21,12 @@ export const dataverseTables = {
   greyhounds: 'cr4cc_greyhounds',
   injuries: 'cr4cc_injuries',
   treatments: 'cr4cc_treatments',
-  veterinaryReports: 'cr4cc_veterinaryreports'
+  veterinaryReports: 'cr4cc_veterinaryreports',
+  
+  // GAP (Greyhound Adoption Program) tables
+  adoptableGreyhounds: 'cr4cc_adoptablegreyhounds',
+  adoptionApplications: 'cr4cc_adoptionapplications',
+  adoptions: 'cr4cc_adoptions',
+  fosterCarers: 'cr4cc_fostercarers',
+  behavioralAssessments: 'cr4cc_behavioralassessments'
 };

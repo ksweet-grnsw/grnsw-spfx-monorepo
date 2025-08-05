@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "grnsw-gap-spfx-client-side-solution",
+    "id": "d4e5f6a7-b8c9-0123-defg-234567890123",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "GRNSW Development Team",
+      "websiteUrl": "https://github.com/ksweet-grnsw/grnsw-spfx-monorepo",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "Greyhound Adoption Program (GAP) web parts for GRNSW"
+      },
+      "longDescription": {
+        "default": "SharePoint web parts for managing the Greyhound Adoption Program. Includes adoption tracking, foster care management, behavioral assessments, adoption applications, and program analytics."
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "GRNSW GAP Feature",
+        "description": "Greyhound Adoption Program management components",
+        "id": "c4d5e6f7-a8b9-0123-defg-234567890123",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/gap-spfx.sppkg"
+  }
+}

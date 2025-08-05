@@ -21,10 +21,11 @@ The monorepo structure separates concerns into three distinct packages while sha
 - Contains all web parts (weather + race meetings)
 
 ##### New State (v2.0.0+)
-- Three packages:
-  - `weather-spfx.sppkg` - Weather web parts only
+- Four packages:
+  - `track-conditions-spfx.sppkg` - Track conditions monitoring with weather data
   - `race-management-spfx.sppkg` - Race meetings and race-related web parts
   - `greyhound-health-spfx.sppkg` - Health and injury tracking web parts
+  - `gap-spfx.sppkg` - Greyhound Adoption Program web parts
 
 ##### Migration Process
 
@@ -33,12 +34,12 @@ The monorepo structure separates concerns into three distinct packages while sha
    - Document which web parts are used on each site
 
 2. **Deploy New Packages**
-   - Upload all three new packages to the App Catalog
+   - Upload all four new packages to the App Catalog (or only those needed)
    - Do NOT remove the old package yet
 
 3. **Update Sites**
-   - For sites using only weather web parts:
-     - Add the new `weather-spfx` app
+   - For sites using only weather/track conditions web parts:
+     - Add the new `track-conditions-spfx` app
      - Replace existing weather web parts with new versions
      - Remove the old `full-weather-data-spfx` app
    

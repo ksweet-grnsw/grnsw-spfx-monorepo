@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "whichFolder": "subdir",
+    "solutionName": "full-weather-data-spfx",
+    "environment": "spo",
+    "packageManager": "npm",
+    "componentType": "webpart",
+    "template": "react",
+    "componentName": "TrackConditions",
+    "plusBeta": false,
+    "isCreatingSolution": false,
+    "nodeVersion": "22.17.1",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "full-weather-data-spfx",
+    "libraryId": "5603dfc2-5db0-474e-9fcf-5bdca4798711",
+    "solutionShortDescription": "full-weather-data-spfx description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false
+  }
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "grnsw-weather-spfx-client-side-solution",
+    "name": "grnsw-track-conditions-spfx-client-side-solution",
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "version": "2.0.0.0",
     "includeClientSideAssets": true,
@@ -16,10 +16,10 @@
     },
     "metadata": {
       "shortDescription": {
-        "default": "Weather data visualization web parts for GRNSW"
+        "default": "Track conditions monitoring web parts for GRNSW"
       },
       "longDescription": {
-        "default": "A collection of SharePoint web parts that display live weather data from Dataverse with comprehensive weather metrics. Includes Weather Dashboard, Temperature Analysis, Rainfall Tracking, Wind Analysis, and Track Conditions monitoring."
+        "default": "A collection of SharePoint web parts that monitor track conditions using live weather data from Dataverse. Includes comprehensive weather metrics, temperature analysis, rainfall tracking, wind analysis, and real-time track conditions monitoring."
       },
       "screenshotPaths": [],
       "videoUrl": "",
@@ -27,14 +27,14 @@
     },
     "features": [
       {
-        "title": "GRNSW Weather Data Feature",
-        "description": "Weather data visualization components for track conditions monitoring",
+        "title": "GRNSW Track Conditions Feature",
+        "description": "Track conditions monitoring components with weather data integration",
         "id": "f1e2d3c4-b5a6-9780-abcd-ef1234567890",
         "version": "2.0.0.0"
       }
     ]
   },
   "paths": {
-    "zippedPackage": "solution/weather-spfx.sppkg"
+    "zippedPackage": "solution/track-conditions-spfx.sppkg"
   }
 }

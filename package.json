@@ -2,20 +2,22 @@
   "name": "grnsw-spfx-monorepo",
   "version": "1.0.0",
   "private": true,
-  "description": "GRNSW SharePoint Framework monorepo for weather, race management, and greyhound health solutions",
+  "description": "GRNSW SharePoint Framework monorepo for track conditions, race management, greyhound health, and GAP solutions",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "build:weather": "npm run build -w @grnsw/weather-spfx",
+    "build:track": "npm run build -w @grnsw/track-conditions-spfx",
     "build:race": "npm run build -w @grnsw/race-management-spfx",
     "build:health": "npm run build -w @grnsw/greyhound-health-spfx",
+    "build:gap": "npm run build -w @grnsw/gap-spfx",
     "clean": "npm run clean --workspaces",
     "serve": "echo 'Choose a specific package to serve' && exit 1",
-    "serve:weather": "npm run serve -w @grnsw/weather-spfx",
+    "serve:track": "npm run serve -w @grnsw/track-conditions-spfx",
     "serve:race": "npm run serve -w @grnsw/race-management-spfx",
     "serve:health": "npm run serve -w @grnsw/greyhound-health-spfx",
+    "serve:gap": "npm run serve -w @grnsw/gap-spfx",
     "test": "npm run test --workspaces",
     "package-all": "npm run package-solution --workspaces"
   },

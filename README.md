@@ -1,9 +1,10 @@
 # GRNSW SharePoint Framework Monorepo
 
-A monorepo containing SharePoint Framework solutions for Greyhound Racing NSW, organized into three main packages:
-- Weather data visualization
+A monorepo containing SharePoint Framework solutions for Greyhound Racing NSW, organized into four main packages:
+- Track conditions monitoring (weather data)
 - Race management
 - Greyhound health tracking
+- GAP (Greyhound Adoption Program)
 
 ## Structure
 
@@ -11,9 +12,10 @@ A monorepo containing SharePoint Framework solutions for Greyhound Racing NSW, o
 grnsw-spfx-monorepo/
 ├── packages/
 │   ├── shared/                 # Shared services and utilities
-│   ├── weather-spfx/          # Weather data web parts
-│   ├── race-management/       # Race management web parts
-│   └── greyhound-health/      # Greyhound health web parts
+│   ├── track-conditions-spfx/  # Track conditions & weather web parts
+│   ├── race-management/        # Race management web parts
+│   ├── greyhound-health/       # Greyhound health web parts
+│   └── gap-spfx/              # GAP adoption program web parts
 └── package.json               # Root workspace configuration
 ```
 
@@ -26,13 +28,13 @@ Common services and utilities used across all packages:
 - **Logger**: Centralized logging utility
 - **Config**: Shared configuration for Dataverse connections
 
-### @grnsw/weather-spfx
-Weather data visualization web parts:
+### @grnsw/track-conditions-spfx
+Track conditions monitoring web parts with real-time weather data:
 - Weather Dashboard
 - Temperature Analysis
 - Rainfall Tracking
 - Wind Analysis
-- Track Conditions
+- Track Conditions Monitoring
 
 ### @grnsw/race-management-spfx
 Race management web parts:
@@ -47,6 +49,14 @@ Greyhound health and welfare web parts:
 - Treatment Records
 - Veterinary Reports
 - Health Analytics
+
+### @grnsw/gap-spfx
+Greyhound Adoption Program web parts:
+- Available Greyhounds Gallery
+- Adoption Applications
+- Foster Care Management
+- Behavioral Assessments
+- Adoption Statistics
 
 ## Prerequisites
 
@@ -68,14 +78,17 @@ Greyhound health and welfare web parts:
 ### Working with individual packages
 
 ```bash
-# Serve weather package
-npm run serve:weather
+# Serve track conditions package
+npm run serve:track
 
 # Serve race management package
 npm run serve:race
 
 # Serve greyhound health package
 npm run serve:health
+
+# Serve GAP package
+npm run serve:gap
 ```
 
 ### Building packages
@@ -85,9 +98,10 @@ npm run serve:health
 npm run build
 
 # Build specific package
-npm run build:weather
+npm run build:track
 npm run build:race
 npm run build:health
+npm run build:gap
 ```
 
 ### Creating production packages
@@ -97,7 +111,7 @@ npm run build:health
 npm run package-all
 
 # Or from individual package directories
-cd packages/weather-spfx
+cd packages/track-conditions-spfx
 npm run package-solution -- --ship
 ```
 

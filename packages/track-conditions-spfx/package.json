@@ -1,5 +1,5 @@
 {
-  "name": "@grnsw/weather-spfx",
+  "name": "@grnsw/track-conditions-spfx",
   "version": "2.0.0",
   "private": true,
   "main": "lib/index.js",
