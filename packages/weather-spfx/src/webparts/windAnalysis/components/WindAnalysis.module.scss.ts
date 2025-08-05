@@ -1,0 +1,40 @@
+
+require("./WindAnalysis.module.css");
+const styles = {
+  windAnalysis: 'windAnalysis_b539f6a7',
+  teams: 'teams_b539f6a7',
+  dark: 'dark_b539f6a7',
+  periodSelector: 'periodSelector_b539f6a7',
+  active: 'active_b539f6a7',
+  viewToggle: 'viewToggle_b539f6a7',
+  windCompass: 'windCompass_b539f6a7',
+  windStats: 'windStats_b539f6a7',
+  statItem: 'statItem_b539f6a7',
+  windRoseContainer: 'windRoseContainer_b539f6a7',
+  header: 'header_b539f6a7',
+  contentArea: 'contentArea_b539f6a7',
+  error: 'error_b539f6a7',
+  loading: 'loading_b539f6a7',
+  spinner: 'spinner_b539f6a7',
+  spin: 'spin_b539f6a7',
+  noData: 'noData_b539f6a7',
+  currentWind: 'currentWind_b539f6a7',
+  windArrow: 'windArrow_b539f6a7',
+  arrowHead: 'arrowHead_b539f6a7',
+  compassLabels: 'compassLabels_b539f6a7',
+  north: 'north_b539f6a7',
+  east: 'east_b539f6a7',
+  south: 'south_b539f6a7',
+  west: 'west_b539f6a7',
+  mainStat: 'mainStat_b539f6a7',
+  statValue: 'statValue_b539f6a7',
+  statLabel: 'statLabel_b539f6a7',
+  statDirection: 'statDirection_b539f6a7',
+  secondaryStats: 'secondaryStats_b539f6a7',
+  label: 'label_b539f6a7',
+  value: 'value_b539f6a7',
+  timestamp: 'timestamp_b539f6a7',
+  windRoseLegend: 'windRoseLegend_b539f6a7'
+};
+
+export default styles;

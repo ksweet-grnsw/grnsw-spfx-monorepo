@@ -1,0 +1,296 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+
+.temperature {
+  padding: 1em;
+  color: "[theme:bodyText, default: #323130]";
+  color: var(--bodyText);
+  background-color: $ms-color-white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &.teams {
+    font-family: $ms-font-family-fallbacks;
+  }
+
+  &.dark {
+    background-color: $ms-color-gray160;
+    color: $ms-color-white;
+
+    .periodSelector button {
+      background-color: $ms-color-gray150;
+      border-color: $ms-color-gray130;
+      color: $ms-color-white;
+
+      &:hover:not(:disabled):not(.active) {
+        background-color: $ms-color-gray140;
+      }
+
+      &.active {
+        background-color: $ms-color-themePrimary;
+        border-color: $ms-color-themePrimary;
+      }
+    }
+
+    .statCard {
+      background-color: $ms-color-gray150;
+      border-color: $ms-color-gray130;
+    }
+
+    .viewToggle button,
+    .chartTypeSelector button {
+      background-color: $ms-color-gray150;
+      border-color: $ms-color-gray130;
+      color: $ms-color-white;
+
+      &:hover:not(:disabled):not(.active) {
+        background-color: $ms-color-gray140;
+      }
+
+      &.active {
+        background-color: $ms-color-themePrimary;
+        border-color: $ms-color-themePrimary;
+      }
+    }
+
+    .chartContainer {
+      background-color: $ms-color-gray150;
+    }
+  }
+}
+
+.header {
+  margin-bottom: 1em;
+  text-align: center;
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: $ms-color-themePrimary;
+  }
+}
+
+.viewToggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.5em;
+  margin-top: 1.5em;
+
+  button {
+    padding: 0.4em 1em;
+    border: 1px solid $ms-color-neutralTertiary;
+    background-color: $ms-color-white;
+    color: $ms-color-neutralPrimary;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled):not(.active) {
+      background-color: $ms-color-neutralLight;
+      border-color: $ms-color-neutralSecondary;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.active {
+      background-color: $ms-color-themePrimary;
+      color: $ms-color-white;
+      border-color: $ms-color-themePrimary;
+    }
+  }
+}
+
+.contentArea {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartTypeSelector {
+  display: flex;
+  justify-content: center;
+  gap: 0.5em;
+  margin-bottom: 1em;
+
+  button {
+    padding: 0.4em 1em;
+    border: 1px solid $ms-color-neutralTertiary;
+    background-color: $ms-color-white;
+    color: $ms-color-neutralPrimary;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled):not(.active) {
+      background-color: $ms-color-neutralLight;
+      border-color: $ms-color-neutralSecondary;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.active {
+      background-color: $ms-color-themeDark;
+      color: $ms-color-white;
+      border-color: $ms-color-themeDark;
+    }
+  }
+}
+
+.chartContainer {
+  height: 300px;
+  padding: 1em;
+  background-color: $ms-color-white;
+  border-radius: 8px;
+  
+  canvas {
+    max-height: 100%;
+  }
+}
+
+.periodSelector {
+  display: flex;
+  justify-content: center;
+  gap: 0.5em;
+  margin-bottom: 1em;
+
+  button {
+    padding: 0.5em 1.5em;
+    border: 1px solid $ms-color-neutralTertiary;
+    background-color: $ms-color-white;
+    color: $ms-color-neutralPrimary;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled):not(.active) {
+      background-color: $ms-color-neutralLight;
+      border-color: $ms-color-neutralSecondary;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.active {
+      background-color: $ms-color-themePrimary;
+      color: $ms-color-white;
+      border-color: $ms-color-themePrimary;
+    }
+  }
+}
+
+.error {
+  padding: 1em;
+  background-color: $ms-color-errorBackground;
+  color: $ms-color-error;
+  border-radius: 4px;
+  margin-bottom: 1em;
+  text-align: center;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2em;
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid $ms-color-neutralLight;
+    border-top-color: $ms-color-themePrimary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    margin-top: 1em;
+    color: $ms-color-neutralSecondary;
+    font-size: 14px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.noData {
+  text-align: center;
+  padding: 2em;
+  color: $ms-color-neutralSecondary;
+  font-style: italic;
+}
+
+.temperatureDisplay {
+  text-align: center;
+  padding: 1em;
+}
+
+.currentTemp {
+  .mainTemp {
+    font-size: 48px;
+    font-weight: 700;
+    color: $ms-color-themePrimary;
+    margin: 0.2em 0;
+  }
+
+  .feelLike {
+    font-size: 16px;
+    color: $ms-color-neutralSecondary;
+    margin-bottom: 0.5em;
+  }
+
+  .timestamp {
+    font-size: 14px;
+    color: $ms-color-neutralTertiary;
+  }
+}
+
+.statsDisplay {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.statCard {
+  padding: 1em;
+  background-color: $ms-color-neutralLighter;
+  border: 1px solid $ms-color-neutralLight;
+  border-radius: 8px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .statLabel {
+    font-size: 12px;
+    color: $ms-color-neutralSecondary;
+    text-transform: uppercase;
+    margin-bottom: 0.5em;
+  }
+
+  .statValue {
+    font-size: 24px;
+    font-weight: 600;
+    color: $ms-color-themePrimary;
+  }
+}

@@ -1,0 +1,40 @@
+
+require("./TrackConditions.module.css");
+const styles = {
+  trackConditions: 'trackConditions_9d24e870',
+  teams: 'teams_9d24e870',
+  trackTitle: 'trackTitle_9d24e870',
+  header: 'header_9d24e870',
+  timestamp: 'timestamp_9d24e870',
+  overallCondition: 'overallCondition_9d24e870',
+  rating: 'rating_9d24e870',
+  surface: 'surface_9d24e870',
+  alerts: 'alerts_9d24e870',
+  alert: 'alert_9d24e870',
+  metrics: 'metrics_9d24e870',
+  gauge: 'gauge_9d24e870',
+  gaugeValue: 'gaugeValue_9d24e870',
+  gaugeLabel: 'gaugeLabel_9d24e870',
+  windImpact: 'windImpact_9d24e870',
+  windLabel: 'windLabel_9d24e870',
+  windValue: 'windValue_9d24e870',
+  low: 'low_9d24e870',
+  medium: 'medium_9d24e870',
+  high: 'high_9d24e870',
+  scoreExplanation: 'scoreExplanation_9d24e870',
+  conditions: 'conditions_9d24e870',
+  conditionCard: 'conditionCard_9d24e870',
+  conditionTitle: 'conditionTitle_9d24e870',
+  conditionData: 'conditionData_9d24e870',
+  label: 'label_9d24e870',
+  value: 'value_9d24e870',
+  recommendations: 'recommendations_9d24e870',
+  loading: 'loading_9d24e870',
+  spinner: 'spinner_9d24e870',
+  spin: 'spin_9d24e870',
+  error: 'error_9d24e870',
+  noData: 'noData_9d24e870',
+  dark: 'dark_9d24e870'
+};
+
+export default styles;

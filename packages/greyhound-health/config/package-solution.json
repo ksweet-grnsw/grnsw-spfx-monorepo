@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "grnsw-greyhound-health-spfx-client-side-solution",
+    "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "GRNSW Development Team",
+      "websiteUrl": "https://github.com/ksweet-grnsw/grnsw-spfx-monorepo",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "Greyhound health and welfare tracking web parts for GRNSW"
+      },
+      "longDescription": {
+        "default": "SharePoint web parts for tracking greyhound injuries, treatments, and veterinary reports. Includes injury tracking dashboard, treatment records, health analytics, and comprehensive reporting features."
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "GRNSW Greyhound Health Feature",
+        "description": "Health and welfare tracking components for greyhound management",
+        "id": "b3c4d5e6-f7a8-9012-cdef-123456789012",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/greyhound-health-spfx.sppkg"
+  }
+}

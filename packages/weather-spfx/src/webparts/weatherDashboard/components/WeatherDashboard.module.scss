@@ -1,0 +1,171 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+
+.weatherDashboard {
+  overflow: auto;
+  padding: 1em;
+  color: "[theme:bodyText, default: #323130]";
+  color: var(--bodyText);
+
+  &.teams {
+    font-family: $ms-font-family-fallbacks;
+  }
+
+  &.dark {
+    background-color: $ms-color-gray160;
+    color: $ms-color-white;
+
+    .weatherCard {
+      background-color: $ms-color-gray150;
+      border-color: $ms-color-gray130;
+    }
+  }
+}
+
+.header {
+  margin-bottom: 1.5em;
+
+  h2 {
+    margin: 0 0 0.5em 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: $ms-color-neutralSecondary;
+  }
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 1.5em;
+  padding: 1em;
+  background-color: $ms-color-neutralLighter;
+  border-radius: 4px;
+
+  button {
+    padding: 0.5em 1.5em;
+    border: none;
+    background-color: $ms-color-themePrimary;
+    color: $ms-color-white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+
+    &:hover:not(:disabled) {
+      background-color: $ms-color-themeDarkAlt;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.error {
+  padding: 1em;
+  background-color: $ms-color-errorBackground;
+  color: $ms-color-error;
+  border-radius: 4px;
+  margin-bottom: 1em;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3em;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $ms-color-neutralLight;
+    border-top-color: $ms-color-themePrimary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    margin-top: 1em;
+    color: $ms-color-neutralSecondary;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.noData {
+  text-align: center;
+  padding: 3em;
+  color: $ms-color-neutralSecondary;
+}
+
+.weatherGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1em;
+}
+
+.weatherCard {
+  padding: 1.5em;
+  background-color: $ms-color-white;
+  border: 1px solid $ms-color-neutralLight;
+  border-radius: 8px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  h4 {
+    margin: 0 0 1em 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: $ms-color-themePrimary;
+  }
+
+  .weatherDetails {
+    p {
+      margin: 0.5em 0;
+      font-size: 14px;
+
+      strong {
+        font-weight: 600;
+        margin-right: 0.5em;
+      }
+    }
+  }
+
+  .stationInfo {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid $ms-color-neutralLight;
+    
+    p {
+      margin: 0.25em 0;
+      font-size: 13px;
+      color: $ms-color-neutralSecondary;
+
+      strong {
+        font-weight: 600;
+        margin-right: 0.5em;
+      }
+    }
+  }
+
+  .timestamp {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid $ms-color-neutralLight;
+    font-size: 12px;
+    color: $ms-color-neutralSecondary;
+  }
+}

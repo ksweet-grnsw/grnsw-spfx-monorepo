@@ -1,0 +1,366 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+
+.raceMeetings {
+  overflow: hidden;
+  padding: 1em;
+  color: "[theme:bodyText, default: #323130]";
+  color: var(--bodyText);
+  
+  &.teams {
+    font-family: $ms-font-family-fallbacks;
+  }
+
+  .calendarHeader {
+    margin-bottom: 1.5em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid "[theme:neutralLight, default: #edebe9]";
+    
+    .dateDisplay {
+      font-weight: 600;
+      color: "[theme:themePrimary, default: #0078d4]";
+    }
+    
+    .filters {
+      margin-top: 1em;
+    }
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
+
+  .calendarContent {
+    background-color: "[theme:white, default: #ffffff]";
+    border: 1px solid "[theme:neutralLight, default: #edebe9]";
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  // Day View Styles
+  .dayView {
+    .timeGrid {
+      .hourSlot {
+        display: flex;
+        border-bottom: 1px solid "[theme:neutralLighter, default: #f3f2f1]";
+        min-height: 60px;
+        
+        .hourLabel {
+          width: 80px;
+          padding: 0.5em;
+          font-size: 0.875em;
+          color: "[theme:neutralSecondary, default: #605e5c]";
+          text-align: right;
+          border-right: 1px solid "[theme:neutralLighter, default: #f3f2f1]";
+        }
+        
+        .hourContent {
+          flex: 1;
+          padding: 0.25em;
+          position: relative;
+        }
+      }
+    }
+  }
+
+  // Week View Styles
+  .weekView {
+    .weekGrid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      min-height: 500px;
+      
+      .dayColumn {
+        border-right: 1px solid "[theme:neutralLighter, default: #f3f2f1]";
+        
+        &:last-child {
+          border-right: none;
+        }
+        
+        .dayHeader {
+          padding: 0.75em;
+          text-align: center;
+          border-bottom: 2px solid "[theme:neutralLight, default: #edebe9]";
+          background-color: "[theme:neutralLighter, default: #f3f2f1]";
+          
+          .dayName {
+            font-weight: 600;
+            color: "[theme:neutralPrimary, default: #323130]";
+          }
+          
+          .dayNumber {
+            font-size: 1.25em;
+            color: "[theme:themePrimary, default: #0078d4]";
+          }
+        }
+        
+        .dayContent {
+          padding: 0.5em;
+          min-height: 400px;
+        }
+      }
+    }
+  }
+
+  // Month View Styles
+  .monthView {
+    .weekDays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background-color: "[theme:neutralLighter, default: #f3f2f1]";
+      
+      .weekDay {
+        padding: 0.75em;
+        text-align: center;
+        font-weight: 600;
+        color: "[theme:neutralPrimary, default: #323130]";
+        border-right: 1px solid "[theme:neutralLight, default: #edebe9]";
+        
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+    
+    .week {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      
+      .day {
+        min-height: 120px;
+        border-right: 1px solid "[theme:neutralLighter, default: #f3f2f1]";
+        border-bottom: 1px solid "[theme:neutralLighter, default: #f3f2f1]";
+        padding: 0.5em;
+        position: relative;
+        overflow-y: auto;
+        overflow-x: hidden;
+        
+        &:last-child {
+          border-right: none;
+        }
+        
+        &.otherMonth {
+          background-color: "[theme:neutralLighterAlt, default: #faf9f8]";
+          
+          .dayNumber {
+            color: "[theme:neutralTertiary, default: #a19f9d]";
+          }
+        }
+        
+        &.today {
+          background-color: "[theme:themeLighterAlt, default: #eff6fc]";
+          
+          .dayNumber {
+            font-weight: bold;
+            color: "[theme:themePrimary, default: #0078d4]";
+          }
+        }
+        
+        .dayNumber {
+          font-size: 0.875em;
+          margin-bottom: 0.25em;
+        }
+        
+        .meetings {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1em;
+          margin-top: 0.25em;
+          
+          .meetingRectangle {
+            padding: 0.15em 0.3em;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            
+            &:hover {
+              transform: translateX(1px);
+              box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2);
+              opacity: 0.9;
+            }
+            
+            .trackName {
+              color: white;
+              font-size: 0.65em;
+              font-weight: 600;
+              line-height: 1.1;
+              display: block;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+            }
+          }
+          
+          .moreMeetings {
+            font-size: 0.75em;
+            color: "[theme:neutralSecondary, default: #605e5c]";
+          }
+        }
+      }
+    }
+  }
+
+  // Day View - No Meetings Message
+  .noMeetings {
+    padding: 2em;
+    text-align: center;
+    color: "[theme:neutralSecondary, default: #605e5c]";
+    font-size: 1.1em;
+  }
+
+  // Day View - Meetings List (when no time data)
+  .meetingsList {
+    padding: 1em;
+    
+    .meetingCard {
+      background: white;
+      border: 1px solid "[theme:neutralLight, default: #edebe9]";
+      border-left: 4px solid;
+      border-radius: 4px;
+      padding: 1em;
+      margin-bottom: 1em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+      }
+      
+      .meetingHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5em;
+        
+        .meetingTitle {
+          font-size: 1.1em;
+          font-weight: 600;
+          color: "[theme:neutralPrimary, default: #323130]";
+        }
+        
+        .meetingAuthority {
+          font-size: 0.9em;
+          color: "[theme:neutralSecondary, default: #605e5c]";
+          font-weight: 500;
+        }
+      }
+      
+      .meetingDetails {
+        color: "[theme:neutralSecondary, default: #605e5c]";
+        font-size: 0.9em;
+        margin-bottom: 0.25em;
+      }
+      
+      .meetingType {
+        color: "[theme:neutralTertiary, default: #a19f9d]";
+        font-size: 0.85em;
+        font-style: italic;
+      }
+    }
+  }
+
+  // Common Meeting Styles
+  .meeting {
+    padding: 0.5em;
+    margin-bottom: 0.25em;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateX(2px);
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .meetingTime {
+      font-size: 0.75em;
+      opacity: 0.9;
+    }
+    
+    .meetingTitle {
+      font-weight: 600;
+      font-size: 0.875em;
+      margin: 0.25em 0;
+    }
+    
+    .meetingDetails {
+      font-size: 0.75em;
+      opacity: 0.8;
+    }
+  }
+
+  // Legend Styles
+  .legend {
+    margin-top: 1.5em;
+    padding: 1em;
+    background-color: "[theme:neutralLighter, default: #f3f2f1]";
+    border-radius: 4px;
+    
+    .legendItems {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      margin-top: 0.5em;
+      
+      .legendItem {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        
+        .legendColor {
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+        }
+      }
+    }
+  }
+
+  // Meeting Details Panel
+  .meetingDetails {
+    padding: 1em 0;
+    
+    .authorityBadge {
+      display: inline-block;
+      padding: 0.5em 1em;
+      border-radius: 4px;
+      color: white;
+      font-weight: 600;
+    }
+  }
+}
+
+// Dark theme adjustments
+.dark {
+  .raceMeetings {
+    .calendarContent {
+      background-color: "[theme:neutralLighter, default: #3c3c3c]";
+      border-color: "[theme:neutralQuaternary, default: #2b2b2b]";
+    }
+    
+    .monthView {
+      .day {
+        &.otherMonth {
+          background-color: "[theme:neutralQuaternaryAlt, default: #2b2b2b]";
+        }
+        
+        &.today {
+          background-color: "[theme:themeDark, default: #005a9e]";
+        }
+      }
+    }
+    
+    .legend {
+      background-color: "[theme:neutralQuaternaryAlt, default: #2b2b2b]";
+    }
+  }
+}

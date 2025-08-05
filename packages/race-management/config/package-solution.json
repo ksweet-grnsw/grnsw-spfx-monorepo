@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "grnsw-race-management-spfx-client-side-solution",
+    "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "GRNSW Development Team",
+      "websiteUrl": "https://github.com/ksweet-grnsw/grnsw-spfx-monorepo",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "Race management web parts for GRNSW"
+      },
+      "longDescription": {
+        "default": "SharePoint web parts for managing greyhound race meetings, results, and performance analytics. Includes Race Meetings calendar with multi-view support, authority filtering, and track selection."
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "GRNSW Race Management Feature",
+        "description": "Race management components for greyhound racing operations",
+        "id": "a2b3c4d5-e6f7-8901-bcde-f12345678901",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/race-management-spfx.sppkg"
+  }
+}
