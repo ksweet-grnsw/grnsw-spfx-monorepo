@@ -3,7 +3,7 @@
   "solution": {
     "name": "grnsw-track-conditions-spfx-client-side-solution",
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "version": "2.2.3.0",
+    "version": "2.2.4.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -30,7 +30,7 @@
         "title": "GRNSW Track Conditions Feature",
         "description": "Track conditions monitoring components with weather data integration",
         "id": "f1e2d3c4-b5a6-9780-abcd-ef1234567890",
-        "version": "2.2.3.0"
+        "version": "2.2.4.0"
       }
     ]
   },
