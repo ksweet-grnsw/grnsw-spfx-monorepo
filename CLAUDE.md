@@ -76,13 +76,18 @@ When creating releases, always:
 
 ## Version and Release Creation
 When asked to create a new version or release:
-1. Update version in `config/package-solution.json` (increment the version number)
-2. Run `npm run build` to create the .sppkg file
-3. Run `gulp package-solution --ship` to create the production package
-4. Create a new folder in `releases/track-conditions/` directory named with the version (e.g., `v2.1.9`)
-5. Copy the .sppkg file from `packages/track-conditions-spfx/sharepoint/solution/` to the new release folder
-6. Create a README.md file in the release folder with release notes
-7. Provide the user with the path to the release file
+1. **CRITICAL: Update version in BOTH files:**
+   - `package.json` - Update the "version" field (e.g., "2.2.3")
+   - `config/package-solution.json` - Update solution version (e.g., "2.2.3.0") and feature version
+2. Run `gulp clean` to ensure clean build
+3. Run `gulp bundle --ship` to create production bundle
+4. Run `gulp package-solution --ship` to create the production package
+5. Create a new folder in `releases/[package-name]/` directory named with the version (e.g., `v2.2.3`)
+6. Copy the .sppkg file from `packages/[package-name]/sharepoint/solution/` to the new release folder
+7. Create a README.md file in the release folder with release notes
+8. Provide the user with the path to the release file
+
+**WARNING:** SPFx uses the version from package.json during build. If package.json and package-solution.json versions don't match, SharePoint will show incorrect version numbers!
 
 IMPORTANT: Releases are stored at the monorepo root level, NOT in the package folder!
 
