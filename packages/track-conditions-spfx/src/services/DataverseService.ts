@@ -27,7 +27,9 @@ export class DataverseService {
       });
 
       if (!response.ok) {
-        throw new Error(`Error fetching weather data: ${response.statusText}`);
+        const error = new Error(`Error fetching weather data: ${response.statusText}`) as Error & { status?: number };
+        error.status = response.status;
+        throw error;
       }
 
       const data = await response.json();
@@ -57,7 +59,9 @@ export class DataverseService {
         const errorText = await response.text();
         console.error('API Error Response:', errorText);
         console.error('API Status:', response.status);
-        throw new Error(`Error fetching weather data: ${response.statusText} - Status: ${response.status}`);
+        const error = new Error(`Error fetching weather data: ${response.statusText} - Status: ${response.status}`) as Error & { status?: number };
+        error.status = response.status;
+        throw error;
       }
 
       const data = await response.json();

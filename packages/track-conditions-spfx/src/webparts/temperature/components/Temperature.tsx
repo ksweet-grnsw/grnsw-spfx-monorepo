@@ -5,6 +5,7 @@ import { DataverseService } from '../../../services';
 import { IDataverseWeatherData } from '../../../models/IDataverseWeatherData';
 import { Logger, ErrorHandler } from '../../../utils';
 import { Icon } from '@fluentui/react/lib/Icon';
+import { ErrorDisplay } from '../../../components/ErrorDisplay/ErrorDisplay';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,7 +40,7 @@ interface ITemperatureState {
   selectedPeriod: TimePeriod;
   temperatureData: IDataverseWeatherData[];
   loading: boolean;
-  error: string | null;
+  error: string | undefined;
   trackName: string;
   chartType: ChartType;
   viewType: ViewType;
@@ -55,7 +56,7 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
       selectedPeriod: 'today',
       temperatureData: [],
       loading: false,
-      error: null,
+      error: undefined,
       trackName: '',
       chartType: 'line',
       viewType: 'stats'
@@ -81,7 +82,7 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
       return;
     }
 
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: undefined });
     
     try {
       const filter = this.buildFilter();
@@ -126,18 +127,21 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
     let dateFilter = '';
     
     switch (this.state.selectedPeriod) {
-      case 'today':
+      case 'today': {
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         dateFilter = `createdon ge ${todayStart.toISOString()}`;
         break;
-      case 'week':
+      }
+      case 'week': {
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         dateFilter = `createdon ge ${weekAgo.toISOString()}`;
         break;
-      case 'month':
+      }
+      case 'month': {
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         dateFilter = `createdon ge ${monthAgo.toISOString()}`;
         break;
+      }
     }
     
     return `${trackFilter} and ${dateFilter}`;
@@ -153,11 +157,13 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
 
   private handlePeriodChange = (period: TimePeriod): void => {
     this.setState({ selectedPeriod: period }, () => {
-      this.loadTemperatureData();
+      this.loadTemperatureData().catch(error => {
+        console.error('Failed to load temperature data:', error);
+      });
     });
   }
 
-  private calculateStats() {
+  private calculateStats(): { current: number | null; min: number | null; max: number | null; avg: number | null } {
     const temps = this.state.temperatureData
       .map(d => d.cr4cc_temp_celsius)
       .filter(t => t !== null && t !== undefined);
@@ -355,15 +361,11 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
           </div>
         )}
 
-        {error && (
-          <div className={styles.error}>
-            <strong>Error:</strong> {error}
-          </div>
-        )}
+        {error && <ErrorDisplay error={error} />}
 
         {loading ? (
           <div className={styles.loading}>
-            <div className={styles.spinner}></div>
+            <div className={styles.spinner} />
             <p>Loading temperature data...</p>
           </div>
         ) : (

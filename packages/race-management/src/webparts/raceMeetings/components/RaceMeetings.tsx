@@ -24,8 +24,8 @@ export interface IRaceMeetingsState {
   error: string | null;
   currentView: CalendarView;
   currentDate: Date;
-  selectedAuthority: string;
-  selectedTrackId: string;
+  selectedAuthorities: string[];
+  selectedTrackIds: string[];
   tracks: Array<{trackId: string, trackName: string}>;
   selectedMeeting: IRaceMeeting | null;
   isPanelOpen: boolean;
@@ -39,22 +39,22 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
     this.state = {
       meetings: [],
       loading: false,
-      error: null,
+      error: undefined,
       currentView: props.defaultView || 'month',
       currentDate: new Date(),
-      selectedAuthority: props.selectedAuthority || '',
-      selectedTrackId: props.selectedTrackId || '',
+      selectedAuthorities: props.selectedAuthority ? [props.selectedAuthority] : [],
+      selectedTrackIds: props.selectedTrackId ? [props.selectedTrackId] : [],
       tracks: [],
-      selectedMeeting: null,
+      selectedMeeting: undefined,
       isPanelOpen: false
     };
     this.raceMeetingService = new RaceMeetingService(props.context);
   }
 
-  public componentDidMount(): void {
-    this.loadMeetings();
-    if (this.state.selectedAuthority) {
-      this.loadTracksByAuthority(this.state.selectedAuthority);
+  public async componentDidMount(): Promise<void> {
+    await this.loadMeetings();
+    if (this.state.selectedAuthorities.length > 0) {
+      await this.loadTracksByAuthorities(this.state.selectedAuthorities);
     }
   }
 
@@ -62,19 +62,19 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
     if (prevProps.selectedAuthority !== this.props.selectedAuthority ||
         prevProps.selectedTrackId !== this.props.selectedTrackId) {
       this.setState({
-        selectedAuthority: this.props.selectedAuthority || '',
-        selectedTrackId: this.props.selectedTrackId || ''
+        selectedAuthorities: this.props.selectedAuthority ? [this.props.selectedAuthority] : [],
+        selectedTrackIds: this.props.selectedTrackId ? [this.props.selectedTrackId] : []
       }, () => {
-        this.loadMeetings();
+        void this.loadMeetings();
         if (this.props.selectedAuthority) {
-          this.loadTracksByAuthority(this.props.selectedAuthority);
+          void this.loadTracksByAuthorities([this.props.selectedAuthority]);
         }
       });
     }
   }
 
   private async loadMeetings(): Promise<void> {
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: undefined });
 
     try {
       const { startDate, endDate } = this.getDateRange();
@@ -83,15 +83,15 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
         view: this.state.currentView,
-        authority: this.state.selectedAuthority,
-        track: this.state.selectedTrackId
+        authorities: this.state.selectedAuthorities,
+        tracks: this.state.selectedTrackIds
       });
       
       const meetings = await this.raceMeetingService.getRaceMeetingsByDateRange(
         startDate,
         endDate,
-        this.state.selectedAuthority ? [this.state.selectedAuthority] : undefined,
-        this.state.selectedTrackId ? [this.state.selectedTrackId] : undefined
+        this.state.selectedAuthorities.length > 0 ? this.state.selectedAuthorities : undefined,
+        this.state.selectedTrackIds.length > 0 ? this.state.selectedTrackIds : undefined
       );
 
       console.log(`Loaded ${meetings.length} meetings:`, meetings);
@@ -163,7 +163,7 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         startDate.setHours(0, 0, 0, 0);
         endDate.setHours(23, 59, 59, 999);
         break;
-      case 'week':
+      case 'week': {
         const dayOfWeek = startDate.getDay();
         const diff = startDate.getDate() - dayOfWeek;
         startDate.setDate(diff);
@@ -171,6 +171,7 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         endDate.setDate(startDate.getDate() + 6);
         endDate.setHours(23, 59, 59, 999);
         break;
+      }
       case 'month':
         startDate.setDate(1);
         startDate.setHours(0, 0, 0, 0);
@@ -184,7 +185,7 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
   }
 
   private onViewChange = (view: CalendarView): void => {
-    this.setState({ currentView: view }, () => this.loadMeetings());
+    this.setState({ currentView: view }, () => void this.loadMeetings());
   };
 
 
@@ -193,7 +194,7 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
     const newDate = new Date(currentDate.getTime());
 
     if (direction === 'today') {
-      this.setState({ currentDate: new Date() }, () => this.loadMeetings());
+      this.setState({ currentDate: new Date() }, () => void this.loadMeetings());
       return;
     }
 
@@ -211,38 +212,58 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         break;
     }
 
-    this.setState({ currentDate: newDate }, () => this.loadMeetings());
+    this.setState({ currentDate: newDate }, () => void this.loadMeetings());
   };
 
-  private onAuthorityChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
+  private onAuthorityChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number): void => {
     if (option) {
       const authority = option.key as string;
+      let newAuthorities: string[];
+      
+      if (option.selected) {
+        // Add authority if selected
+        newAuthorities = [...this.state.selectedAuthorities, authority];
+      } else {
+        // Remove authority if unselected
+        newAuthorities = this.state.selectedAuthorities.filter(auth => auth !== authority);
+      }
+      
       this.setState({ 
-        selectedAuthority: authority,
-        selectedTrackId: '' // Reset track when authority changes
+        selectedAuthorities: newAuthorities,
+        selectedTrackIds: [] // Reset tracks when authorities change
       }, () => {
-        this.loadMeetings();
-        if (authority) {
-          this.loadTracksByAuthority(authority);
+        void this.loadMeetings();
+        if (newAuthorities.length > 0) {
+          void this.loadTracksByAuthorities(newAuthorities);
         } else {
           this.setState({ tracks: [] });
         }
         // Call the callback to persist the selection
         if (this.props.onUpdateFilters) {
-          this.props.onUpdateFilters(authority, '');
+          this.props.onUpdateFilters(newAuthorities.join(','), '');
         }
       });
     }
   };
 
-  private onTrackChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
+  private onTrackChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number): void => {
     if (option) {
       const trackId = option.key as string;
-      this.setState({ selectedTrackId: trackId }, () => {
-        this.loadMeetings();
+      let newTrackIds: string[];
+      
+      if (option.selected) {
+        // Add track if selected
+        newTrackIds = [...this.state.selectedTrackIds, trackId];
+      } else {
+        // Remove track if unselected
+        newTrackIds = this.state.selectedTrackIds.filter(track => track !== trackId);
+      }
+      
+      this.setState({ selectedTrackIds: newTrackIds }, () => {
+        void this.loadMeetings();
         // Call the callback to persist the selection
         if (this.props.onUpdateFilters) {
-          this.props.onUpdateFilters(this.state.selectedAuthority, trackId);
+          this.props.onUpdateFilters(this.state.selectedAuthorities.join(','), newTrackIds.join(','));
         }
       });
     }
@@ -250,11 +271,11 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
 
   private onClearFilters = (): void => {
     this.setState({ 
-      selectedAuthority: '',
-      selectedTrackId: '',
+      selectedAuthorities: [],
+      selectedTrackIds: [],
       tracks: []
     }, () => {
-      this.loadMeetings();
+      void this.loadMeetings();
       // Call the callback to persist the cleared selection
       if (this.props.onUpdateFilters) {
         this.props.onUpdateFilters('', '');
@@ -280,7 +301,7 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
 
   private onPanelDismiss = (): void => {
     this.setState({ 
-      selectedMeeting: null,
+      selectedMeeting: undefined,
       isPanelOpen: false
     });
   };
@@ -348,8 +369,10 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
             <Dropdown
               placeholder="Filter by Authority"
               options={authorityOptions}
-              selectedKey={this.state.selectedAuthority}
+              selectedKeys={this.state.selectedAuthorities}
               onChange={this.onAuthorityChange}
+              multiSelect
+              multiSelectDelimiter=", "
               styles={{ 
                 dropdown: { minWidth: 200 },
                 title: { fontSize: 13 }
@@ -360,16 +383,18 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
             <Dropdown
               placeholder="Filter by Track"
               options={trackOptions}
-              selectedKey={this.state.selectedTrackId}
+              selectedKeys={this.state.selectedTrackIds}
               onChange={this.onTrackChange}
-              disabled={this.state.tracks.length === 0 && !this.state.selectedAuthority}
+              multiSelect
+              multiSelectDelimiter=", "
+              disabled={this.state.tracks.length === 0 && this.state.selectedAuthorities.length === 0}
               styles={{ 
                 dropdown: { minWidth: 200 },
                 title: { fontSize: 13 }
               }}
             />
           </Stack.Item>
-          {(this.state.selectedAuthority || this.state.selectedTrackId) && (
+          {(this.state.selectedAuthorities.length > 0 || this.state.selectedTrackIds.length > 0) && (
             <Stack.Item>
               <DefaultButton
                 text="Clear Filters"

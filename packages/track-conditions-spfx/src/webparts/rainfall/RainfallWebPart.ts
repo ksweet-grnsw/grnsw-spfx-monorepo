@@ -18,6 +18,9 @@ const packageSolution = require('../../../config/package-solution.json');
 
 export interface IRainfallWebPartProps {
   selectedTrack: string;
+  defaultView: 'stats' | 'chart';
+  defaultPeriod: 'today' | 'week' | 'month';
+  defaultChartType: 'line' | 'bar';
 }
 
 export default class RainfallWebPart extends BaseClientSideWebPart<IRainfallWebPartProps> {
@@ -29,6 +32,9 @@ export default class RainfallWebPart extends BaseClientSideWebPart<IRainfallWebP
       Rainfall,
       {
         selectedTrack: this.properties.selectedTrack || 'wentworth-park',
+        defaultView: this.properties.defaultView || 'stats',
+        defaultPeriod: this.properties.defaultPeriod || 'today',
+        defaultChartType: this.properties.defaultChartType || 'bar',
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -112,6 +118,31 @@ export default class RainfallWebPart extends BaseClientSideWebPart<IRainfallWebP
                   label: 'Select Track',
                   options: trackOptions,
                   selectedKey: this.properties.selectedTrack
+                }),
+                PropertyPaneDropdown('defaultView', {
+                  label: 'Default View',
+                  options: [
+                    { key: 'stats', text: 'Statistics' },
+                    { key: 'chart', text: 'Chart' }
+                  ],
+                  selectedKey: this.properties.defaultView || 'stats'
+                }),
+                PropertyPaneDropdown('defaultPeriod', {
+                  label: 'Default Period',
+                  options: [
+                    { key: 'today', text: 'Today' },
+                    { key: 'week', text: 'Week' },
+                    { key: 'month', text: 'Month' }
+                  ],
+                  selectedKey: this.properties.defaultPeriod || 'today'
+                }),
+                PropertyPaneDropdown('defaultChartType', {
+                  label: 'Default Chart Type',
+                  options: [
+                    { key: 'line', text: 'Line' },
+                    { key: 'bar', text: 'Bar' }
+                  ],
+                  selectedKey: this.properties.defaultChartType || 'bar'
                 })
               ]
             },

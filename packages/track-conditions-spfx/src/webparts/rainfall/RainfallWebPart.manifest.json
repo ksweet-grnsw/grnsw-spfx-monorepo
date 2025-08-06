@@ -16,13 +16,16 @@
   "supportsThemeVariants": true,
 
   "preconfiguredEntries": [{
-    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Advanced
-    "group": { "default": "Advanced" },
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // GRNSW Tools
+    "group": { "default": "GRNSW Tools" },
     "title": { "default": "Rainfall" },
     "description": { "default": "Displays rainfall data from Dataverse with chart visualization" },
     "officeFabricIconFontName": "Rain",
     "properties": {
-      "selectedTrack": ""
+      "selectedTrack": "",
+      "defaultView": "stats",
+      "defaultPeriod": "today",
+      "defaultChartType": "bar"
     }
   }]
 }

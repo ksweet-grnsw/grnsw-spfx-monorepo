@@ -26,11 +26,11 @@ export class Logger {
     this.log(LogLevel.Warning, message, context);
   }
 
-  public static error(message: string, context?: string, error?: any): void {
+  public static error(message: string, context?: string, error?: Error | unknown): void {
     this.log(LogLevel.Error, message, context, error);
   }
 
-  private static log(level: LogLevel, message: string, context?: string, error?: any): void {
+  private static log(level: LogLevel, message: string, context?: string, error?: Error | unknown): void {
     if (level < this.logLevel) return;
 
     const timestamp = new Date();

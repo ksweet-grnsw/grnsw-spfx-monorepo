@@ -16,11 +16,11 @@
   "supportsThemeVariants": true,
 
   "preconfiguredEntries": [{
-    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Advanced
-    "group": { "default": "Advanced" },
-    "title": { "default": "WeatherDashboard" },
-    "description": { "default": "Live weather dashboard from Dataverse" },
-    "officeFabricIconFontName": "Page",
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // GRNSW Tools
+    "group": { "default": "GRNSW Tools" },
+    "title": { "default": "Weather Dashboard" },
+    "description": { "default": "Live weather monitoring dashboard showing data from all stations" },
+    "officeFabricIconFontName": "GridViewMedium",
     "properties": {
       "description": "WeatherDashboard"
     }

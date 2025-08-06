@@ -1,5 +1,6 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { AuthService, dataverseConfig, Logger, ErrorHandler } from '@grnsw/shared';
+import { AuthService, dataverseConfig } from '@grnsw/shared';
+import { Logger, ErrorHandler } from '../utils';
 import { IRaceMeeting, IRaceMeetingFilter } from '../models/IRaceMeeting';
 
 export class RaceMeetingService {
@@ -97,10 +98,10 @@ export class RaceMeetingService {
   }
 
   private findFieldByPattern(fields: any[], patterns: string[]): string | undefined {
-    for (var i = 0; i < patterns.length; i++) {
-      var pattern = patterns[i];
-      for (var j = 0; j < fields.length; j++) {
-        var field = fields[j];
+    for (let i = 0; i < patterns.length; i++) {
+      const pattern = patterns[i];
+      for (let j = 0; j < fields.length; j++) {
+        const field = fields[j];
         if (field.LogicalName.toLowerCase().indexOf(pattern.toLowerCase()) !== -1) {
           return field.LogicalName;
         }
@@ -110,7 +111,7 @@ export class RaceMeetingService {
   }
 
   private findInArray<T>(arr: T[], predicate: (item: T) => boolean): T | undefined {
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       if (predicate(arr[i])) {
         return arr[i];
       }

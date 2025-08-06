@@ -39,7 +39,7 @@ interface IRainfallState {
   selectedPeriod: TimePeriod;
   rainfallData: IDataverseWeatherData[];
   loading: boolean;
-  error: string | null;
+  error: string | undefined;
   trackName: string;
   chartType: ChartType;
   viewType: ViewType;
@@ -52,13 +52,13 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
     super(props);
     
     this.state = {
-      selectedPeriod: 'today',
+      selectedPeriod: props.defaultPeriod || 'today',
       rainfallData: [],
       loading: false,
-      error: null,
+      error: undefined,
       trackName: '',
-      chartType: 'bar',
-      viewType: 'stats'
+      chartType: props.defaultChartType || 'bar',
+      viewType: props.defaultView || 'stats'
     };
 
     this.dataverseService = new DataverseService(this.props.context);
@@ -81,7 +81,7 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
       return;
     }
 
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: undefined });
     
     try {
       const filter = this.buildFilter();
@@ -126,18 +126,21 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
     let dateFilter = '';
     
     switch (this.state.selectedPeriod) {
-      case 'today':
+      case 'today': {
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         dateFilter = `createdon ge ${todayStart.toISOString()}`;
         break;
-      case 'week':
+      }
+      case 'week': {
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         dateFilter = `createdon ge ${weekAgo.toISOString()}`;
         break;
-      case 'month':
+      }
+      case 'month': {
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         dateFilter = `createdon ge ${monthAgo.toISOString()}`;
         break;
+      }
     }
     
     return `${trackFilter} and ${dateFilter}`;
@@ -153,24 +156,29 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
 
   private handlePeriodChange = (period: TimePeriod): void => {
     this.setState({ selectedPeriod: period }, () => {
-      this.loadRainfallData();
+      this.loadRainfallData().catch(error => {
+        console.error('Failed to load rainfall data:', error);
+      });
     });
   }
 
-  private calculateStats() {
+  private calculateStats(): { total: number; average: number; max: number; rainDays: number } {
     const rainfall = this.state.rainfallData
       .map(d => d.cr4cc_rainfall_day_mm)
       .filter(r => r !== null && r !== undefined);
     
     if (rainfall.length === 0) {
-      return { current: null, total: null, max: null, avg: null };
+      return { total: 0, average: 0, max: 0, rainDays: 0 };
     }
     
+    const total = rainfall.reduce((a, b) => a + b, 0);
+    const rainDays = rainfall.filter(r => r > 0).length;
+    
     return {
-      current: rainfall[0],
-      total: rainfall.reduce((a, b) => a + b, 0),
+      total: total,
+      average: total / rainfall.length,
       max: Math.max(...rainfall),
-      avg: rainfall.reduce((a, b) => a + b, 0) / rainfall.length
+      rainDays: rainDays
     };
   }
 
@@ -282,7 +290,7 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
           <div className={styles.statsDisplay}>
             <div className={styles.statCard}>
               <div className={styles.statLabel}>Current</div>
-              <div className={styles.statValue}>{stats.current?.toFixed(1) || '0.0'}mm</div>
+              <div className={styles.statValue}>{latestData?.cr4cc_rainfall_day_mm?.toFixed(1) || '0.0'}mm</div>
             </div>
             <div className={styles.statCard}>
               <div className={styles.statLabel}>Total</div>
@@ -294,7 +302,7 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
             </div>
             <div className={styles.statCard}>
               <div className={styles.statLabel}>Avg</div>
-              <div className={styles.statValue}>{stats.avg?.toFixed(1) || '0.0'}mm</div>
+              <div className={styles.statValue}>{stats.average.toFixed(1)}mm</div>
             </div>
           </div>
         )}
@@ -366,7 +374,7 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
 
         {loading ? (
           <div className={styles.loading}>
-            <div className={styles.spinner}></div>
+            <div className={styles.spinner} />
             <p>Loading rainfall data...</p>
           </div>
         ) : (

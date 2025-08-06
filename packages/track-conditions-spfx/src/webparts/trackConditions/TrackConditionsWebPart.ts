@@ -14,7 +14,7 @@ import TrackConditions from './components/TrackConditions';
 import { ITrackConditionsProps } from './components/ITrackConditionsProps';
 import { trackOptions } from '../shared/trackOptions';
 
-const packageSolution = require('../../../config/package-solution.json');
+const packageSolution: any = require('../../../config/package-solution.json'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 export interface ITrackConditionsWebPartProps {
   selectedTrackId: string;

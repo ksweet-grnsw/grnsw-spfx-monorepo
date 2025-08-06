@@ -1,0 +1,92 @@
+@import '../../../styles/variables.module.scss';
+
+.windRose {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 0 auto;
+
+  // Remove header and track name sections entirely
+
+  .svg {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .directionLabel {
+    font-size: 14px;
+    fill: #666;
+    font-weight: 500;
+  }
+
+  .percentageLabel {
+    font-size: 12px;
+    fill: #999;
+  }
+
+  .zeroLabel {
+    font-size: 12px;
+    fill: #999;
+  }
+
+  .periodSelector {
+    display: flex;
+    justify-content: center;
+    gap: 0.5em;
+    margin: 1.5em 0;
+
+    button {
+      padding: 0.4em 1em;
+      border: 1px solid #d4d4d4;
+      background-color: white;
+      color: #323130;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.2s;
+
+      &:hover:not(:disabled):not(.active) {
+        background-color: #f3f2f1;
+        border-color: #a19f9d;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &.active {
+        background-color: #0078d4;
+        color: white;
+        border-color: #0078d4;
+      }
+    }
+  }
+
+  .legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5em;
+    margin-top: 1em;
+
+    .legendItem {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+
+      .legendColor {
+        width: 20px;
+        height: 12px;
+        border-radius: 2px;
+      }
+
+      .legendLabel {
+        font-size: 0.85em;
+        color: #666;
+      }
+    }
+  }
+}

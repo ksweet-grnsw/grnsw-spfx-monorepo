@@ -6,6 +6,7 @@ import { IDataverseWeatherData } from '../../../models/IDataverseWeatherData';
 import { Logger, ErrorHandler } from '../../../utils';
 import { degreesToCardinal } from '../../../utils/windUtils';
 import { Icon } from '@fluentui/react/lib/Icon';
+import { WindRose, IWindData } from './WindRose';
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -17,7 +18,6 @@ import {
   ChartData,
   ChartOptions
 } from 'chart.js';
-import { Radar } from 'react-chartjs-2';
 
 ChartJS.register(
   RadialLinearScale,
@@ -29,13 +29,13 @@ ChartJS.register(
 );
 
 type TimePeriod = 'today' | 'week' | 'month';
-type ViewType = 'current' | 'windrose';
+type ViewType = 'current' | 'windRose';
 
 interface IWindAnalysisState {
   selectedPeriod: TimePeriod;
   windData: IDataverseWeatherData[];
   loading: boolean;
-  error: string | null;
+  error: string | undefined;
   trackName: string;
   viewType: ViewType;
 }
@@ -62,12 +62,12 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
     super(props);
     
     this.state = {
-      selectedPeriod: 'today',
+      selectedPeriod: props.defaultPeriod || 'today',
       windData: [],
       loading: false,
       error: null,
       trackName: '',
-      viewType: 'current'
+      viewType: props.defaultView || 'current'
     };
 
     this.dataverseService = new DataverseService(this.props.context);
@@ -89,7 +89,7 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
       return;
     }
 
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: undefined });
     
     try {
       const filter = this.buildFilter();
@@ -134,18 +134,21 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
     let dateFilter = '';
     
     switch (this.state.selectedPeriod) {
-      case 'today':
+      case 'today': {
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         dateFilter = `createdon ge ${todayStart.toISOString()}`;
         break;
-      case 'week':
+      }
+      case 'week': {
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         dateFilter = `createdon ge ${weekAgo.toISOString()}`;
         break;
-      case 'month':
+      }
+      case 'month': {
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         dateFilter = `createdon ge ${monthAgo.toISOString()}`;
         break;
+      }
     }
     
     return `${trackFilter} and ${dateFilter}`;
@@ -161,7 +164,9 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
 
   private handlePeriodChange = (period: TimePeriod): void => {
     this.setState({ selectedPeriod: period }, () => {
-      this.loadWindData();
+      this.loadWindData().catch(error => {
+        console.error('Failed to load wind data:', error);
+      });
     });
   }
 
@@ -318,7 +323,9 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
     const windDirection = latestData.cr4cc_wind_direction_cardinal || degreesToCardinal(latestData.cr4cc_wind_dir_last || 0);
     const windSpeed = latestData.cr4cc_wind_speed_kmh || 0;
     const gustSpeed = latestData.cr4cc_wind_speed_hi_kmh || windSpeed;
-    const windChill = latestData.cr4cc_wind_chill;
+    // Convert wind chill from Fahrenheit to Celsius
+    const windChillF = latestData.cr4cc_wind_chill;
+    const windChill = windChillF !== null && windChillF !== undefined ? (windChillF - 32) * 5/9 : null;
     
     return (
       <div className={styles.currentWind}>
@@ -374,16 +381,23 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
       return <div className={styles.noData}>No wind data available for wind rose</div>;
     }
 
-    const chartData = this.prepareWindRoseChartData();
-    const options = this.getWindRoseChartOptions();
+    // Convert windData to IWindData format for WindRose component
+    const windRoseData: IWindData[] = this.state.windData.map(data => ({
+      direction: data.cr4cc_wind_direction_cardinal || degreesToCardinal(data.cr4cc_wind_dir_last || 0),
+      speed: data.cr4cc_wind_speed_kmh || 0,
+      timestamp: new Date(data.createdon)
+    }));
 
     return (
-      <div className={styles.windRoseContainer}>
-        <Radar data={chartData} options={options} />
-        <div className={styles.windRoseLegend}>
-          <p>Wind rose shows percentage of observations by wind speed and direction</p>
-        </div>
-      </div>
+      <WindRose 
+        data={windRoseData}
+        selectedPeriod={this.state.selectedPeriod === 'today' ? 'day' : this.state.selectedPeriod as 'week' | 'month'}
+        onPeriodChange={(period) => {
+          const mappedPeriod = period === 'day' ? 'today' : period;
+          this.handlePeriodChange(mappedPeriod as 'today' | 'week' | 'month');
+        }}
+        trackName={this.state.trackName}
+      />
     );
   }
 
@@ -400,29 +414,31 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
           </div>
         </div>
 
-        <div className={styles.periodSelector}>
-          <button 
-            className={selectedPeriod === 'today' ? styles.active : ''}
-            onClick={() => this.handlePeriodChange('today')}
-            disabled={loading}
-          >
-            Today
-          </button>
-          <button 
-            className={selectedPeriod === 'week' ? styles.active : ''}
-            onClick={() => this.handlePeriodChange('week')}
-            disabled={loading}
-          >
-            Week
-          </button>
-          <button 
-            className={selectedPeriod === 'month' ? styles.active : ''}
-            onClick={() => this.handlePeriodChange('month')}
-            disabled={loading}
-          >
-            Month
-          </button>
-        </div>
+        {viewType === 'current' && (
+          <div className={styles.periodSelector}>
+            <button 
+              className={selectedPeriod === 'today' ? styles.active : ''}
+              onClick={() => this.handlePeriodChange('today')}
+              disabled={loading}
+            >
+              Today
+            </button>
+            <button 
+              className={selectedPeriod === 'week' ? styles.active : ''}
+              onClick={() => this.handlePeriodChange('week')}
+              disabled={loading}
+            >
+              Week
+            </button>
+            <button 
+              className={selectedPeriod === 'month' ? styles.active : ''}
+              onClick={() => this.handlePeriodChange('month')}
+              disabled={loading}
+            >
+              Month
+            </button>
+          </div>
+        )}
 
         {error && (
           <div className={styles.error}>
@@ -432,7 +448,7 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
 
         {loading ? (
           <div className={styles.loading}>
-            <div className={styles.spinner}></div>
+            <div className={styles.spinner} />
             <p>Loading wind data...</p>
           </div>
         ) : (
@@ -450,8 +466,8 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
             Current
           </button>
           <button
-            className={viewType === 'windrose' ? styles.active : ''}
-            onClick={() => this.setState({ viewType: 'windrose' })}
+            className={viewType === 'windRose' ? styles.active : ''}
+            onClick={() => this.setState({ viewType: 'windRose' })}
             disabled={loading}
           >
             Wind Rose

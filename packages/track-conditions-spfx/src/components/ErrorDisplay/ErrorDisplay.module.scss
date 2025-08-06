@@ -1,0 +1,102 @@
+.errorContainer {
+  background-color: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+
+  &.authError {
+    background-color: #FEF3C7;
+    border-color: #F59E0B;
+  }
+
+  .errorIcon {
+    flex-shrink: 0;
+    font-size: 24px;
+    color: #DC2626;
+    
+    .authError & {
+      color: #F59E0B;
+    }
+  }
+
+  .errorContent {
+    flex: 1;
+
+    .errorTitle {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #991B1B;
+      
+      .authError & {
+        color: #92400E;
+      }
+    }
+
+    .errorMessage {
+      margin: 0 0 16px 0;
+      color: #7F1D1D;
+      
+      .authError & {
+        color: #78350F;
+      }
+    }
+
+    .errorDetails {
+      background-color: white;
+      border-radius: 4px;
+      padding: 16px;
+      margin: 16px 0;
+
+      p {
+        margin: 0 0 8px 0;
+        color: #374151;
+      }
+
+      ol {
+        margin: 8px 0 0 0;
+        padding-left: 20px;
+        color: #4B5563;
+
+        li {
+          margin-bottom: 8px;
+        }
+      }
+
+      ul {
+        margin: 4px 0 0 0;
+        padding-left: 20px;
+        
+        li {
+          margin-bottom: 4px;
+          font-size: 14px;
+        }
+      }
+
+      code {
+        background-color: #F3F4F6;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: monospace;
+        font-size: 13px;
+      }
+    }
+
+    .errorFooter {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #E5E7EB;
+
+      .errorCode {
+        margin: 0;
+        font-size: 12px;
+        color: #6B7280;
+        font-family: monospace;
+      }
+    }
+  }
+}

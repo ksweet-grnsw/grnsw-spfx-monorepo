@@ -7,7 +7,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import { degreesToCardinal } from '../../../utils/windUtils';
 
 export interface ITrackConditionsState {
-  weatherData: IDataverseWeatherData | null;
+  weatherData: IDataverseWeatherData | undefined;
   loading: boolean;
   error: string | null;
   selectedPeriod: string;
@@ -36,16 +36,20 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
     this.state = {
       weatherData: null,
       loading: false,
-      error: null,
+      error: undefined,
       selectedPeriod: '1h',
       historicalData: []
     };
     this.dataverseService = new DataverseService(props.context);
   }
 
-  public componentDidMount(): void {
-    this.loadWeatherData();
-    this.refreshInterval = window.setInterval(() => this.loadWeatherData(), 300000);
+  public async componentDidMount(): Promise<void> {
+    await this.loadWeatherData();
+    this.refreshInterval = window.setInterval(() => {
+      this.loadWeatherData().catch(error => {
+        console.error('Failed to load weather data:', error);
+      });
+    }, 300000);
   }
 
   public componentWillUnmount(): void {
@@ -56,7 +60,9 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
 
   public componentDidUpdate(prevProps: ITrackConditionsProps): void {
     if (prevProps.selectedTrackId !== this.props.selectedTrackId) {
-      this.loadWeatherData();
+      this.loadWeatherData().catch(error => {
+        console.error('Failed to load weather data:', error);
+      });
     }
   }
 
@@ -65,7 +71,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
       return;
     }
 
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: undefined });
 
     try {
       // Get the display name for the track
@@ -264,7 +270,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
       return (
         <div className={`${styles.trackConditions} ${hasTeamsContext ? styles.teams : ''}`}>
           <div className={styles.loading}>
-            <div className={styles.spinner}></div>
+            <div className={styles.spinner} />
             Loading track conditions...
           </div>
         </div>
@@ -288,7 +294,11 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
           <h2>Track Conditions Analysis</h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
             <div className={styles.timestamp}>
-              Last updated: {new Date(weatherData.cr4cc_last_packet_received_timestamp || Date.now()).toLocaleTimeString()}
+              Last updated: {weatherData.cr4cc_last_packet_received_timestamp 
+                ? new Date(weatherData.cr4cc_last_packet_received_timestamp * 1000).toLocaleTimeString()
+                : 'N/A'}
+              <br />
+              <small>Record created: {new Date(weatherData.createdon).toLocaleString()}</small>
             </div>
             <Icon iconName="Flag" style={{ fontSize: 24, color: '#333333' }} />
           </div>

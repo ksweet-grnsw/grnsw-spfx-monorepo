@@ -14,10 +14,12 @@ import WindAnalysis from './components/WindAnalysis';
 import { IWindAnalysisProps } from './components/IWindAnalysisProps';
 import { trackOptions } from '../shared/trackOptions';
 
-const packageSolution = require('../../../config/package-solution.json');
+const packageSolution: any = require('../../../config/package-solution.json'); // eslint-disable-line @typescript-eslint/no-var-requires
 
 export interface IWindAnalysisWebPartProps {
   selectedTrack: string;
+  defaultView: 'current' | 'windRose';
+  defaultPeriod: 'today' | 'week' | 'month';
 }
 
 export default class WindAnalysisWebPart extends BaseClientSideWebPart<IWindAnalysisWebPartProps> {
@@ -29,6 +31,8 @@ export default class WindAnalysisWebPart extends BaseClientSideWebPart<IWindAnal
       WindAnalysis,
       {
         selectedTrack: this.properties.selectedTrack || 'wentworth-park',
+        defaultView: this.properties.defaultView || 'current',
+        defaultPeriod: this.properties.defaultPeriod || 'today',
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -112,6 +116,23 @@ export default class WindAnalysisWebPart extends BaseClientSideWebPart<IWindAnal
                   label: 'Select Track',
                   options: trackOptions,
                   selectedKey: this.properties.selectedTrack
+                }),
+                PropertyPaneDropdown('defaultView', {
+                  label: 'Default View',
+                  options: [
+                    { key: 'current', text: 'Current Wind' },
+                    { key: 'windRose', text: 'Wind Rose' }
+                  ],
+                  selectedKey: this.properties.defaultView || 'current'
+                }),
+                PropertyPaneDropdown('defaultPeriod', {
+                  label: 'Default Period',
+                  options: [
+                    { key: 'today', text: 'Today' },
+                    { key: 'week', text: 'Week' },
+                    { key: 'month', text: 'Month' }
+                  ],
+                  selectedKey: this.properties.defaultPeriod || 'today'
                 })
               ]
             },

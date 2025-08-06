@@ -9,7 +9,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 interface IWeatherDashboardState {
   weatherData: IDataverseWeatherData[];
   loading: boolean;
-  error: string | null;
+  error: string | undefined;
 }
 
 export default class WeatherDashboard extends React.Component<IWeatherDashboardProps, IWeatherDashboardState> {
@@ -21,7 +21,7 @@ export default class WeatherDashboard extends React.Component<IWeatherDashboardP
     this.state = {
       weatherData: [],
       loading: false,
-      error: null
+      error: undefined
     };
 
     this.dataverseService = new DataverseService(this.props.context);
@@ -32,7 +32,7 @@ export default class WeatherDashboard extends React.Component<IWeatherDashboardP
   }
 
   private async loadWeatherData(): Promise<void> {
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: undefined });
     
     try {
       Logger.info('Loading data from Dataverse', 'WeatherDashboard');
@@ -102,7 +102,7 @@ export default class WeatherDashboard extends React.Component<IWeatherDashboardP
 
         {loading && (
           <div className={styles.loading}>
-            <div className={styles.spinner}></div>
+            <div className={styles.spinner} />
             <p>Loading weather data...</p>
           </div>
         )}

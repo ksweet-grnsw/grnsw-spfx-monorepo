@@ -1,0 +1,102 @@
+.optimalScoreGauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  &.small {
+    .gaugeContainer {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
+  &.medium {
+    .gaugeContainer {
+      width: 180px;
+      height: 180px;
+    }
+  }
+
+  &.large {
+    .gaugeContainer {
+      width: 240px;
+      height: 240px;
+    }
+  }
+
+  .gaugeContainer {
+    position: relative;
+
+    .gauge {
+      transform: rotate(0deg);
+
+      .progress {
+        transition: stroke-dashoffset 0.5s ease-in-out;
+      }
+    }
+
+    .scoreText {
+      font-size: 48px;
+      font-weight: 300;
+      fill: #0078d4;
+    }
+
+    .scoreLabel {
+      font-size: 14px;
+      font-weight: 600;
+      fill: #605e5c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .details {
+    text-align: center;
+    margin-top: 16px;
+
+    h4 {
+      margin: 0 0 4px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #0078d4;
+    }
+
+    .timestamp {
+      font-size: 12px;
+      color: #605e5c;
+      margin-bottom: 12px;
+    }
+
+    .factorGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      text-align: left;
+      max-width: 200px;
+      margin: 0 auto;
+
+      .factorItem {
+        font-size: 12px;
+        padding: 4px 8px;
+        background: #f3f2f1;
+        border-radius: 3px;
+
+        .factorName {
+          color: #605e5c;
+          text-transform: capitalize;
+          margin-right: 4px;
+        }
+
+        .negative {
+          color: #dc3545;
+          font-weight: 600;
+        }
+
+        .positive {
+          color: #28a745;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 
-require("./variables.css");
+require("./variables.module.css");
 const styles = {
 
 };

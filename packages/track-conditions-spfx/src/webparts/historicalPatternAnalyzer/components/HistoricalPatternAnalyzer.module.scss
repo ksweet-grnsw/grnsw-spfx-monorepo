@@ -1,0 +1,157 @@
+@import '../../../styles/variables.module.scss';
+
+.historicalPatternAnalyzer {
+  padding: 20px;
+  background-color: var(--bodyBackground);
+  color: var(--bodyText);
+  min-height: 400px;
+
+  &.teams {
+    font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  }
+
+  &.dark {
+    background-color: #151515;
+    color: #ffffff;
+  }
+
+  .header {
+    margin-bottom: 20px;
+    
+    h2 {
+      margin: 0 0 16px 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .controls {
+      margin-bottom: 16px;
+    }
+  }
+
+  .alerts {
+    margin-bottom: 16px;
+    
+    > div {
+      margin-bottom: 8px;
+    }
+  }
+
+  .content {
+    display: grid;
+    gap: 20px;
+
+    &.compact {
+      grid-template-columns: 1fr;
+    }
+
+    &.standard {
+      grid-template-columns: 1fr;
+    }
+
+    &.detailed {
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 1024px) {
+      &.standard {
+        grid-template-columns: 1fr;
+      }
+
+      &.detailed {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  .primarySection {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (min-width: 1200px) {
+      grid-template-columns: 2fr 3fr;
+    }
+  }
+
+  .secondarySection {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .scoreSection,
+  .heatmapSection,
+  .volatilitySection,
+  .predictionsSection {
+    background: #ffffff;
+    border: 1px solid #edebe9;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    .dark & {
+      background: #323130;
+      border-color: #484644;
+    }
+
+    h3 {
+      margin: 0 0 16px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+
+  .footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #edebe9;
+    text-align: center;
+    color: #605e5c;
+
+    .dark & {
+      border-color: #484644;
+      color: #edebe9;
+    }
+  }
+
+  // Loading state
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
+
+  // Error state
+  .error {
+    padding: 20px;
+    text-align: center;
+    color: #a4262c;
+  }
+
+  // Color variables for scores
+  --excellent: #28a745;
+  --good: #ffc107;
+  --fair: #fd7e14;
+  --poor: #dc3545;
+
+  // Chart colors
+  --primary: #0078d4;
+  --secondary: #40e0d0;
+  --accent: #ff6b6b;
+
+  // Track colors
+  --grafton: #28a745;
+  --gosford: #0078d4;
+  --dapto: #6f42c1;
+  --casino: #fd7e14;
+}

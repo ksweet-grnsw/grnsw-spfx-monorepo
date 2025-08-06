@@ -16,8 +16,8 @@
   "supportsThemeVariants": true,
 
   "preconfiguredEntries": [{
-    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Advanced
-    "group": { "default": "Advanced" },
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // GRNSW Tools
+    "group": { "default": "GRNSW Tools" },
     "title": { "default": "Track Conditions Analysis" },
     "description": { "default": "Analyze track conditions for race day based on weather data" },
     "officeFabricIconFontName": "Flag",
