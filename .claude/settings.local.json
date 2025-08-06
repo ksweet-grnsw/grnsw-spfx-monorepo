@@ -12,7 +12,10 @@
       "Bash(gulp bundle:*)",
       "Bash(gulp clean:*)",
       "Bash(find:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }
