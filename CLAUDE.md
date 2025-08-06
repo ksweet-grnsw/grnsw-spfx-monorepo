@@ -320,6 +320,14 @@ If users report seeing old versions after deployment:
 - **Historical Pattern Analyzer:** Must show all 22 tracks, validate track selection before API calls
 - **Error handling:** Display user-friendly messages instead of technical errors
 - **Version incrementing:** Always increment version numbers for SharePoint to recognize updates
+- **CRITICAL VERSION SYNC:** package.json and package-solution.json MUST have matching versions
+  - SPFx build uses package.json version number
+  - If they don't match, SharePoint shows wrong version
+  - Always update both files before building
+
+## Current Package Versions (as of Dec 12, 2024)
+- **Race Management:** v1.0.4 (in v1.0.5 folder - yes, folder name doesn't match)
+- **Track Conditions:** v2.2.4 (in v2.2.5 folder - yes, folder name doesn't match)
 
 ## Important Notes
 - Do what has been asked; nothing more, nothing less
@@ -328,3 +336,4 @@ If users report seeing old versions after deployment:
 - NEVER proactively create documentation files unless explicitly requested
 - When asked to create a release, always follow the complete process including README.md creation
 - Always clean build before creating production packages: `gulp clean && gulp bundle --ship && gulp package-solution --ship`
+- Double-check version numbers - folder names may not match package versions
