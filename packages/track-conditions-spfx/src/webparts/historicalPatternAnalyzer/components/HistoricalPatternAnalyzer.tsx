@@ -141,20 +141,18 @@ export default class HistoricalPatternAnalyzer extends React.Component<
       return;
     }
 
-    const trackFilter = this.state.selectedTracks
-      .map(track => `cr4cc_track_name eq '${track}'`)
-      .join(' or ');
-
-    const query = `$filter=(${trackFilter}) and cr4cc_is_current_reading eq true&$orderby=createdon desc`;
-
-    const data = await this.dataverseService.getWeatherDataWithQuery(query);
-    
+    // Get latest reading for each selected track
     const currentConditions = new Map<string, IDataverseWeatherData>();
-    data.forEach(record => {
-      if (record.cr4cc_track_name && !currentConditions.has(record.cr4cc_track_name)) {
-        currentConditions.set(record.cr4cc_track_name, record);
+    
+    // Fetch current data for each track separately to ensure we get the latest for each
+    for (const track of this.state.selectedTracks) {
+      const trackQuery = `$filter=cr4cc_track_name eq '${track}'&$orderby=createdon desc&$top=1`;
+      const trackData = await this.dataverseService.getWeatherDataWithQuery(trackQuery);
+      
+      if (trackData && trackData.length > 0) {
+        currentConditions.set(track, trackData[0]);
       }
-    });
+    }
 
     this.setState({ currentConditions });
   }
@@ -368,6 +366,10 @@ export default class HistoricalPatternAnalyzer extends React.Component<
         : this.state.selectedTracks.filter(t => t !== option.key);
 
       this.setState({ selectedTracks }, () => {
+        // Save the selection to props so it persists
+        if (this.props.onUpdateProperty) {
+          this.props.onUpdateProperty('defaultTracks', selectedTracks);
+        }
         this.loadData().catch(error => {
           console.error('Failed to reload data:', error);
         });
