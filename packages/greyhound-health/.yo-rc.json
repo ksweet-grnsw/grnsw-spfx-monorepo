@@ -6,7 +6,7 @@
     "packageManager": "npm",
     "componentType": "webpart",
     "template": "react",
-    "componentName": "TrackConditions",
+    "componentName": "RealTimeSafetyDashboard",
     "plusBeta": false,
     "isCreatingSolution": false,
     "nodeVersion": "22.17.1",

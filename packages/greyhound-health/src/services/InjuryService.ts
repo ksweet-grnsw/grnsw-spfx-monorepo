@@ -1,12 +1,12 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { BaseDataverseService, dataverseConfig, dataverseTables } from '@grnsw/shared';
+import { BaseDataverseService } from './BaseDataverseService';
 import { IInjury, InjurySeverity } from '../models/IGreyhoundHealth';
 
 export class InjuryService extends BaseDataverseService<IInjury> {
-  protected tableName = dataverseTables.injuries;
+  protected tableName = 'cr4cc_injuries'; // Update this to your actual table name
 
   constructor(context: WebPartContext) {
-    super(context, dataverseConfig);
+    super(context);
   }
 
   public async getActiveInjuries(): Promise<IInjury[]> {

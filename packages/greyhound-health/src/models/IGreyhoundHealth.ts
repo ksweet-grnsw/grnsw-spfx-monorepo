@@ -1,4 +1,4 @@
-import { IBaseEntity } from '@grnsw/shared';
+import { IBaseEntity } from './IBaseEntity';
 
 export interface IGreyhound extends IBaseEntity {
   cr4cc_greyhoundid: string;

@@ -1,0 +1,308 @@
+.safetyDashboard {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 400px;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+  
+  .loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+    .title {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #323130;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #605e5c;
+    }
+  }
+
+  .trackSelector {
+    max-width: 400px;
+    margin: 0 auto 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+
+    .statCard {
+      background: white;
+      border-radius: 8px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+
+      .statNumber {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #323130;
+        margin-bottom: 5px;
+      }
+
+      .statLabel {
+        font-size: 0.9rem;
+        color: #605e5c;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      &.critical .statNumber {
+        color: #d83b01;
+      }
+
+      &.warning .statNumber {
+        color: #ffb900;
+      }
+
+      &.success .statNumber {
+        color: #107c10;
+      }
+    }
+  }
+
+  .chartsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+
+    .chartContainer {
+      background: white;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+      .chartTitle {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #323130;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .chartCanvas {
+        position: relative;
+        height: 300px;
+      }
+    }
+  }
+
+  .insightsSection {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+
+    .insightsTitle {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #323130;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+
+      &::before {
+        content: "💡";
+        margin-right: 10px;
+        font-size: 1.3rem;
+      }
+    }
+
+    .insightItem {
+      background: #f8f8f8;
+      border-left: 4px solid #0078d4;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      border-radius: 0 4px 4px 0;
+
+      &.critical {
+        border-left-color: #d83b01;
+        background: #fdf6f6;
+      }
+
+      &.warning {
+        border-left-color: #ffb900;
+        background: #fffdf5;
+      }
+
+      h4 {
+        color: #323130;
+        margin: 0 0 8px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      p {
+        color: #605e5c;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+  }
+
+  .recommendations {
+    background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+
+    h3 {
+      font-size: 1.5rem;
+      margin: 0 0 20px 0;
+      display: flex;
+      align-items: center;
+
+      &::before {
+        content: "✓";
+        margin-right: 10px;
+        font-size: 1.3rem;
+      }
+    }
+
+    .recommendationList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-left: 3px solid rgba(255, 255, 255, 0.5);
+        line-height: 1.6;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        strong {
+          display: inline-block;
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+  .footer {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    .lastRefresh {
+      color: #605e5c;
+      font-size: 0.9rem;
+    }
+
+    .statusIndicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+
+      &.green {
+        background: #e7f3e7;
+        color: #107c10;
+      }
+
+      &.yellow {
+        background: #fff4e6;
+        color: #8a6500;
+      }
+
+      &.red {
+        background: #fde8e8;
+        color: #d83b01;
+      }
+
+      .statusIcon {
+        font-size: 16px;
+      }
+
+      .statusText {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Teams theme
+.teams {
+  .safetyDashboard {
+    background-color: #292827;
+    color: #ffffff;
+
+    .header,
+    .trackSelector,
+    .statCard,
+    .chartContainer,
+    .insightsSection,
+    .footer {
+      background: #323130;
+      color: #ffffff;
+    }
+
+    .title,
+    .chartTitle,
+    .insightsTitle,
+    h4 {
+      color: #ffffff;
+    }
+
+    .subtitle,
+    .statLabel,
+    p {
+      color: #c8c6c4;
+    }
+
+    .insightItem {
+      background: #3b3a39;
+      
+      &.critical {
+        background: #442726;
+      }
+
+      &.warning {
+        background: #443826;
+      }
+    }
+  }
+}

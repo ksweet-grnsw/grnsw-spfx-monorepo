@@ -68,14 +68,24 @@ grnsw-spfx-monorepo/
 
 ## Build and Release Process
 When creating releases, always:
-1. Run `npm run build` in the package directory
-2. Run `npm run lint` to check for issues
-3. Run `npm run typecheck` if available
-4. Create releases in `sharepoint/solution/` directory
-5. Name releases with semantic versioning (e.g., v2.1.0)
+1. Run `gulp clean` to clean previous build artifacts
+2. Run `gulp bundle --ship` for production bundling (REQUIRED for SharePoint deployment)
+3. Run `gulp package-solution --ship` to create the production .sppkg file
+4. Run `npm run lint` to check for issues
+5. Run `npm run typecheck` if available
+6. Create releases in `sharepoint/solution/` directory
+7. Name releases with semantic versioning (e.g., v2.1.0)
+
+**CRITICAL**: The `--ship` flag is MANDATORY for production packages. Without it, the web parts will not appear correctly in SharePoint.
 
 ## 🚨 CRITICAL VERSION SYNCHRONIZATION 🚨
 **THIS IS THE #1 CAUSE OF SHAREPOINT DEPLOYMENT ISSUES - READ CAREFULLY!**
+
+### Patch Version Strategy
+**IMPORTANT**: Always increment patch versions when creating new releases. Never overwrite existing release files!
+- v1.0.0 → v1.0.1 → v1.0.2 (patch increments for fixes)
+- v1.1.0 (minor increment for new features)
+- v2.0.0 (major increment for breaking changes)
 
 ### Version Sync Requirements
 SharePoint Framework REQUIRES perfect version synchronization or it WILL display wrong version numbers. This causes major deployment problems for the user.
@@ -99,8 +109,10 @@ npm run sync-version 2.2.8  # Replace with your version
 # 2. Verify sync was successful
 npm run check-version
 
-# 3. Only if verification passes, build
-npm run build:prod
+# 3. Only if verification passes, build with production flags
+gulp clean
+gulp bundle --ship
+gulp package-solution --ship
 
 # 4. Create release folder and copy files
 mkdir -p ../../releases/track-conditions/v2.2.8
@@ -158,6 +170,17 @@ grnsw-spfx-monorepo/
 - Always add explicit return types to functions
 - Use `unknown` instead of `any` for error parameters
 - Rename `.scss` files to `.module.scss` for CSS modules
+- **ALWAYS include version number in property pane**: Add an "About" group with PropertyPaneLabel showing the current version
+  ```typescript
+  {
+    groupName: 'About',
+    groupFields: [
+      PropertyPaneLabel('version', {
+        text: `Version: ${version}`
+      })
+    ]
+  }
+  ```
 
 ## Testing
 Before committing any changes:
@@ -166,10 +189,11 @@ Before committing any changes:
 - Test that all web parts load correctly
 
 ## Common Commands
-- Build track-conditions: `cd packages/track-conditions-spfx && npm run build`
-- Build race-management: `cd packages/race-management && npm run build`
-- Clean and rebuild: `npm run clean && npm run build`
-- Create production package: `gulp package-solution --ship`
+- Build track-conditions: `cd packages/track-conditions-spfx && gulp bundle --ship && gulp package-solution --ship`
+- Build race-management: `cd packages/race-management && gulp bundle --ship && gulp package-solution --ship`
+- Build greyhound-health: `cd packages/greyhound-health && gulp bundle --ship && gulp package-solution --ship`
+- Clean and rebuild: `gulp clean && gulp bundle --ship && gulp package-solution --ship`
+- Create production package: `gulp package-solution --ship` (MUST run `gulp bundle --ship` first!)
 - Serve locally: `gulp serve`
 
 ## API Considerations
@@ -294,10 +318,7 @@ When fixing property persistence in web parts:
   - ErrorHandler
   - Logger
 
-## Track Names (Official API Values - All 22 Tracks)
-- "Albion Park"
-- "Appin"
-- "Bathurst"
+## Track Names (Official API Values - All 18 GRNSW Tracks)
 - "Broken Hill"
 - "Bulli"
 - "Casino"
@@ -307,7 +328,6 @@ When fixing property persistence in web parts:
 - "Goulburn"
 - "Grafton"
 - "Gunnedah"
-- "Lismore"
 - "Lithgow"
 - "Maitland"
 - "Nowra"

@@ -2,62 +2,26 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
   "version": "2.0",
   "bundles": {
-    "weather-dashboard-web-part": {
+    "schema-explorer-web-part": {
       "components": [
         {
-          "entrypoint": "./lib/webparts/weatherDashboard/WeatherDashboardWebPart.js",
-          "manifest": "./src/webparts/weatherDashboard/WeatherDashboardWebPart.manifest.json"
+          "entrypoint": "./lib/webparts/schemaExplorer/SchemaExplorerWebPart.js",
+          "manifest": "./src/webparts/schemaExplorer/SchemaExplorerWebPart.manifest.json"
         }
       ]
     },
-    "temperature-web-part": {
+    "real-time-safety-dashboard-web-part": {
       "components": [
         {
-          "entrypoint": "./lib/webparts/temperature/TemperatureWebPart.js",
-          "manifest": "./src/webparts/temperature/TemperatureWebPart.manifest.json"
-        }
-      ]
-    },
-    "rainfall-web-part": {
-      "components": [
-        {
-          "entrypoint": "./lib/webparts/rainfall/RainfallWebPart.js",
-          "manifest": "./src/webparts/rainfall/RainfallWebPart.manifest.json"
-        }
-      ]
-    },
-    "wind-analysis-web-part": {
-      "components": [
-        {
-          "entrypoint": "./lib/webparts/windAnalysis/WindAnalysisWebPart.js",
-          "manifest": "./src/webparts/windAnalysis/WindAnalysisWebPart.manifest.json"
-        }
-      ]
-    },
-    "track-conditions-web-part": {
-      "components": [
-        {
-          "entrypoint": "./lib/webparts/trackConditions/TrackConditionsWebPart.js",
-          "manifest": "./src/webparts/trackConditions/TrackConditionsWebPart.manifest.json"
-        }
-      ]
-    },
-    "race-meetings-web-part": {
-      "components": [
-        {
-          "entrypoint": "./lib/webparts/raceMeetings/RaceMeetingsWebPart.js",
-          "manifest": "./src/webparts/raceMeetings/RaceMeetingsWebPart.manifest.json"
+          "entrypoint": "./lib/webparts/realTimeSafetyDashboard/RealTimeSafetyDashboardWebPart.js",
+          "manifest": "./src/webparts/realTimeSafetyDashboard/RealTimeSafetyDashboardWebPart.manifest.json"
         }
       ]
     }
   },
   "externals": {},
   "localizedResources": {
-    "WeatherDashboardWebPartStrings": "lib/webparts/weatherDashboard/loc/{locale}.js",
-    "TemperatureWebPartStrings": "lib/webparts/temperature/loc/{locale}.js",
-    "RainfallWebPartStrings": "lib/webparts/rainfall/loc/{locale}.js",
-    "WindAnalysisWebPartStrings": "lib/webparts/windAnalysis/loc/{locale}.js",
-    "TrackConditionsWebPartStrings": "lib/webparts/trackConditions/loc/{locale}.js",
-    "RaceMeetingsWebPartStrings": "lib/webparts/raceMeetings/loc/{locale}.js"
+    "SchemaExplorerWebPartStrings": "lib/webparts/schemaExplorer/loc/{locale}.js",
+    "RealTimeSafetyDashboardWebPartStrings": "lib/webparts/realTimeSafetyDashboard/loc/{locale}.js"
   }
 }
