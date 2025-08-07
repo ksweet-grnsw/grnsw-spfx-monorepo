@@ -6,6 +6,7 @@ import { IDataverseWeatherData } from '../../../models/IDataverseWeatherData';
 import { IOptimalScore, IPrediction } from '../../../models';
 import { CalculationService } from '../../../services/CalculationService';
 import { Logger, ErrorHandler } from '../../../utils';
+import { trackOptions as sharedTrackOptions } from '../../shared/trackOptions';
 import { 
   Spinner, 
   SpinnerSize, 
@@ -56,12 +57,20 @@ export default class HistoricalPatternAnalyzer extends React.Component<
   constructor(props: IHistoricalPatternAnalyzerProps) {
     super(props);
 
+    // Initialize selected tracks from defaultTrack or defaultTracks
+    let initialTracks: string[] = [];
+    if (props.defaultTrack && props.defaultTrack !== '') {
+      initialTracks = [props.defaultTrack];
+    } else if (props.defaultTracks && props.defaultTracks.length > 0) {
+      initialTracks = props.defaultTracks;
+    }
+
     this.state = {
       isLoading: true,
       error: null,
       currentConditions: new Map(),
       historicalData: [],
-      selectedTracks: props.defaultTracks || [],
+      selectedTracks: initialTracks,
       timeRange: props.defaultTimeRange,
       optimalScores: new Map(),
       predictions: [],
@@ -74,6 +83,11 @@ export default class HistoricalPatternAnalyzer extends React.Component<
   }
 
   public async componentDidMount(): Promise<void> {
+    console.log('HistoricalPatternAnalyzer - componentDidMount');
+    console.log('Default Track:', this.props.defaultTrack);
+    console.log('Default Tracks:', this.props.defaultTracks);
+    console.log('Selected Tracks in State:', this.state.selectedTracks);
+    
     await this.loadData();
     this.startAutoRefresh();
   }
@@ -368,6 +382,12 @@ export default class HistoricalPatternAnalyzer extends React.Component<
       this.setState({ selectedTracks }, () => {
         // Save the selection to props so it persists
         if (this.props.onUpdateProperty) {
+          // Update both defaultTrack (first selected) and defaultTracks (all selected)
+          if (selectedTracks.length > 0) {
+            this.props.onUpdateProperty('defaultTrack', selectedTracks[0]);
+          } else {
+            this.props.onUpdateProperty('defaultTrack', '');
+          }
           this.props.onUpdateProperty('defaultTracks', selectedTracks);
         }
         this.loadData().catch(error => {
@@ -427,37 +447,18 @@ export default class HistoricalPatternAnalyzer extends React.Component<
       { key: '90days', text: 'Last 90 Days' }
     ];
 
-    const trackOptions: IDropdownOption[] = [
-      { key: 'Albion Park', text: 'Albion Park' },
-      { key: 'Appin', text: 'Appin' },
-      { key: 'Bathurst', text: 'Bathurst' },
-      { key: 'Broken Hill', text: 'Broken Hill' },
-      { key: 'Bulli', text: 'Bulli' },
-      { key: 'Casino', text: 'Casino' },
-      { key: 'Dapto', text: 'Dapto' },
-      { key: 'Dubbo', text: 'Dubbo' },
-      { key: 'Gosford', text: 'Gosford' },
-      { key: 'Goulburn', text: 'Goulburn' },
-      { key: 'Grafton', text: 'Grafton' },
-      { key: 'Gunnedah', text: 'Gunnedah' },
-      { key: 'Lismore', text: 'Lismore' },
-      { key: 'Lithgow', text: 'Lithgow' },
-      { key: 'Maitland', text: 'Maitland' },
-      { key: 'Nowra', text: 'Nowra' },
-      { key: 'Richmond', text: 'Richmond' },
-      { key: 'Taree', text: 'Taree' },
-      { key: 'Temora', text: 'Temora' },
-      { key: 'The Gardens', text: 'The Gardens' },
-      { key: 'Wagga Wagga', text: 'Wagga Wagga' },
-      { key: 'Wentworth Park', text: 'Wentworth Park' }
-    ];
+    // Convert shared track options to IDropdownOption format for the component
+    const trackOptions: IDropdownOption[] = sharedTrackOptions.map(opt => ({
+      key: opt.text,  // Use text as key since API expects track names
+      text: opt.text
+    }));
 
     return (
       <section className={`${styles.historicalPatternAnalyzer} ${hasTeamsContext ? styles.teams : ''} ${isDarkTheme ? styles.dark : ''}`}>
         <div className={styles.header}>
           <h2>Historical Weather Pattern Analysis</h2>
           <div className={styles.controls}>
-            <Stack horizontal tokens={{ childrenGap: 10 }}>
+            <Stack horizontal tokens={{ childrenGap: 10 }} verticalAlign="center">
               <Dropdown
                 placeholder="Select time range"
                 options={timeRangeOptions}
@@ -478,12 +479,22 @@ export default class HistoricalPatternAnalyzer extends React.Component<
                 iconProps={{ iconName: 'Refresh' }}
                 onClick={this.handleRefresh}
                 disabled={isLoading}
+                styles={{ root: { height: 32 } }}
               />
-              <Toggle
-                label="Auto-refresh"
-                checked={autoRefresh}
-                onChange={(_, checked) => this.handleAutoRefreshToggle(checked || false)}
-              />
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                padding: '0 8px',
+                borderLeft: '1px solid #edebe9'
+              }}>
+                <span style={{ fontSize: '14px', fontWeight: 400 }}>Auto-refresh</span>
+                <Toggle
+                  checked={autoRefresh}
+                  onChange={(_, checked) => this.handleAutoRefreshToggle(checked || false)}
+                  styles={{ root: { marginBottom: 0 } }}
+                />
+              </div>
             </Stack>
           </div>
         </div>

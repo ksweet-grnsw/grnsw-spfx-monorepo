@@ -91,6 +91,33 @@ const PatternHeatmap: React.FC<IPatternHeatmapProps> = ({
     return days[day];
   };
 
+  const getHistoricalDates = (day: number): string => {
+    // Get dates from the actual historical data for this day of week
+    const trackData = historicalData.filter(d => 
+      d.cr4cc_track_name === selectedTrack && 
+      new Date(d.createdon).getDay() === day
+    );
+    
+    if (trackData.length === 0) return 'No data';
+    
+    // Get unique dates for this day of week
+    const dates = new Set<string>();
+    trackData.forEach(d => {
+      const date = new Date(d.createdon);
+      const dd = date.getDate();
+      const mm = date.getMonth() + 1;
+      const dateStr = `${dd}/${mm}`;
+      dates.add(dateStr);
+    });
+    
+    const sortedDates = Array.from(dates).sort().slice(-3); // Show last 3 dates
+    if (sortedDates.length === 0) return 'No data';
+    if (sortedDates.length === 1) return sortedDates[0];
+    if (sortedDates.length === 2) return `${sortedDates[0]}, ${sortedDates[1]}`;
+    return `${sortedDates[0]}...${sortedDates[sortedDates.length - 1]}`;
+  };
+
+
   const formatHour = (hour: number): string => {
     if (hour === 0) return '12am';
     if (hour < 12) return `${hour}am`;
@@ -142,7 +169,12 @@ const PatternHeatmap: React.FC<IPatternHeatmapProps> = ({
           <div className={styles.dayColumns}>
             {[0, 1, 2, 3, 4, 5, 6].map(day => (
               <div key={day} className={styles.dayColumn}>
-                <div className={styles.dayLabel}>{getDayName(day)}</div>
+                <div className={styles.dayLabel}>
+                  <div>{getDayName(day)}</div>
+                  <div style={{ fontSize: '9px', opacity: 0.6, marginTop: '2px' }}>
+                    {getHistoricalDates(day)}
+                  </div>
+                </div>
                 {heatmapData
                   .filter(d => d.day === day)
                   .map(cell => (
@@ -163,7 +195,12 @@ const PatternHeatmap: React.FC<IPatternHeatmapProps> = ({
         <div className={styles.dailyView}>
           {heatmapData.map(cell => (
             <div key={cell.day} className={styles.dayBar}>
-              <div className={styles.dayName}>{getDayName(cell.day)}</div>
+              <div className={styles.dayName}>
+                <div>{getDayName(cell.day)}</div>
+                <div style={{ fontSize: '10px', opacity: 0.6, marginTop: '2px' }}>
+                  {getHistoricalDates(cell.day)}
+                </div>
+              </div>
               <div className={styles.barContainer}>
                 <div
                   className={styles.bar}

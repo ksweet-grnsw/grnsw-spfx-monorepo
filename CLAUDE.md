@@ -74,20 +74,55 @@ When creating releases, always:
 4. Create releases in `sharepoint/solution/` directory
 5. Name releases with semantic versioning (e.g., v2.1.0)
 
-## Version and Release Creation
-When asked to create a new version or release:
-1. **CRITICAL: Update version in BOTH files:**
-   - `package.json` - Update the "version" field (e.g., "2.2.3")
-   - `config/package-solution.json` - Update solution version (e.g., "2.2.3.0") and feature version
-2. Run `gulp clean` to ensure clean build
-3. Run `gulp bundle --ship` to create production bundle
-4. Run `gulp package-solution --ship` to create the production package
-5. Create a new folder in `releases/[package-name]/` directory named with the version (e.g., `v2.2.3`)
-6. Copy the .sppkg file from `packages/[package-name]/sharepoint/solution/` to the new release folder
-7. Create a README.md file in the release folder with release notes
-8. Provide the user with the path to the release file
+## 🚨 CRITICAL VERSION SYNCHRONIZATION 🚨
+**THIS IS THE #1 CAUSE OF SHAREPOINT DEPLOYMENT ISSUES - READ CAREFULLY!**
 
-**WARNING:** SPFx uses the version from package.json during build. If package.json and package-solution.json versions don't match, SharePoint will show incorrect version numbers!
+### Version Sync Requirements
+SharePoint Framework REQUIRES perfect version synchronization or it WILL display wrong version numbers. This causes major deployment problems for the user.
+
+**BEFORE ANY BUILD, YOU MUST:**
+1. Run `npm run check-version` to verify synchronization
+2. If versions are out of sync, run `npm run sync-version [version]` to fix them
+3. NEVER proceed with a build if versions are not synchronized
+
+### Version Files That MUST Match:
+1. `package.json` → `"version": "x.y.z"` (e.g., "2.2.7")
+2. `config/package-solution.json` → `"solution.version": "x.y.z.0"` (e.g., "2.2.7.0")
+3. `config/package-solution.json` → `"features[0].version": "x.y.z.0"` (e.g., "2.2.7.0")
+
+### Creating a New Release - MANDATORY STEPS:
+```bash
+# 1. ALWAYS sync versions first
+cd packages/track-conditions-spfx
+npm run sync-version 2.2.8  # Replace with your version
+
+# 2. Verify sync was successful
+npm run check-version
+
+# 3. Only if verification passes, build
+npm run build:prod
+
+# 4. Create release folder and copy files
+mkdir -p ../../releases/track-conditions/v2.2.8
+cp sharepoint/solution/*.sppkg ../../releases/track-conditions/v2.2.8/
+```
+
+### Version Sync Scripts Available:
+- `npm run check-version` - Checks if versions are synchronized (RUN BEFORE EVERY BUILD!)
+- `npm run sync-version [version]` - Automatically synchronizes all version files
+- `npm run build:prod` - Runs version check, then builds production package
+
+### Common Version Sync Failures:
+❌ **NEVER DO THIS:**
+- Updating only package.json
+- Updating only package-solution.json
+- Using different version formats (2.2.7 vs 2.2.7.0)
+- Building without running version check
+
+✅ **ALWAYS DO THIS:**
+- Use the sync-version script for ALL version changes
+- Run check-version before EVERY build
+- Use the same version number everywhere (with .0 suffix in package-solution.json)
 
 IMPORTANT: Releases are stored at the monorepo root level, NOT in the package folder!
 

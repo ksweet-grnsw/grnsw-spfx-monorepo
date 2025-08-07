@@ -22,6 +22,7 @@ const packageSolution = require('../../../config/package-solution.json');
 export interface IHistoricalPatternAnalyzerWebPartProps {
   refreshInterval: number;
   defaultTimeRange: string;
+  defaultTrack: string;
   defaultTracks: string[];
   viewMode: 'compact' | 'standard' | 'detailed';
   enableAlerts: boolean;
@@ -42,7 +43,8 @@ export default class HistoricalPatternAnalyzerWebPart extends BaseClientSideWebP
       {
         refreshInterval: this.properties.refreshInterval || 5,
         defaultTimeRange: this.properties.defaultTimeRange || '7days',
-        defaultTracks: this.properties.defaultTracks || [],
+        defaultTrack: this.properties.defaultTrack || '',
+        defaultTracks: this.properties.defaultTracks || (this.properties.defaultTrack ? [this.properties.defaultTrack] : []),
         viewMode: this.properties.viewMode || 'standard',
         enableAlerts: this.properties.enableAlerts,
         optimalScoreThreshold: this.properties.optimalScoreThreshold || 85,
@@ -146,6 +148,14 @@ export default class HistoricalPatternAnalyzerWebPart extends BaseClientSideWebP
             {
               groupName: 'Data Settings',
               groupFields: [
+                PropertyPaneDropdown('defaultTrack', {
+                  label: 'Default Track',
+                  options: [
+                    { key: '', text: 'None' },
+                    ...trackOptions.map(opt => ({ key: opt.text, text: opt.text }))
+                  ],
+                  selectedKey: this.properties.defaultTrack
+                }),
                 PropertyPaneDropdown('refreshInterval', {
                   label: 'Refresh Interval (minutes)',
                   options: [

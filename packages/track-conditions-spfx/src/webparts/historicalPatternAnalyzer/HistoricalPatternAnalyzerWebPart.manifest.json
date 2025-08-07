@@ -18,6 +18,7 @@
     "properties": {
       "refreshInterval": 5,
       "defaultTimeRange": "7days",
+      "defaultTrack": "",
       "defaultTracks": [],
       "viewMode": "standard",
       "enableAlerts": true,

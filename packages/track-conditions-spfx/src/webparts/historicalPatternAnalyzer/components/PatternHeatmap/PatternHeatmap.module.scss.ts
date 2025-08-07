@@ -1,27 +1,27 @@
 
 require("./PatternHeatmap.module.css");
 const styles = {
-  patternHeatmap: 'patternHeatmap_42879be2',
-  header: 'header_42879be2',
-  controls: 'controls_42879be2',
-  heatmapContainer: 'heatmapContainer_42879be2',
-  hourLabels: 'hourLabels_42879be2',
-  hourLabel: 'hourLabel_42879be2',
-  dayColumns: 'dayColumns_42879be2',
-  dayColumn: 'dayColumn_42879be2',
-  dayLabel: 'dayLabel_42879be2',
-  cell: 'cell_42879be2',
-  dailyView: 'dailyView_42879be2',
-  dayBar: 'dayBar_42879be2',
-  dayName: 'dayName_42879be2',
-  barContainer: 'barContainer_42879be2',
-  bar: 'bar_42879be2',
-  score: 'score_42879be2',
-  samples: 'samples_42879be2',
-  legend: 'legend_42879be2',
-  legendTitle: 'legendTitle_42879be2',
-  legendItem: 'legendItem_42879be2',
-  legendColor: 'legendColor_42879be2'
+  patternHeatmap: 'patternHeatmap_3bbd905b',
+  header: 'header_3bbd905b',
+  controls: 'controls_3bbd905b',
+  heatmapContainer: 'heatmapContainer_3bbd905b',
+  hourLabels: 'hourLabels_3bbd905b',
+  hourLabel: 'hourLabel_3bbd905b',
+  dayColumns: 'dayColumns_3bbd905b',
+  dayColumn: 'dayColumn_3bbd905b',
+  dayLabel: 'dayLabel_3bbd905b',
+  cell: 'cell_3bbd905b',
+  dailyView: 'dailyView_3bbd905b',
+  dayBar: 'dayBar_3bbd905b',
+  dayName: 'dayName_3bbd905b',
+  barContainer: 'barContainer_3bbd905b',
+  bar: 'bar_3bbd905b',
+  score: 'score_3bbd905b',
+  samples: 'samples_3bbd905b',
+  legend: 'legend_3bbd905b',
+  legendTitle: 'legendTitle_3bbd905b',
+  legendItem: 'legendItem_3bbd905b',
+  legendColor: 'legendColor_3bbd905b'
 };
 
 export default styles;

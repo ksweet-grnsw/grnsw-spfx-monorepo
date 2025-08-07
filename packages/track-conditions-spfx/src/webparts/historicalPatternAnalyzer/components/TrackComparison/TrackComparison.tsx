@@ -116,13 +116,15 @@ const TrackComparison: React.FC<ITrackComparisonProps> = ({
 
               <div className={styles.factors}>
                 <div className={styles.factorBreakdown}>
+                  <div className={styles.factorTitle}>Score Adjustments:</div>
                   {Object.entries(score.factors).map(([factor, value]) => {
                     if (value === 0) return null;
+                    const factorLabel = factor.charAt(0).toUpperCase() + factor.slice(1);
                     return (
                       <div key={factor} className={styles.factor}>
-                        <span className={styles.factorName}>{factor}:</span>
+                        <span className={styles.factorName}>{factorLabel}:</span>
                         <span className={value < 0 ? styles.negative : styles.positive}>
-                          {value > 0 ? '+' : ''}{value}
+                          {value > 0 ? '+' : ''}{value} pts
                         </span>
                       </div>
                     );

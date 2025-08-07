@@ -144,13 +144,23 @@
     .factors {
       .factorBreakdown {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+        flex-direction: column;
+        gap: 6px;
         font-size: 12px;
+        
+        .factorTitle {
+          font-weight: 600;
+          color: #605e5c;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 4px;
+        }
 
         .factor {
           display: flex;
-          gap: 4px;
+          justify-content: space-between;
+          gap: 8px;
           padding: 2px 6px;
           background: #f3f2f1;
           border-radius: 3px;

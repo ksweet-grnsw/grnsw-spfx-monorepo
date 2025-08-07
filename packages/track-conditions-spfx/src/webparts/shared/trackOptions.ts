@@ -1,9 +1,6 @@
 import { IPropertyPaneDropdownOption } from '@microsoft/sp-property-pane';
 
 export const trackOptions: IPropertyPaneDropdownOption[] = [
-  { key: 'albion-park', text: 'Albion Park' },
-  { key: 'appin', text: 'Appin' },
-  { key: 'bathurst', text: 'Bathurst' },
   { key: 'broken-hill', text: 'Broken Hill' },
   { key: 'bulli', text: 'Bulli' },
   { key: 'casino', text: 'Casino' },

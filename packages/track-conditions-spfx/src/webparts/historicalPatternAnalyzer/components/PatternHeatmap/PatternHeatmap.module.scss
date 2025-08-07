@@ -47,13 +47,15 @@
 
       .dayColumn {
         .dayLabel {
-          height: 32px;
+          height: 40px;
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
           font-weight: 600;
           font-size: 12px;
           margin-bottom: 2px;
+          text-align: center;
         }
 
         .cell {
@@ -81,7 +83,7 @@
   .dailyView {
     .dayBar {
       display: grid;
-      grid-template-columns: 80px 1fr 80px;
+      grid-template-columns: 100px 1fr 80px;
       align-items: center;
       gap: 16px;
       margin-bottom: 12px;
@@ -89,6 +91,9 @@
       .dayName {
         font-weight: 600;
         font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.3;
       }
 
       .barContainer {

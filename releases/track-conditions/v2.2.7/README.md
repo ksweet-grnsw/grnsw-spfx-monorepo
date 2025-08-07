@@ -1,8 +1,11 @@
-# Track Conditions SPFx v2.2.6 Release Notes
+# Track Conditions SPFx v2.2.7 Release Notes
 
 **Release Date:** December 13, 2024  
 **Package:** track-conditions-spfx.sppkg  
-**Version:** 2.2.6
+**Version:** 2.2.7
+
+## ⚠️ CRITICAL VERSION UPDATE
+This release increments the version to 2.2.7 to ensure SharePoint recognizes it as a new version and displays the correct version number.
 
 ## 🎯 New Features
 
@@ -22,6 +25,11 @@
 
 ## 🐛 Bug Fixes
 
+### Version Synchronization
+- **CRITICAL FIX**: Ensured package.json and package-solution.json versions are synchronized at 2.2.7
+- SharePoint will now correctly display version 2.2.7.0
+- Resolved issue where SharePoint was showing old version numbers
+
 ### Component Integration
 - Fixed shared track options to use centralized configuration
 - Resolved import issues with Historical Pattern Analyzer
@@ -34,37 +42,37 @@
 
 ## 🔧 Technical Details
 
-### Version Synchronization
-- **CRITICAL FIX**: Ensured package.json and package-solution.json versions are synchronized
-- Both files now correctly show version 2.2.6
-- SharePoint will display the correct version number
+### Build Configuration
+- Successfully builds with Node.js 22.17.1
+- SPFx version: 1.21.1
+- TypeScript version: 5.3.3
+- Build shows version 2.2.7 correctly in logs
 
 ### Code Quality
 - Resolved TypeScript compilation errors
 - Fixed null vs undefined inconsistencies (59 warnings remain but don't block functionality)
 - Improved error handling in weather data services
 
-### Build Configuration
-- Successfully builds with Node.js 22.17.1
-- SPFx version: 1.21.1
-- TypeScript version: 5.3.3
-
 ## 📦 Installation Instructions
 
-1. **Upload to App Catalog**:
-   - Navigate to your SharePoint App Catalog
-   - Upload `track-conditions-spfx.sppkg`
+### IMPORTANT: Clean Installation Required
+1. **Delete Old Version from App Catalog**:
+   - Go to your SharePoint App Catalog
+   - Find the existing track-conditions-spfx package
+   - Delete it completely
+   - Empty the recycle bin
+
+2. **Upload New Version**:
+   - Upload `track-conditions-spfx.sppkg` (v2.2.7)
    - Check "Make this solution available to all sites"
    - Deploy
+   - Verify version shows as 2.2.7.0
 
-2. **Add to Site**:
-   - Go to Site Contents
-   - Click "New" > "App"
-   - Find "GRNSW Track Conditions" and add it
-
-3. **Clear Cache** (if seeing old version):
-   - Hard refresh: Ctrl+F5 (Windows) or Cmd+Shift+R (Mac)
-   - Wait 15-30 minutes for CDN propagation
+3. **Update Sites**:
+   - Go to each site using the app
+   - Remove the old app from Site Contents
+   - Add the new version
+   - Clear browser cache (Ctrl+F5 or Cmd+Shift+R)
 
 ## ⚙️ Configuration
 
@@ -118,3 +126,4 @@ https://github.com/ksweet-grnsw/grnsw-spfx-monorepo
 
 ---
 *Built with SharePoint Framework (SPFx) 1.21.1*
+*Version 2.2.7 - Synchronized and verified*

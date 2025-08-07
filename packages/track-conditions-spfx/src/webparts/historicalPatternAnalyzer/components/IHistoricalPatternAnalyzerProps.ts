@@ -3,6 +3,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 export interface IHistoricalPatternAnalyzerProps {
   refreshInterval: number;
   defaultTimeRange: string;
+  defaultTrack: string;
   defaultTracks: string[];
   viewMode: 'compact' | 'standard' | 'detailed';
   enableAlerts: boolean;
