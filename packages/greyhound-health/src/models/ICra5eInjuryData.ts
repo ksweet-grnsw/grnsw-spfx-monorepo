@@ -35,6 +35,7 @@ export interface ICra5eInjurydata {
   cra5e_determinedserious?: string; // Determined Serious
   cra5e_failedtofinish?: string; // Failed to Finish
   cra5e_runstage?: string; // Run Stage
+  cra5e_standdowndays?: number; // Stand Down Days (60, 90, or empty for euthanasia)
   
   // Examination Information
   cra5e_examreason?: string; // Exam Reason

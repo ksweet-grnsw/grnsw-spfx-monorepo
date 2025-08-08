@@ -11,10 +11,11 @@
   &.compact {
     .contentArea {
       min-height: 200px;
+      height: 200px;
     }
     
-    .chartContainer {
-      height: 200px;
+    .chartContainer canvas {
+      max-height: 160px !important;
     }
   }
 
@@ -62,9 +63,6 @@
       }
     }
 
-    .chartContainer {
-      background-color: $ms-color-gray150;
-    }
   }
 }
 
@@ -117,8 +115,9 @@
 
 .contentArea {
   min-height: 350px;
+  height: 350px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
 }
 
@@ -158,13 +157,14 @@
 }
 
 .chartContainer {
-  height: 300px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 1em;
-  background-color: $ms-color-white;
-  border-radius: 8px;
   
   canvas {
-    max-height: 100%;
+    max-height: 280px !important;
   }
 }
 
@@ -278,6 +278,7 @@
   gap: 1em;
   max-width: 300px;
   margin: 0 auto;
+  align-self: center;
 }
 
 .statCard {

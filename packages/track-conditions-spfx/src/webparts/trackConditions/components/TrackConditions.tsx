@@ -215,13 +215,31 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
     }
   }
 
-  private renderGauge(value: number, label: string, color: string = '#2196F3'): JSX.Element {
+  private getGaugeColor(value: number): string {
+    // Red-Amber-Green system based on percentage
+    // For safety metrics: higher is better
+    if (value >= 70) {
+      // Green zone (70-100%)
+      return '#4CAF50'; // Green
+    } else if (value >= 50) {
+      // Amber zone (50-69%)
+      return '#FF9800'; // Amber/Orange
+    } else {
+      // Red zone (0-49%)
+      return '#F44336'; // Red
+    }
+  }
+
+  private renderGauge(value: number, label: string): JSX.Element {
     const radius = 45;
     const strokeWidth = 8;
     const normalizedRadius = radius - strokeWidth * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
     // Calculate offset to show completed portion in color
     const strokeDashoffset = circumference - (circumference * value / 100);
+    
+    // Get dynamic color based on value
+    const color = this.getGaugeColor(value);
 
     return (
       <div className={styles.gauge}>
@@ -244,7 +262,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
             cx={radius}
             cy={radius}
           />
-          <text x="50%" y="50%" textAnchor="middle" dy=".3em" className={styles.gaugeValue}>
+          <text x="50%" y="50%" textAnchor="middle" dy=".3em" className={styles.gaugeValue} style={{ fontSize: '14px' }}>
             {value}%
           </text>
         </svg>
@@ -324,8 +342,8 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
         )}
 
         <div className={styles.metrics}>
-          {this.renderGauge(conditions.gripLevel, 'Track Safety', '#4CAF50')}
-          {this.renderGauge(conditions.visibility, 'Visibility', '#2196F3')}
+          {this.renderGauge(conditions.gripLevel, 'Track Safety')}
+          {this.renderGauge(conditions.visibility, 'Visibility')}
           <div className={styles.windImpact}>
             <div className={styles.windLabel}>Wind Impact</div>
             <div className={`${styles.windValue} ${conditions.windImpact.toLowerCase() === 'low' ? styles.low : conditions.windImpact.toLowerCase() === 'medium' ? styles.medium : styles.high}`}>

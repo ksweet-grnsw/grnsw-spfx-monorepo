@@ -1,6 +1,6 @@
 {
   "name": "@grnsw/track-conditions-spfx",
-  "version": "2.2.16",
+  "version": "2.2.25",
   "private": true,
   "main": "lib/index.js",
   "engines": {

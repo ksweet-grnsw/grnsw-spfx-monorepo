@@ -1,45 +1,59 @@
 # Race Management SPFx v1.0.5 Release
 
-**Release Date:** December 12, 2024
+**Release Date:** December 19, 2024
 
-## CRITICAL FIX
-**This release fixes the version mismatch issue where package.json had version 1.0.0 while package-solution.json had 1.0.4.0**
+## 🐛 Bug Fixes
 
-## What's Fixed
-- **Version Synchronization**: Both package.json and package-solution.json now correctly show version 1.0.4
-- **Package Version**: The .sppkg file now correctly embeds version 1.0.4.0 (will display properly in SharePoint)
-- **Multi-select Functionality**: Authority and Track dropdowns support multiple selections
-- **Custom Group**: Configured for "GRNSW Tools" section
+### Fixed Multi-Select Dropdown Functionality
+- **Issue:** Authority and Track dropdown filters were closing immediately when selecting checkboxes, preventing multiple selections
+- **Solution:** Updated the onChange event handlers to properly toggle selections based on current state
+- **Impact:** Users can now select multiple authorities and tracks using the checkboxes as intended
 
-## Technical Details
-- **Build Version:** 1.0.4 (synchronized across all config files)
-- **SharePoint Version:** Will display as 1.0.4.0 in App Catalog
-- **Build Warnings:** 29 ESLint warnings (expected)
-- **Node Version:** 22.17.1
-- **TypeScript Version:** 5.3.3
+## 📋 Technical Details
 
-## Installation Instructions
-1. **DELETE the old app from App Catalog first** (critical step!)
-2. Upload `race-management-spfx-v1.0.5-PROD.sppkg` to your SharePoint App Catalog
-3. The version should now correctly show as **1.0.4.0**
-4. Deploy the solution (check "Make this solution available to all sites")
-5. Remove and re-add the app on your sites
+### Changes Made:
+1. **Modified dropdown onChange handlers** in `RaceMeetings.tsx`:
+   - Changed from using `option.selected` property to checking current state
+   - Used `indexOf()` instead of `includes()` for ES5 compatibility
+   - Added `notifyOnReselect={true}` to keep dropdowns open during selection
 
-## Features
-- **Race Meetings Calendar Web Part**:
-  - Multiple calendar views (day, week, month)
-  - Multi-select Authority filtering with color coding
-  - Multi-select Track filtering
-  - Meeting detail panels
-  - Time-grid view for detailed scheduling
+2. **Updated TypeScript configuration**:
+   - Added 'es2015' to lib array in tsconfig.json for better array method support
 
-## What Was Wrong Before
-- package.json had version "1.0.0" while package-solution.json had "1.0.4.0"
-- SPFx build process uses package.json version, causing the mismatch
-- This is why SharePoint showed version 1.0.3.0 even with updated package-solution.json
+### Build Information:
+- Built with `gulp bundle --ship` and `gulp package-solution --ship`
+- SharePoint Framework version: 1.21.1
+- Node version: 22.17.1
+- TypeScript version: 4.7.4
 
-## File Information
-- **Package:** race-management-spfx-v1.0.5-PROD.sppkg
-- **Embedded Version:** 1.0.4.0
-- **Size:** Approximately 475 KB
-- **Solution ID:** b2c3d4e5-f6a7-8901-bcde-f12345678901
+### Known Issues:
+- ESLint warnings for `any` types and `void` operators (non-critical)
+- These warnings do not affect functionality
+
+## 📦 Installation Instructions
+
+1. Upload `race-management-spfx-v1.0.5-PROD.sppkg` to your SharePoint App Catalog
+2. Deploy the solution when prompted
+3. Add the app to your SharePoint site(s)
+4. The Race Meetings Calendar web part will be available in the "GRNSW Tools" section
+
+## ✅ Testing Recommendations
+
+After deployment:
+1. Test multi-select functionality in both Authority and Track dropdowns
+2. Verify that multiple selections persist when filtering meetings
+3. Confirm that the "Clear Filters" button removes all selections
+4. Check that track dropdown populates correctly when authorities are selected
+
+## 🔄 Upgrade Notes
+
+If upgrading from v1.0.4:
+- Clear browser cache (Ctrl+F5 or Cmd+Shift+R)
+- Remove and re-add the web part if dropdown issues persist
+- Allow 15-30 minutes for SharePoint CDN propagation
+
+---
+
+**File:** `race-management-spfx-v1.0.5-PROD.sppkg`  
+**Size:** ~370 KB  
+**Compatible with:** SharePoint Online

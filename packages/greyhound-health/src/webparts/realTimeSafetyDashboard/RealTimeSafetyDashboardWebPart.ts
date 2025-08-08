@@ -176,7 +176,7 @@ export default class RealTimeSafetyDashboardWebPart extends BaseClientSideWebPar
               groupName: 'About',
               groupFields: [
                 PropertyPaneLabel('version', {
-                  text: `Version: 1.1.4`
+                  text: `Version: 1.1.7`
                 })
               ]
             }

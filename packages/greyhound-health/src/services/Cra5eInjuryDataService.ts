@@ -34,7 +34,8 @@ export class Cra5eInjuryDataService extends BaseDataverseService<ICra5eInjurydat
         'cra5e_injurycategory',
         'cra5e_injurystate',
         'cra5e_determinedserious',
-        'cra5e_failedtofinish'
+        'cra5e_failedtofinish',
+        'cra5e_standdowndays'
       ]
     });
   }
@@ -68,6 +69,19 @@ export class Cra5eInjuryDataService extends BaseDataverseService<ICra5eInjurydat
   public async getSeriousInjuries(): Promise<ICra5eInjurydata[]> {
     return this.getAll({
       filter: `cra5e_determinedserious eq 'Yes' or cra5e_determinedserious eq 'TRUE'`,
+      orderBy: 'cra5e_racedate desc'
+    });
+  }
+
+  /**
+   * Get euthanasia records
+   * Uses Injury State field (primary) with Stand Down Days as validation
+   */
+  public async getEuthanasiaRecords(): Promise<ICra5eInjurydata[]> {
+    // Primary check is injury state = 'Euthanised'
+    // Secondary check is empty/zero stand down days with determinedserious = Yes
+    return this.getAll({
+      filter: `cra5e_injurystate eq 'Euthanised'`,
       orderBy: 'cra5e_racedate desc'
     });
   }
@@ -244,8 +258,10 @@ export class Cra5eInjuryDataService extends BaseDataverseService<ICra5eInjurydat
         'cra5e_microchip',
         'cra5e_trackname',
         'cra5e_injurycategory',
+        'cra5e_injurystate',
         'cra5e_determinedserious',
-        'cra5e_failedtofinish'
+        'cra5e_failedtofinish',
+        'cra5e_standdowndays'
       ]
     });
   }

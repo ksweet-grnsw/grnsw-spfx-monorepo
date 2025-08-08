@@ -43,14 +43,14 @@ export const WindRose: React.FC<IWindRoseProps> = ({ data, selectedPeriod, onPer
     const startAngleRad = (startAngle - 90) * Math.PI / 180;
     const endAngleRad = (endAngle - 90) * Math.PI / 180;
     
-    const x1 = 150 + innerRadius * Math.cos(startAngleRad);
-    const y1 = 150 + innerRadius * Math.sin(startAngleRad);
-    const x2 = 150 + outerRadius * Math.cos(startAngleRad);
-    const y2 = 150 + outerRadius * Math.sin(startAngleRad);
-    const x3 = 150 + outerRadius * Math.cos(endAngleRad);
-    const y3 = 150 + outerRadius * Math.sin(endAngleRad);
-    const x4 = 150 + innerRadius * Math.cos(endAngleRad);
-    const y4 = 150 + innerRadius * Math.sin(endAngleRad);
+    const x1 = 200 + innerRadius * Math.cos(startAngleRad);
+    const y1 = 200 + innerRadius * Math.sin(startAngleRad);
+    const x2 = 200 + outerRadius * Math.cos(startAngleRad);
+    const y2 = 200 + outerRadius * Math.sin(startAngleRad);
+    const x3 = 200 + outerRadius * Math.cos(endAngleRad);
+    const y3 = 200 + outerRadius * Math.sin(endAngleRad);
+    const x4 = 200 + innerRadius * Math.cos(endAngleRad);
+    const y4 = 200 + innerRadius * Math.sin(endAngleRad);
     
     return `M ${x1} ${y1} L ${x2} ${y2} A ${outerRadius} ${outerRadius} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${innerRadius} ${innerRadius} 0 0 0 ${x1} ${y1} Z`;
   };
@@ -128,13 +128,13 @@ export const WindRose: React.FC<IWindRoseProps> = ({ data, selectedPeriod, onPer
       }
     }
     
-    // Scale to fit within the 50-pixel radius (from 50 to 100)
-    const startRadius = 50 + (previousBins / total) * 50 * (100 / maxPercentage);
-    const endRadius = 50 + ((previousBins + binCount) / total) * 50 * (100 / maxPercentage);
+    // Scale to fit within the 70-pixel radius (from 70 to 140)
+    const startRadius = 70 + (previousBins / total) * 70 * (100 / maxPercentage);
+    const endRadius = 70 + ((previousBins + binCount) / total) * 70 * (100 / maxPercentage);
     
     // Ensure we don't exceed the outer circle
-    const clampedStartRadius = Math.min(startRadius, 100);
-    const clampedEndRadius = Math.min(endRadius, 100);
+    const clampedStartRadius = Math.min(startRadius, 140);
+    const clampedEndRadius = Math.min(endRadius, 140);
     
     const angleSpread = 22.5; // 45 degrees / 2
     const startAngle = direction.angle - angleSpread;
@@ -146,19 +146,19 @@ export const WindRose: React.FC<IWindRoseProps> = ({ data, selectedPeriod, onPer
   return (
     <div className={styles.windRose}>
       
-      <svg width="300" height="300" viewBox="0 0 300 300" className={styles.svg}>
+      <svg width="400" height="400" viewBox="0 0 400 400" className={styles.svg}>
         {/* Grid circles */}
-        <circle cx="150" cy="150" r="100" fill="none" stroke="#e0e0e0" strokeWidth="1" />
-        <circle cx="150" cy="150" r="75" fill="none" stroke="#e0e0e0" strokeWidth="1" />
-        <circle cx="150" cy="150" r="50" fill="none" stroke="#e0e0e0" strokeWidth="1" />
+        <circle cx="200" cy="200" r="140" fill="none" stroke="#e0e0e0" strokeWidth="1" />
+        <circle cx="200" cy="200" r="105" fill="none" stroke="#e0e0e0" strokeWidth="1" />
+        <circle cx="200" cy="200" r="70" fill="none" stroke="#e0e0e0" strokeWidth="1" />
         
         {/* Grid lines */}
         {[0, 45, 90, 135].map(angle => {
           const angleRad = angle * Math.PI / 180;
-          const x1 = 150 + 100 * Math.cos(angleRad);
-          const y1 = 150 + 100 * Math.sin(angleRad);
-          const x2 = 150 - 100 * Math.cos(angleRad);
-          const y2 = 150 - 100 * Math.sin(angleRad);
+          const x1 = 200 + 140 * Math.cos(angleRad);
+          const y1 = 200 + 140 * Math.sin(angleRad);
+          const x2 = 200 - 140 * Math.cos(angleRad);
+          const y2 = 200 - 140 * Math.sin(angleRad);
           return (
             <line
               key={angle}
@@ -188,7 +188,7 @@ export const WindRose: React.FC<IWindRoseProps> = ({ data, selectedPeriod, onPer
                 return (
                   <path
                     key={binKey}
-                    d={createPath(direction, binKey, 50)}
+                    d={createPath(direction, binKey, 70)}
                     fill={binColor}
                     stroke="white"
                     strokeWidth="0.5"
@@ -200,22 +200,22 @@ export const WindRose: React.FC<IWindRoseProps> = ({ data, selectedPeriod, onPer
         })}
         
         {/* Direction labels */}
-        <text x="150" y="35" textAnchor="middle" className={styles.directionLabel}>N</text>
-        <text x="235" y="85" textAnchor="middle" className={styles.directionLabel}>NE</text>
-        <text x="285" y="155" textAnchor="middle" className={styles.directionLabel}>E</text>
-        <text x="235" y="225" textAnchor="middle" className={styles.directionLabel}>SE</text>
-        <text x="150" y="275" textAnchor="middle" className={styles.directionLabel}>S</text>
-        <text x="65" y="225" textAnchor="middle" className={styles.directionLabel}>SW</text>
-        <text x="15" y="155" textAnchor="middle" className={styles.directionLabel}>W</text>
-        <text x="65" y="85" textAnchor="middle" className={styles.directionLabel}>NW</text>
+        <text x="200" y="45" textAnchor="middle" className={styles.directionLabel}>N</text>
+        <text x="315" y="115" textAnchor="middle" className={styles.directionLabel}>NE</text>
+        <text x="380" y="205" textAnchor="middle" className={styles.directionLabel}>E</text>
+        <text x="315" y="295" textAnchor="middle" className={styles.directionLabel}>SE</text>
+        <text x="200" y="365" textAnchor="middle" className={styles.directionLabel}>S</text>
+        <text x="85" y="295" textAnchor="middle" className={styles.directionLabel}>SW</text>
+        <text x="20" y="205" textAnchor="middle" className={styles.directionLabel}>W</text>
+        <text x="85" y="115" textAnchor="middle" className={styles.directionLabel}>NW</text>
         
         {/* Center percentage label */}
-        <text x="150" y="120" textAnchor="middle" className={styles.percentageLabel}>
+        <text x="200" y="160" textAnchor="middle" className={styles.percentageLabel}>
           {maxPercentage}%
         </text>
         
         {/* 0% label */}
-        <text x="150" y="155" textAnchor="middle" className={styles.zeroLabel}>
+        <text x="200" y="205" textAnchor="middle" className={styles.zeroLabel}>
           0%
         </text>
       </svg>

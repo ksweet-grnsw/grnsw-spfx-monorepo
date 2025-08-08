@@ -11,6 +11,7 @@
   &.compact {
     .contentArea {
       min-height: 200px;
+      height: 200px;
     }
     
     .windCompass {
@@ -20,10 +21,6 @@
       .windArrow {
         height: 60px;
       }
-    }
-    
-    canvas {
-      max-height: 200px;
     }
   }
 
@@ -75,10 +72,6 @@
         background-color: $ms-color-gray150;
         border-color: $ms-color-gray130;
       }
-    }
-
-    .windRoseContainer {
-      background-color: $ms-color-gray150;
     }
   }
 }
@@ -166,9 +159,9 @@
 
 .contentArea {
   min-height: 350px;
+  height: 350px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
 }
 
 .error {
@@ -356,23 +349,4 @@
   text-align: center;
 }
 
-// Wind Rose View
-.windRoseContainer {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 1em;
-  background-color: $ms-color-white;
-  border-radius: 8px;
-
-  canvas {
-    max-height: 300px;
-  }
-
-  .windRoseLegend {
-    margin-top: 1em;
-    text-align: center;
-    font-size: 14px;
-    color: $ms-color-neutralSecondary;
-  }
-}
+// Wind Rose View (styles moved to WindRose.module.scss)

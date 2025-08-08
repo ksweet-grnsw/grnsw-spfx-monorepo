@@ -95,10 +95,19 @@ const RealTimeSafetyDashboard: React.FC<IRealTimeSafetyDashboardProps> = (props)
 
       // Calculate all tracks metrics
       const allTracksMonthlyCount = allMonthlyInjuries.length;
-      const allTracksFatalities = allYearlyInjuries.filter(injury => 
-        injury.cra5e_determinedserious === 'Yes' && 
-        injury.cra5e_failedtofinish === 'Yes'
-      ).length;
+      // Count euthanasias using Injury State field (primary) with Stand Down Days as validation
+      const allTracksFatalities = allYearlyInjuries.filter(injury => {
+        // Primary check: Injury State field indicates euthanasia (uses 'Euthanased' spelling)
+        if (injury.cra5e_injurystate && injury.cra5e_injurystate.toLowerCase() === 'euthanased') {
+          return true;
+        }
+        // Secondary check: Empty stand down days often indicates euthanasia
+        if ((injury.cra5e_standdowndays === null || injury.cra5e_standdowndays === undefined || injury.cra5e_standdowndays === 0) &&
+            injury.cra5e_determinedserious === 'Yes') {
+          return true;
+        }
+        return false;
+      }).length;
 
       let allTracksDaysSinceSerious = 999;
       if (allSeriousInjuries.length > 0) {
@@ -148,10 +157,19 @@ const RealTimeSafetyDashboard: React.FC<IRealTimeSafetyDashboardProps> = (props)
         const trackSeriousInjuries = allSeriousInjuries.filter(i => i.cra5e_trackname === state.selectedTrack);
         
         trackData.trackMonthlyInjuries = trackMonthlyInjuries.length;
-        trackData.trackYTDFatalities = trackYearlyInjuries.filter(injury => 
-          injury.cra5e_determinedserious === 'Yes' && 
-          injury.cra5e_failedtofinish === 'Yes'
-        ).length;
+        // Count euthanasias using Injury State field (primary) with Stand Down Days as validation
+        trackData.trackYTDFatalities = trackYearlyInjuries.filter(injury => {
+          // Primary check: Injury State field indicates euthanasia (uses 'Euthanased' spelling)
+          if (injury.cra5e_injurystate && injury.cra5e_injurystate.toLowerCase() === 'euthanased') {
+            return true;
+          }
+          // Secondary check: Empty stand down days often indicates euthanasia
+          if ((injury.cra5e_standdowndays === null || injury.cra5e_standdowndays === undefined || injury.cra5e_standdowndays === 0) &&
+              injury.cra5e_determinedserious === 'Yes') {
+            return true;
+          }
+          return false;
+        }).length;
 
         if (trackSeriousInjuries.length > 0) {
           const mostRecentSerious = trackSeriousInjuries

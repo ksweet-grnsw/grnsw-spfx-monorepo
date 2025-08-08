@@ -101,7 +101,8 @@ export class InjuryDataService {
     const startOfYear = new Date(now.getFullYear(), 0, 1);
     const startDate = startOfYear.toISOString();
     
-    let filter = `cra5e_racedate ge ${startDate} and cra5e_determinedserious eq true`;
+    // Updated to use injury state field for accurate euthanasia count
+    let filter = `cra5e_racedate ge ${startDate} and cra5e_injurystate eq 'Euthanised'`;
     if (trackName) {
       filter += ` and cra5e_trackname eq '${trackName}'`;
     }

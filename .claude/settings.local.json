@@ -16,7 +16,10 @@
       "Bash(git push:*)",
       "Bash(git commit:*)",
       "Bash(ls:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(git pull:*)",
+      "Bash(npm run sync-version:*)",
+      "Bash(npm run check-version:*)"
     ],
     "deny": []
   }

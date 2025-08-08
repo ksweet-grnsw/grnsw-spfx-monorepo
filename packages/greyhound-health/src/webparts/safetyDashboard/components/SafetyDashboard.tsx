@@ -88,7 +88,26 @@ const SafetyDashboard: React.FC<ISafetyDashboardProps> = (props) => {
   const processInjuryData = useCallback((injuries: IInjuryDataRecord[]) => {
     // Calculate statistics
     const totalInjuries = injuries.length;
-    const euthanasiaCount = injuries.filter(i => i.cra5e_determinedserious === true).length;
+    
+    // Count euthanasias using Injury State field (primary) with Stand Down Days as validation
+    const euthanasiaCount = injuries.filter(i => {
+      // Primary check: Injury State field indicates euthanasia
+      // The field uses 'Euthanased' spelling (with 'a' not 'i')
+      if (i.cra5e_injurystate) {
+        const state = i.cra5e_injurystate.toLowerCase();
+        if (state === 'euthanased' || state === 'euthanised' || state === 'deceased') {
+          return true;
+        }
+      }
+      // Secondary check: Empty stand down days with determinedserious = true can indicate euthanasia
+      // Only used as fallback if injury state is not available
+      if (!i.cra5e_injurystate && 
+          (i.cra5e_standdowndays === null || i.cra5e_standdowndays === undefined || i.cra5e_standdowndays === 0) &&
+          i.cra5e_determinedserious === true) {
+        return true;
+      }
+      return false;
+    }).length;
     const fatalityRate = totalInjuries > 0 ? (euthanasiaCount / totalInjuries * 100) : 0;
     const ninetyDayInjuries = injuries.filter(i => i.cra5e_standdowndays && i.cra5e_standdowndays >= 90).length;
     const sixtyDayInjuries = injuries.filter(i => i.cra5e_standdowndays && i.cra5e_standdowndays >= 60 && i.cra5e_standdowndays < 90).length;
