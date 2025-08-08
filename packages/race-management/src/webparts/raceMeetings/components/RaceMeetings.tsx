@@ -42,8 +42,8 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
       error: undefined,
       currentView: props.defaultView || 'month',
       currentDate: new Date(),
-      selectedAuthorities: props.selectedAuthority ? [props.selectedAuthority] : [],
-      selectedTrackIds: props.selectedTrackId ? [props.selectedTrackId] : [],
+      selectedAuthorities: props.selectedAuthority ? props.selectedAuthority.split(',').filter(a => a) : [],
+      selectedTrackIds: props.selectedTrackId ? props.selectedTrackId.split(',').filter(t => t) : [],
       tracks: [],
       selectedMeeting: undefined,
       isPanelOpen: false
@@ -61,13 +61,15 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
   public componentDidUpdate(prevProps: IRaceMeetingsProps): void {
     if (prevProps.selectedAuthority !== this.props.selectedAuthority ||
         prevProps.selectedTrackId !== this.props.selectedTrackId) {
+      const newAuthorities = this.props.selectedAuthority ? this.props.selectedAuthority.split(',').filter(a => a) : [];
+      const newTrackIds = this.props.selectedTrackId ? this.props.selectedTrackId.split(',').filter(t => t) : [];
       this.setState({
-        selectedAuthorities: this.props.selectedAuthority ? [this.props.selectedAuthority] : [],
-        selectedTrackIds: this.props.selectedTrackId ? [this.props.selectedTrackId] : []
+        selectedAuthorities: newAuthorities,
+        selectedTrackIds: newTrackIds
       }, () => {
         void this.loadMeetings();
-        if (this.props.selectedAuthority) {
-          void this.loadTracksByAuthorities([this.props.selectedAuthority]);
+        if (newAuthorities.length > 0) {
+          void this.loadTracksByAuthorities(newAuthorities);
         }
       });
     }
@@ -216,57 +218,77 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
   };
 
   private onAuthorityChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number): void => {
-    if (option) {
-      const authority = option.key as string;
-      let newAuthorities: string[];
-      
-      if (option.selected) {
-        // Add authority if selected
-        newAuthorities = [...this.state.selectedAuthorities, authority];
+    if (!option) return;
+    
+    const authority = option.key as string;
+    const currentAuthorities = [...this.state.selectedAuthorities];
+    const existingIndex = currentAuthorities.indexOf(authority);
+    
+    // Check if option.selected is undefined - if so, use toggle logic
+    if (option.selected === undefined) {
+      // Toggle logic when selected property is not provided
+      if (existingIndex === -1) {
+        currentAuthorities.push(authority);
       } else {
-        // Remove authority if unselected
-        newAuthorities = this.state.selectedAuthorities.filter(auth => auth !== authority);
+        currentAuthorities.splice(existingIndex, 1);
       }
-      
-      this.setState({ 
-        selectedAuthorities: newAuthorities,
-        selectedTrackIds: [] // Reset tracks when authorities change
-      }, () => {
-        void this.loadMeetings();
-        if (newAuthorities.length > 0) {
-          void this.loadTracksByAuthorities(newAuthorities);
-        } else {
-          this.setState({ tracks: [] });
-        }
-        // Call the callback to persist the selection
-        if (this.props.onUpdateFilters) {
-          this.props.onUpdateFilters(newAuthorities.join(','), '');
-        }
-      });
+    } else {
+      // Use option.selected when available
+      if (option.selected && existingIndex === -1) {
+        currentAuthorities.push(authority);
+      } else if (!option.selected && existingIndex !== -1) {
+        currentAuthorities.splice(existingIndex, 1);
+      }
     }
+    
+    this.setState({ 
+      selectedAuthorities: currentAuthorities,
+      selectedTrackIds: [] // Reset tracks when authorities change
+    }, () => {
+      void this.loadMeetings();
+      if (currentAuthorities.length > 0) {
+        void this.loadTracksByAuthorities(currentAuthorities);
+      } else {
+        this.setState({ tracks: [] });
+      }
+      // Call the callback to persist the selection
+      if (this.props.onUpdateFilters) {
+        this.props.onUpdateFilters(currentAuthorities.join(','), '');
+      }
+    });
   };
 
   private onTrackChange = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption, index?: number): void => {
-    if (option) {
-      const trackId = option.key as string;
-      let newTrackIds: string[];
-      
-      if (option.selected) {
-        // Add track if selected
-        newTrackIds = [...this.state.selectedTrackIds, trackId];
+    if (!option) return;
+    
+    const trackId = option.key as string;
+    const currentTrackIds = [...this.state.selectedTrackIds];
+    const existingIndex = currentTrackIds.indexOf(trackId);
+    
+    // Check if option.selected is undefined - if so, use toggle logic
+    if (option.selected === undefined) {
+      // Toggle logic when selected property is not provided
+      if (existingIndex === -1) {
+        currentTrackIds.push(trackId);
       } else {
-        // Remove track if unselected
-        newTrackIds = this.state.selectedTrackIds.filter(track => track !== trackId);
+        currentTrackIds.splice(existingIndex, 1);
       }
-      
-      this.setState({ selectedTrackIds: newTrackIds }, () => {
-        void this.loadMeetings();
-        // Call the callback to persist the selection
-        if (this.props.onUpdateFilters) {
-          this.props.onUpdateFilters(this.state.selectedAuthorities.join(','), newTrackIds.join(','));
-        }
-      });
+    } else {
+      // Use option.selected when available
+      if (option.selected && existingIndex === -1) {
+        currentTrackIds.push(trackId);
+      } else if (!option.selected && existingIndex !== -1) {
+        currentTrackIds.splice(existingIndex, 1);
+      }
     }
+    
+    this.setState({ selectedTrackIds: currentTrackIds }, () => {
+      void this.loadMeetings();
+      // Call the callback to persist the selection
+      if (this.props.onUpdateFilters) {
+        this.props.onUpdateFilters(this.state.selectedAuthorities.join(','), currentTrackIds.join(','));
+      }
+    });
   };
 
   private onClearFilters = (): void => {

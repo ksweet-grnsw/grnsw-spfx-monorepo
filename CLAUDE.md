@@ -67,14 +67,23 @@ grnsw-spfx-monorepo/
 - **UI:** Fluent UI React 8.106.4
 
 ## Build and Release Process
-When creating releases, always:
-1. Run `gulp clean` to clean previous build artifacts
-2. Run `gulp bundle --ship` for production bundling (REQUIRED for SharePoint deployment)
-3. Run `gulp package-solution --ship` to create the production .sppkg file
-4. Run `npm run lint` to check for issues
-5. Run `npm run typecheck` if available
-6. Create releases in `sharepoint/solution/` directory
-7. Name releases with semantic versioning (e.g., v2.1.0)
+
+### ⚠️ CRITICAL: Version Update Sequence ⚠️
+**ALWAYS update versions BEFORE building!** Building with old versions then updating will result in SharePoint showing the wrong version number.
+
+**Correct Order:**
+1. ✅ Update version → Clean → Build → Package
+2. ❌ Build → Update version → Package (WRONG - will show old version!)
+
+When creating releases, always follow this EXACT sequence:
+1. **UPDATE VERSIONS FIRST** in both `package.json` and `config/package-solution.json`
+2. Run `gulp clean` to clean ALL previous build artifacts
+3. Run `gulp bundle --ship` for production bundling (REQUIRED for SharePoint deployment)
+4. Run `gulp package-solution --ship` to create the production .sppkg file
+5. Run `npm run lint` to check for issues
+6. Run `npm run typecheck` if available
+7. Copy the .sppkg from `sharepoint/solution/` to release folder
+8. Name releases with semantic versioning (e.g., v2.1.0)
 
 **CRITICAL**: The `--ship` flag is MANDATORY for production packages. Without it, the web parts will not appear correctly in SharePoint.
 
@@ -101,6 +110,28 @@ SharePoint Framework REQUIRES perfect version synchronization or it WILL display
 3. `config/package-solution.json` → `"features[0].version": "x.y.z.0"` (e.g., "2.2.7.0")
 
 ### Creating a New Release - MANDATORY STEPS:
+
+#### For packages WITHOUT version sync scripts (race-management, greyhound-health, etc.):
+```bash
+# 1. CRITICAL: Update versions FIRST (before ANY build commands!)
+cd packages/race-management
+
+# 2. Manually update BOTH files to the SAME version:
+#    - package.json: "version": "1.0.6"
+#    - config/package-solution.json: "solution.version": "1.0.6.0"
+#    - config/package-solution.json: "features[0].version": "1.0.6.0"
+
+# 3. ONLY AFTER versions are updated, clean and build:
+gulp clean
+gulp bundle --ship
+gulp package-solution --ship
+
+# 4. Create release folder and copy files
+mkdir -p ../../releases/race-management/v1.0.6
+cp sharepoint/solution/*.sppkg ../../releases/race-management/v1.0.6/
+```
+
+#### For packages WITH version sync scripts (track-conditions-spfx):
 ```bash
 # 1. ALWAYS sync versions first
 cd packages/track-conditions-spfx
@@ -126,15 +157,20 @@ cp sharepoint/solution/*.sppkg ../../releases/track-conditions/v2.2.8/
 
 ### Common Version Sync Failures:
 ❌ **NEVER DO THIS:**
+- Building BEFORE updating versions (SharePoint will show old version!)
 - Updating only package.json
-- Updating only package-solution.json
+- Updating only package-solution.json  
 - Using different version formats (2.2.7 vs 2.2.7.0)
 - Building without running version check
+- Running `gulp bundle` or `gulp package-solution` before version update
 
 ✅ **ALWAYS DO THIS:**
-- Use the sync-version script for ALL version changes
-- Run check-version before EVERY build
+- **UPDATE VERSIONS FIRST, THEN BUILD**
+- Run `gulp clean` after version update to ensure clean build
+- Use the sync-version script for ALL version changes (if available)
+- Run check-version before EVERY build (if available)
 - Use the same version number everywhere (with .0 suffix in package-solution.json)
+- Verify the version shows correctly in SharePoint after deployment
 
 IMPORTANT: Releases are stored at the monorepo root level, NOT in the package folder!
 

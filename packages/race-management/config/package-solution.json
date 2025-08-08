@@ -3,7 +3,7 @@
   "solution": {
     "name": "grnsw-race-management-spfx-client-side-solution",
     "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-    "version": "1.0.4.0",
+    "version": "1.0.12.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -30,7 +30,7 @@
         "title": "GRNSW Race Management Feature",
         "description": "Race management components for greyhound racing operations",
         "id": "a2b3c4d5-e6f7-8901-bcde-f12345678901",
-        "version": "1.0.4.0"
+        "version": "1.0.12.0"
       }
     ]
   },
