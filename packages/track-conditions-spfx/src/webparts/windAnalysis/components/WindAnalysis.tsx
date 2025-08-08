@@ -402,11 +402,13 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
   }
 
   public render(): React.ReactElement<IWindAnalysisProps> {
-    const { isDarkTheme, hasTeamsContext } = this.props;
+    const { isDarkTheme, hasTeamsContext, displayMode } = this.props;
     const { selectedPeriod, loading, error, trackName, viewType } = this.state;
+    
+    const isCompact = displayMode === 'compact';
 
     return (
-      <section className={`${styles.windAnalysis} ${hasTeamsContext ? styles.teams : ''} ${isDarkTheme ? styles.dark : ''}`}>
+      <section className={`${styles.windAnalysis} ${hasTeamsContext ? styles.teams : ''} ${isDarkTheme ? styles.dark : ''} ${isCompact ? styles.compact : ''}`}>
         <div className={styles.header}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3>{trackName || 'Wind Analysis'}</h3>

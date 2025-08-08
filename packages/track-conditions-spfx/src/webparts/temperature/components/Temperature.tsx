@@ -53,13 +53,13 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
     super(props);
     
     this.state = {
-      selectedPeriod: 'today',
+      selectedPeriod: props.defaultPeriod || 'today',
       temperatureData: [],
       loading: false,
       error: undefined,
       trackName: '',
-      chartType: 'line',
-      viewType: 'stats'
+      chartType: props.defaultChartType || 'line',
+      viewType: props.defaultView || 'stats'
     };
 
     this.dataverseService = new DataverseService(this.props.context);
@@ -74,6 +74,19 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
   public async componentDidUpdate(prevProps: ITemperatureProps): Promise<void> {
     if (prevProps.selectedTrack !== this.props.selectedTrack) {
       await this.loadTemperatureData();
+    }
+    
+    // Update default states if properties change
+    if (prevProps.defaultView !== this.props.defaultView && this.state.viewType !== this.props.defaultView) {
+      this.setState({ viewType: this.props.defaultView });
+    }
+    if (prevProps.defaultPeriod !== this.props.defaultPeriod && this.state.selectedPeriod !== this.props.defaultPeriod) {
+      this.setState({ selectedPeriod: this.props.defaultPeriod }, () => {
+        this.loadTemperatureData().catch(error => console.error('Error loading temperature data:', error));
+      });
+    }
+    if (prevProps.defaultChartType !== this.props.defaultChartType && this.state.chartType !== this.props.defaultChartType) {
+      this.setState({ chartType: this.props.defaultChartType });
     }
   }
 
@@ -202,7 +215,9 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
           data: temperatures,
           borderColor: 'rgb(75, 192, 192)',
           backgroundColor: this.state.chartType === 'bar' ? 'rgba(75, 192, 192, 0.5)' : 'rgba(75, 192, 192, 0.2)',
-          tension: 0.1
+          tension: 0.1,
+          pointRadius: 0,
+          pointHoverRadius: 0
         }
       ]
     };
@@ -306,11 +321,13 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
   }
 
   public render(): React.ReactElement<ITemperatureProps> {
-    const { isDarkTheme, hasTeamsContext } = this.props;
+    const { isDarkTheme, hasTeamsContext, displayMode } = this.props;
     const { selectedPeriod, loading, error, trackName, viewType, chartType } = this.state;
+    
+    const isCompact = displayMode === 'compact';
 
     return (
-      <section className={`${styles.temperature} ${hasTeamsContext ? styles.teams : ''} ${isDarkTheme ? styles.dark : ''}`}>
+      <section className={`${styles.temperature} ${hasTeamsContext ? styles.teams : ''} ${isDarkTheme ? styles.dark : ''} ${isCompact ? styles.compact : ''}`}>
         <div className={styles.header}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3>{trackName || 'Temperature'}</h3>

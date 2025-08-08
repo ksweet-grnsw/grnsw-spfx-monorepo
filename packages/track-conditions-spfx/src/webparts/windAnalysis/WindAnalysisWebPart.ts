@@ -20,6 +20,7 @@ export interface IWindAnalysisWebPartProps {
   selectedTrack: string;
   defaultView: 'current' | 'windRose';
   defaultPeriod: 'today' | 'week' | 'month';
+  displayMode: 'full' | 'compact';
 }
 
 export default class WindAnalysisWebPart extends BaseClientSideWebPart<IWindAnalysisWebPartProps> {
@@ -33,6 +34,7 @@ export default class WindAnalysisWebPart extends BaseClientSideWebPart<IWindAnal
         selectedTrack: this.properties.selectedTrack || 'wentworth-park',
         defaultView: this.properties.defaultView || 'current',
         defaultPeriod: this.properties.defaultPeriod || 'today',
+        displayMode: this.properties.displayMode || 'full',
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -133,6 +135,14 @@ export default class WindAnalysisWebPart extends BaseClientSideWebPart<IWindAnal
                     { key: 'month', text: 'Month' }
                   ],
                   selectedKey: this.properties.defaultPeriod || 'today'
+                }),
+                PropertyPaneDropdown('displayMode', {
+                  label: 'Display Mode',
+                  options: [
+                    { key: 'full', text: 'Full' },
+                    { key: 'compact', text: 'Compact' }
+                  ],
+                  selectedKey: this.properties.displayMode || 'full'
                 })
               ]
             },

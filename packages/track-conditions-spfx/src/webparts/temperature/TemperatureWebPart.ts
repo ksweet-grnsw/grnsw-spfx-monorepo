@@ -18,6 +18,10 @@ const packageSolution = require('../../../config/package-solution.json');
 
 export interface ITemperatureWebPartProps {
   selectedTrack: string;
+  defaultView: 'stats' | 'chart';
+  defaultPeriod: 'today' | 'week' | 'month';
+  defaultChartType: 'line' | 'bar';
+  displayMode: 'full' | 'compact';
 }
 
 export default class TemperatureWebPart extends BaseClientSideWebPart<ITemperatureWebPartProps> {
@@ -29,6 +33,10 @@ export default class TemperatureWebPart extends BaseClientSideWebPart<ITemperatu
       Temperature,
       {
         selectedTrack: this.properties.selectedTrack || 'wentworth-park',
+        defaultView: this.properties.defaultView || 'stats',
+        defaultPeriod: this.properties.defaultPeriod || 'today',
+        defaultChartType: this.properties.defaultChartType || 'line',
+        displayMode: this.properties.displayMode || 'full',
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -112,6 +120,39 @@ export default class TemperatureWebPart extends BaseClientSideWebPart<ITemperatu
                   label: 'Select Track',
                   options: trackOptions,
                   selectedKey: this.properties.selectedTrack
+                }),
+                PropertyPaneDropdown('defaultView', {
+                  label: 'Default View',
+                  options: [
+                    { key: 'stats', text: 'Statistics' },
+                    { key: 'chart', text: 'Chart' }
+                  ],
+                  selectedKey: this.properties.defaultView || 'stats'
+                }),
+                PropertyPaneDropdown('defaultPeriod', {
+                  label: 'Default Period',
+                  options: [
+                    { key: 'today', text: 'Today' },
+                    { key: 'week', text: 'Week' },
+                    { key: 'month', text: 'Month' }
+                  ],
+                  selectedKey: this.properties.defaultPeriod || 'today'
+                }),
+                PropertyPaneDropdown('defaultChartType', {
+                  label: 'Default Chart Type',
+                  options: [
+                    { key: 'line', text: 'Line' },
+                    { key: 'bar', text: 'Bar' }
+                  ],
+                  selectedKey: this.properties.defaultChartType || 'line'
+                }),
+                PropertyPaneDropdown('displayMode', {
+                  label: 'Display Mode',
+                  options: [
+                    { key: 'full', text: 'Full' },
+                    { key: 'compact', text: 'Compact' }
+                  ],
+                  selectedKey: this.properties.displayMode || 'full'
                 })
               ]
             },

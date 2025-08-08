@@ -22,7 +22,12 @@
     "description": { "default": "Displays temperature data for a selected track" },
     "officeFabricIconFontName": "Frigid",
     "properties": {
-      "description": "Temperature"
+      "description": "Temperature",
+      "selectedTrack": "wentworth-park",
+      "defaultView": "stats",
+      "defaultPeriod": "today",
+      "defaultChartType": "line",
+      "displayMode": "full"
     }
   }]
 }

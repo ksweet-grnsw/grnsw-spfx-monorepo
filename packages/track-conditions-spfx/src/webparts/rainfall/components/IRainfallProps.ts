@@ -5,6 +5,7 @@ export interface IRainfallProps {
   defaultView: 'stats' | 'chart';
   defaultPeriod: 'today' | 'week' | 'month';
   defaultChartType: 'line' | 'bar';
+  displayMode: 'full' | 'compact';
   isDarkTheme: boolean;
   environmentMessage: string;
   hasTeamsContext: boolean;

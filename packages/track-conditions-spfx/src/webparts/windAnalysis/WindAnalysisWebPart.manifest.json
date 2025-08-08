@@ -24,7 +24,8 @@
     "properties": {
       "selectedTrack": "",
       "defaultView": "current",
-      "defaultPeriod": "today"
+      "defaultPeriod": "today",
+      "displayMode": "full"
     }
   }]
 }

@@ -25,7 +25,8 @@
       "selectedTrack": "",
       "defaultView": "stats",
       "defaultPeriod": "today",
-      "defaultChartType": "bar"
+      "defaultChartType": "bar",
+      "displayMode": "full"
     }
   }]
 }

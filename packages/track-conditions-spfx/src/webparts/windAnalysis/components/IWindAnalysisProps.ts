@@ -4,6 +4,7 @@ export interface IWindAnalysisProps {
   selectedTrack: string;
   defaultView: 'current' | 'windRose';
   defaultPeriod: 'today' | 'week' | 'month';
+  displayMode: 'full' | 'compact';
   isDarkTheme: boolean;
   environmentMessage: string;
   hasTeamsContext: boolean;

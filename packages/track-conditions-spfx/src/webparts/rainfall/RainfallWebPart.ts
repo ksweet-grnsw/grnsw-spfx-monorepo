@@ -21,6 +21,7 @@ export interface IRainfallWebPartProps {
   defaultView: 'stats' | 'chart';
   defaultPeriod: 'today' | 'week' | 'month';
   defaultChartType: 'line' | 'bar';
+  displayMode: 'full' | 'compact';
 }
 
 export default class RainfallWebPart extends BaseClientSideWebPart<IRainfallWebPartProps> {
@@ -35,6 +36,7 @@ export default class RainfallWebPart extends BaseClientSideWebPart<IRainfallWebP
         defaultView: this.properties.defaultView || 'stats',
         defaultPeriod: this.properties.defaultPeriod || 'today',
         defaultChartType: this.properties.defaultChartType || 'bar',
+        displayMode: this.properties.displayMode || 'full',
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -143,6 +145,14 @@ export default class RainfallWebPart extends BaseClientSideWebPart<IRainfallWebP
                     { key: 'bar', text: 'Bar' }
                   ],
                   selectedKey: this.properties.defaultChartType || 'bar'
+                }),
+                PropertyPaneDropdown('displayMode', {
+                  label: 'Display Mode',
+                  options: [
+                    { key: 'full', text: 'Full' },
+                    { key: 'compact', text: 'Compact' }
+                  ],
+                  selectedKey: this.properties.displayMode || 'full'
                 })
               ]
             },

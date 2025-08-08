@@ -7,6 +7,25 @@
   background-color: $ms-color-white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  &.compact {
+    .contentArea {
+      min-height: 200px;
+    }
+    
+    .windCompass {
+      width: 150px;
+      height: 150px;
+      
+      .windArrow {
+        height: 60px;
+      }
+    }
+    
+    canvas {
+      max-height: 200px;
+    }
+  }
 
   &.teams {
     font-family: $ms-font-family-fallbacks;
@@ -146,7 +165,7 @@
 }
 
 .contentArea {
-  min-height: 300px;
+  min-height: 350px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -203,6 +222,7 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5em;
+  justify-content: center;
 }
 
 .windCompass {
@@ -346,7 +366,7 @@
   border-radius: 8px;
 
   canvas {
-    max-height: 400px;
+    max-height: 300px;
   }
 
   .windRoseLegend {

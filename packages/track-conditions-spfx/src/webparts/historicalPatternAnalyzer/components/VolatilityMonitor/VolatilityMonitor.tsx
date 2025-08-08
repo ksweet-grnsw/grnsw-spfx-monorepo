@@ -91,7 +91,9 @@ const VolatilityMonitor: React.FC<IVolatilityMonitorProps> = ({
         borderColor: '#ff6b6b',
         backgroundColor: 'rgba(255, 107, 107, 0.1)',
         tension: 0.1,
-        yAxisID: 'y'
+        yAxisID: 'y',
+        pointRadius: 0,
+        pointHoverRadius: 0
       },
       {
         label: 'Wind Speed (km/h)',
@@ -99,7 +101,9 @@ const VolatilityMonitor: React.FC<IVolatilityMonitorProps> = ({
         borderColor: '#40e0d0',
         backgroundColor: 'rgba(64, 224, 208, 0.1)',
         tension: 0.1,
-        yAxisID: 'y'
+        yAxisID: 'y',
+        pointRadius: 0,
+        pointHoverRadius: 0
       },
       {
         label: 'Humidity (%)',
@@ -107,7 +111,9 @@ const VolatilityMonitor: React.FC<IVolatilityMonitorProps> = ({
         borderColor: '#0078d4',
         backgroundColor: 'rgba(0, 120, 212, 0.1)',
         tension: 0.1,
-        yAxisID: 'y1'
+        yAxisID: 'y1',
+        pointRadius: 0,
+        pointHoverRadius: 0
       },
       {
         label: 'Volatility Score',
@@ -116,7 +122,9 @@ const VolatilityMonitor: React.FC<IVolatilityMonitorProps> = ({
         backgroundColor: 'rgba(111, 66, 193, 0.1)',
         borderWidth: 3,
         tension: 0.1,
-        yAxisID: 'y1'
+        yAxisID: 'y1',
+        pointRadius: 0,
+        pointHoverRadius: 0
       }
     ]
   };

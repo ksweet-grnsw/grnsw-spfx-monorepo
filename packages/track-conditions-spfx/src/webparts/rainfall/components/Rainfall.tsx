@@ -204,7 +204,9 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
           data: rainfallData,
           borderColor: 'rgb(54, 162, 235)',
           backgroundColor: this.state.chartType === 'bar' ? 'rgba(54, 162, 235, 0.5)' : 'rgba(54, 162, 235, 0.2)',
-          tension: 0.1
+          tension: 0.1,
+          pointRadius: 0,
+          pointHoverRadius: 0
         }
       ]
     };
@@ -311,11 +313,13 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
   }
 
   public render(): React.ReactElement<IRainfallProps> {
-    const { isDarkTheme, hasTeamsContext } = this.props;
+    const { isDarkTheme, hasTeamsContext, displayMode } = this.props;
     const { selectedPeriod, loading, error, trackName, viewType, chartType } = this.state;
+    
+    const isCompact = displayMode === 'compact';
 
     return (
-      <section className={`${styles.rainfall} ${hasTeamsContext ? styles.teams : ''} ${isDarkTheme ? styles.dark : ''}`}>
+      <section className={`${styles.rainfall} ${hasTeamsContext ? styles.teams : ''} ${isDarkTheme ? styles.dark : ''} ${isCompact ? styles.compact : ''}`}>
         <div className={styles.header}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3>{trackName || 'Rainfall'}</h3>
