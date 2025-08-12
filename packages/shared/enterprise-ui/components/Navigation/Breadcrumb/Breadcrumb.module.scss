@@ -1,0 +1,88 @@
+@import '../../../styles/tokens';
+
+.breadcrumb {
+  padding: $spacing-sm 0;
+  
+  &.theme-meeting {
+    --breadcrumb-color: #{$racing-meetings};
+  }
+  
+  &.theme-race {
+    --breadcrumb-color: #{$racing-races};
+  }
+  
+  &.theme-contestant {
+    --breadcrumb-color: #{$racing-contestants};
+  }
+  
+  &.theme-neutral {
+    --breadcrumb-color: #{$brand-primary};
+  }
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: $spacing-xxs;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  @include typography('body-small');
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: var(--breadcrumb-color, $brand-primary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: $spacing-xxs $spacing-xs;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: rgba(var(--breadcrumb-color, $brand-primary), 0.08);
+    text-decoration: underline;
+  }
+  
+  &:focus {
+    outline: 2px solid var(--breadcrumb-color, $brand-primary);
+    outline-offset: 2px;
+  }
+}
+
+.current {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $text-primary;
+  font-weight: $font-weight-semibold;
+  padding: $spacing-xxs $spacing-xs;
+}
+
+.separator {
+  color: $text-tertiary;
+  margin: 0 $spacing-xs;
+  user-select: none;
+}
+
+.ellipsis {
+  color: $text-tertiary;
+  padding: $spacing-xxs $spacing-xs;
+  user-select: none;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: $font-size-md;
+}

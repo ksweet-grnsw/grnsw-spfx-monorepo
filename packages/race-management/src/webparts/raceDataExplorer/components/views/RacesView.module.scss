@@ -1,0 +1,282 @@
+@import '../../../../enterprise-ui/styles/tokens';
+
+.racesView {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, lighten($racing-races, 45%), lighten($racing-races, 50%));
+  border-radius: 8px;
+  border-left: 4px solid $racing-races;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  align-self: flex-start;
+  
+  &:hover {
+    background: var(--bg-secondary);
+    border-color: $racing-races;
+    color: $racing-races;
+    transform: translateX(-2px);
+  }
+}
+
+.meetingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.meetingTitle {
+  @include typography('h2');
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.meetingDetails {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.statsBar {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: $shadow-sm;
+  overflow-x: auto;
+  
+  @include media-down('md') {
+    padding: $spacing-md;
+    gap: $spacing-sm;
+  }
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: 0 $spacing-lg;
+  border-right: 1px solid var(--border-light);
+  
+  &:first-child {
+    padding-left: 0;
+  }
+  
+  &:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+  
+  @include media-down('sm') {
+    padding: 0 $spacing-sm;
+    gap: $spacing-sm;
+  }
+}
+
+.statIcon {
+  font-size: 24px;
+  
+  @include media-down('sm') {
+    font-size: 20px;
+  }
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  @include typography('h4');
+  color: $racing-races;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+.statLabel {
+  @include typography('caption');
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.filters {
+  display: flex;
+  gap: $spacing-md;
+  align-items: flex-end;
+  padding: $spacing-md;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  flex-wrap: wrap;
+  
+  @include media-down('md') {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  
+  label {
+    @include typography('label');
+    color: var(--text-secondary);
+    font-size: $font-size-xs;
+  }
+}
+
+.filterSelect,
+.filterInput {
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  background: var(--bg-primary);
+  min-width: 150px;
+  transition: all 200ms ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $racing-races;
+    box-shadow: 0 0 0 2px rgba($racing-races, 0.1);
+  }
+  
+  &:hover {
+    border-color: var(--border-hover);
+  }
+}
+
+.clearButton {
+  padding: $spacing-xs $spacing-md;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  align-self: flex-end;
+  
+  &:hover {
+    border-color: $error;
+    color: $error;
+    background: rgba($error, 0.08);
+  }
+  
+  @include media-down('md') {
+    align-self: stretch;
+  }
+}
+
+// Custom cell styles
+.raceNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  
+  .raceIcon {
+    font-size: $font-size-sm;
+  }
+  
+  .number {
+    font-weight: $font-weight-bold;
+    color: $racing-races;
+  }
+}
+
+.raceName {
+  .primary {
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+  }
+}
+
+.raceTitle {
+  color: var(--text-secondary);
+  
+  .noTitle {
+    color: var(--text-tertiary);
+  }
+}
+
+.distance {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+  
+  .value {
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+  }
+  
+  .unit {
+    font-size: $font-size-xs;
+    color: var(--text-tertiary);
+  }
+}
+
+.startTime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  
+  .timeIcon {
+    font-size: $font-size-xs;
+  }
+}
+
+.contestants {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  
+  .dogIcon {
+    font-size: $font-size-sm;
+  }
+  
+  .count {
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.prizePool {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-xs;
+  
+  .prizeIcon {
+    font-size: $font-size-sm;
+  }
+  
+  .amount {
+    font-weight: $font-weight-semibold;
+    color: $success;
+  }
+}

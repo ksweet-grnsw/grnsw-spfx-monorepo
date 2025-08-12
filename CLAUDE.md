@@ -218,6 +218,89 @@ grnsw-spfx-monorepo/
   }
   ```
 
+## Enterprise UI Standards (MANDATORY for all new/refactored components)
+
+### Component Architecture
+- **Use Enterprise UI components** from `src/enterprise-ui/components` for all UI elements
+- **Replace Fluent UI components** with Enterprise UI equivalents where available:
+  - Tables → `DataGrid`
+  - Status displays → `StatusBadge`
+  - Navigation → `Breadcrumb`
+  - Filters → `FilterPanel`
+- **Use functional components** with React hooks instead of class components
+- **Implement proper TypeScript interfaces** for all props and state
+
+### Styling Rules (CRITICAL - Separation of Concerns)
+- **NEVER use hardcoded values** in SCSS files
+- **ALWAYS import design tokens** at the top of SCSS files:
+  ```scss
+  @import '../../../enterprise-ui/styles/tokens';
+  ```
+- **Use design tokens for ALL styling**:
+  - Colors: Use `$brand-primary`, `$text-primary`, etc., NOT `#0078d4`
+  - Spacing: Use `$spacing-md`, `$spacing-lg`, etc., NOT `16px`
+  - Typography: Use `@include typography('body')`, NOT custom font sizes
+  - Shadows: Use `$shadow-sm`, `$shadow-md`, etc.
+  - Borders: Use `var(--border-default)`, NOT `1px solid #ccc`
+
+### Theme Application
+- **Apply domain-specific themes** to components:
+  - Meetings: `theme="meeting"` (blue)
+  - Races: `theme="race"` (green)
+  - Contestants: `theme="contestant"` (orange)
+  - Weather: `theme="weather"` (dark blue)
+  - Health: `theme="health"` (green)
+  - Financial: `theme="financial"` (purple)
+
+### Responsive Design
+- **Use responsive mixins** for breakpoints:
+  ```scss
+  @include media-down('lg') {
+    // Tablet and below styles
+  }
+  ```
+- **Never use hardcoded media queries**
+
+### Example SCSS File Structure
+```scss
+// ALWAYS start with token import
+@import '../../../enterprise-ui/styles/tokens';
+
+.component {
+  // Use spacing tokens
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  
+  // Use color variables
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  
+  // Use shadow tokens
+  box-shadow: $shadow-sm;
+  
+  // Use typography mixins
+  @include typography('h2');
+  
+  // Responsive design
+  @include media-down('md') {
+    padding: $spacing-md;
+  }
+}
+```
+
+### Component Refactoring Checklist
+When refactoring existing components:
+1. ✅ Convert class components to functional components
+2. ✅ Replace Fluent UI data tables with `DataGrid`
+3. ✅ Replace custom status displays with `StatusBadge`
+4. ✅ Import design tokens in SCSS
+5. ✅ Replace hardcoded colors with token variables
+6. ✅ Replace hardcoded spacing with token variables
+7. ✅ Use typography mixins for text styles
+8. ✅ Apply appropriate domain theme
+9. ✅ Use responsive mixins for breakpoints
+10. ✅ Remove inline styles and use CSS modules
+
 ## Testing
 Before committing any changes:
 - Ensure no TypeScript errors with `npm run build`

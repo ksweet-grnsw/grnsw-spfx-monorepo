@@ -1,0 +1,13 @@
+﻿{
+    "version":  "1.0.0",
+    "license":  "MIT",
+    "dependencies":  {
+                         "@fluentui/react":  "^8.106.4",
+                         "react":  "^17.0.1"
+                     },
+    "types":  "index.d.ts",
+    "name":  "@grnsw/enterprise-ui",
+    "description":  "Shared Enterprise UI Component Library for GRNSW SPFx Solutions",
+    "author":  "GRNSW",
+    "main":  "index.js"
+}

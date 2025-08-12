@@ -1,0 +1,212 @@
+// Enterprise Responsive Breakpoints
+// ===================================
+
+// Breakpoint values
+$breakpoint-xs: 320px;           // Mobile portrait (small phones)
+$breakpoint-sm: 576px;           // Mobile landscape (phones)
+$breakpoint-md: 768px;           // Tablet portrait (tablets)
+$breakpoint-lg: 992px;           // Tablet landscape (desktop)
+$breakpoint-xl: 1200px;          // Desktop (large screens)
+$breakpoint-xxl: 1400px;         // Large desktop (wide screens)
+$breakpoint-xxxl: 1920px;        // Extra large screens
+
+// Container maximum widths
+$container-sm: 540px;
+$container-md: 720px;
+$container-lg: 960px;
+$container-xl: 1140px;
+$container-xxl: 1320px;
+$container-xxxl: 1600px;
+
+// Breakpoint map for easier iteration
+$breakpoints: (
+  'xs': $breakpoint-xs,
+  'sm': $breakpoint-sm,
+  'md': $breakpoint-md,
+  'lg': $breakpoint-lg,
+  'xl': $breakpoint-xl,
+  'xxl': $breakpoint-xxl,
+  'xxxl': $breakpoint-xxxl
+);
+
+// Container widths map
+$containers: (
+  'sm': $container-sm,
+  'md': $container-md,
+  'lg': $container-lg,
+  'xl': $container-xl,
+  'xxl': $container-xxl,
+  'xxxl': $container-xxxl
+);
+
+// Media query mixins
+@mixin media-up($breakpoint) {
+  $value: map-get($breakpoints, $breakpoint);
+  @if $value {
+    @media (min-width: $value) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint '#{$breakpoint}' not found in $breakpoints map.";
+  }
+}
+
+@mixin media-down($breakpoint) {
+  $value: map-get($breakpoints, $breakpoint);
+  @if $value {
+    @media (max-width: #{$value - 1px}) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint '#{$breakpoint}' not found in $breakpoints map.";
+  }
+}
+
+@mixin media-between($lower, $upper) {
+  $lower-value: map-get($breakpoints, $lower);
+  $upper-value: map-get($breakpoints, $upper);
+  
+  @if $lower-value and $upper-value {
+    @media (min-width: $lower-value) and (max-width: #{$upper-value - 1px}) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint not found in $breakpoints map.";
+  }
+}
+
+@mixin media-only($breakpoint) {
+  $keys: map-keys($breakpoints);
+  $index: index($keys, $breakpoint);
+  
+  @if $index {
+    $lower-value: map-get($breakpoints, $breakpoint);
+    
+    @if $index < length($keys) {
+      $next-key: nth($keys, $index + 1);
+      $upper-value: map-get($breakpoints, $next-key);
+      
+      @media (min-width: $lower-value) and (max-width: #{$upper-value - 1px}) {
+        @content;
+      }
+    } @else {
+      @media (min-width: $lower-value) {
+        @content;
+      }
+    }
+  } @else {
+    @warn "Breakpoint '#{$breakpoint}' not found in $breakpoints map.";
+  }
+}
+
+// Container mixin
+@mixin container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  
+  @include media-up('sm') {
+    max-width: $container-sm;
+  }
+  
+  @include media-up('md') {
+    max-width: $container-md;
+  }
+  
+  @include media-up('lg') {
+    max-width: $container-lg;
+  }
+  
+  @include media-up('xl') {
+    max-width: $container-xl;
+  }
+  
+  @include media-up('xxl') {
+    max-width: $container-xxl;
+  }
+  
+  @include media-up('xxxl') {
+    max-width: $container-xxxl;
+  }
+}
+
+// Responsive utility classes
+// Display utilities
+@each $breakpoint, $value in $breakpoints {
+  @include media-up($breakpoint) {
+    .d-#{$breakpoint}-none { display: none !important; }
+    .d-#{$breakpoint}-inline { display: inline !important; }
+    .d-#{$breakpoint}-inline-block { display: inline-block !important; }
+    .d-#{$breakpoint}-block { display: block !important; }
+    .d-#{$breakpoint}-flex { display: flex !important; }
+    .d-#{$breakpoint}-inline-flex { display: inline-flex !important; }
+    .d-#{$breakpoint}-grid { display: grid !important; }
+  }
+}
+
+// Flexbox utilities
+@each $breakpoint, $value in $breakpoints {
+  @include media-up($breakpoint) {
+    .flex-#{$breakpoint}-row { flex-direction: row !important; }
+    .flex-#{$breakpoint}-row-reverse { flex-direction: row-reverse !important; }
+    .flex-#{$breakpoint}-column { flex-direction: column !important; }
+    .flex-#{$breakpoint}-column-reverse { flex-direction: column-reverse !important; }
+    
+    .justify-#{$breakpoint}-start { justify-content: flex-start !important; }
+    .justify-#{$breakpoint}-end { justify-content: flex-end !important; }
+    .justify-#{$breakpoint}-center { justify-content: center !important; }
+    .justify-#{$breakpoint}-between { justify-content: space-between !important; }
+    .justify-#{$breakpoint}-around { justify-content: space-around !important; }
+    .justify-#{$breakpoint}-evenly { justify-content: space-evenly !important; }
+    
+    .align-#{$breakpoint}-start { align-items: flex-start !important; }
+    .align-#{$breakpoint}-end { align-items: flex-end !important; }
+    .align-#{$breakpoint}-center { align-items: center !important; }
+    .align-#{$breakpoint}-baseline { align-items: baseline !important; }
+    .align-#{$breakpoint}-stretch { align-items: stretch !important; }
+  }
+}
+
+// Grid column utilities
+@each $breakpoint, $value in $breakpoints {
+  @include media-up($breakpoint) {
+    @for $i from 1 through 12 {
+      .col-#{$breakpoint}-#{$i} {
+        grid-column: span $i !important;
+      }
+    }
+  }
+}
+
+// Container utility classes
+.container {
+  @include container;
+}
+
+.container-fluid {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+// Export as CSS custom properties
+:root {
+  // Breakpoints
+  --breakpoint-xs: #{$breakpoint-xs};
+  --breakpoint-sm: #{$breakpoint-sm};
+  --breakpoint-md: #{$breakpoint-md};
+  --breakpoint-lg: #{$breakpoint-lg};
+  --breakpoint-xl: #{$breakpoint-xl};
+  --breakpoint-xxl: #{$breakpoint-xxl};
+  --breakpoint-xxxl: #{$breakpoint-xxxl};
+  
+  // Container widths
+  --container-sm: #{$container-sm};
+  --container-md: #{$container-md};
+  --container-lg: #{$container-lg};
+  --container-xl: #{$container-xl};
+  --container-xxl: #{$container-xxl};
+  --container-xxxl: #{$container-xxxl};
+}

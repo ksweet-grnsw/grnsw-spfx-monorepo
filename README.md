@@ -1,47 +1,60 @@
-# GRNSW SharePoint Framework Monorepo
+# GRNSW SPFx Monorepo
 
-A monorepo containing SharePoint Framework solutions for Greyhound Racing NSW, organized into four main packages:
-- Track conditions monitoring (weather data)
-- Race management
-- Greyhound health tracking
-- GAP (Greyhound Adoption Program)
+Enterprise SharePoint Framework solutions for Greyhound Racing NSW, featuring a comprehensive Enterprise UI component library and multiple web part packages for track conditions, race management, health tracking, and adoption programs.
 
-## Structure
+## 🏗️ Architecture
 
+### Enterprise UI Component Library
+A shared, reusable component system providing consistent design and functionality across all GRNSW SharePoint solutions.
+
+**Key Features:**
+- 20+ reusable React components
+- Comprehensive design token system
+- Domain-specific theming
+- Full TypeScript support
+- SCSS architecture with mixins
+
+### Repository Structure
 ```
 grnsw-spfx-monorepo/
 ├── packages/
-│   ├── shared/                 # Shared services and utilities
-│   ├── track-conditions-spfx/  # Track conditions & weather web parts
-│   ├── race-management/        # Race management web parts
-│   ├── greyhound-health/       # Greyhound health web parts
-│   └── gap-spfx/              # GAP adoption program web parts
-└── package.json               # Root workspace configuration
+│   ├── shared/                   # Shared services and utilities
+│   │   └── enterprise-ui/        # Shared component library
+│   ├── track-conditions-spfx/    # Weather monitoring (6 web parts)
+│   ├── race-management/          # Race management + Enterprise UI
+│   ├── greyhound-health/         # Health tracking
+│   └── gap-spfx/                 # Adoption program
+├── releases/                     # Production .sppkg files
+├── scripts/                      # Build and utility scripts
+├── CLAUDE.md                     # AI assistant instructions
+└── REFACTORING_SUMMARY.md        # Enterprise UI documentation
 ```
 
-## Packages
+## 📦 Packages
 
 ### @grnsw/shared
-Common services and utilities used across all packages:
-- **AuthService**: Handles AAD authentication and token management
-- **BaseDataverseService**: Base class for all Dataverse operations
+Shared resources for all packages:
+- **Enterprise UI Components**: Complete component library
+- **AuthService**: AAD authentication and token management
+- **BaseDataverseService**: Base class for Dataverse operations
 - **Logger**: Centralized logging utility
-- **Config**: Shared configuration for Dataverse connections
+- **Design Tokens**: Colors, spacing, typography, shadows
 
 ### @grnsw/track-conditions-spfx
-Track conditions monitoring web parts with real-time weather data:
-- Weather Dashboard
-- Temperature Analysis
-- Rainfall Tracking
-- Wind Analysis
-- Track Conditions Monitoring
+Weather and track condition monitoring (6 web parts):
+- **Temperature Web Part** - Real-time temperature with feels-like calculations
+- **Rainfall Web Part** - Precipitation tracking with statistical analysis
+- **Wind Analysis** - Wind speed, direction, and gust monitoring
+- **Track Conditions Analysis** - Comprehensive safety scoring system
+- **Weather Dashboard** - Multi-station live weather display
+- **Historical Pattern Analyzer** - Predictive insights and trend analysis
 
-### @grnsw/race-management-spfx
-Race management web parts:
-- Race Meetings Calendar
-- Race Results
-- Track Management
-- Performance Analytics
+### @grnsw/race-management
+Race meeting and data management:
+- **Race Meetings Calendar** - Calendar views with authority/track filtering
+- **Race Data Explorer** (NEW) - Three-level drill-down data navigation
+- Includes the primary Enterprise UI Component Library
+- Full TypeScript support with refactored components
 
 ### @grnsw/greyhound-health-spfx
 Greyhound health and welfare web parts:

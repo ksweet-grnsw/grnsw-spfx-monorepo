@@ -19,7 +19,10 @@
       "Bash(rm:*)",
       "Bash(git pull:*)",
       "Bash(npm run sync-version:*)",
-      "Bash(npm run check-version:*)"
+      "Bash(npm run check-version:*)",
+      "Bash(dir:*)",
+      "Bash(mv:*)",
+      "Bash(powershell:*)"
     ],
     "deny": []
   }

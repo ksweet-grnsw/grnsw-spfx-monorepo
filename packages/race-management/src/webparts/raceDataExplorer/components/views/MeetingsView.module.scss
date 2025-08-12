@@ -1,0 +1,228 @@
+@import '../../../../enterprise-ui/styles/tokens';
+
+.meetingsView {
+  display: flex;
+  gap: $spacing-lg;
+  height: 100%;
+  
+  @include media-down('lg') {
+    flex-direction: column;
+  }
+}
+
+.filterPanel {
+  width: 300px;
+  height: fit-content;
+  position: sticky;
+  top: $spacing-lg;
+  
+  @include media-down('lg') {
+    width: 100%;
+    position: static;
+  }
+}
+
+.quickFilters {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: $spacing-md;
+}
+
+.quickLabel {
+  @include typography('caption');
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.quickButton {
+  padding: $spacing-xxs $spacing-sm;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  font-size: $font-size-xs;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: var(--accent-hover);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  
+  label {
+    @include typography('label');
+    color: var(--text-secondary);
+  }
+}
+
+.filterInput {
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  background: var(--bg-primary);
+  transition: all 200ms ease;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba($racing-meetings, 0.1);
+  }
+  
+  &:hover {
+    border-color: var(--border-hover);
+  }
+}
+
+.applyButton {
+  width: 100%;
+  padding: $spacing-sm;
+  background: $racing-meetings;
+  color: var(--text-on-brand);
+  border: none;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: darken($racing-meetings, 10%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.statsBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-md;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: $shadow-sm;
+  
+  @include media-down('md') {
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xxs;
+  
+  &:not(:last-child) {
+    padding-right: $spacing-lg;
+    border-right: 1px solid var(--border-light);
+    
+    @include media-down('md') {
+      border-right: none;
+      padding-right: 0;
+    }
+  }
+}
+
+.statLabel {
+  @include typography('caption');
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.statValue {
+  @include typography('h4');
+  color: $racing-meetings;
+  font-weight: $font-weight-bold;
+}
+
+.refreshButton {
+  margin-left: auto;
+  padding: $spacing-xs $spacing-md;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: all 200ms ease;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  &:hover {
+    background: var(--accent-hover);
+    border-color: $racing-meetings;
+    color: $racing-meetings;
+  }
+  
+  @include media-down('md') {
+    margin-left: 0;
+  }
+}
+
+// Custom cell styles
+.dateCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  
+  .date {
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+  }
+  
+  .day {
+    font-size: $font-size-xs;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+  }
+}
+
+.trackCell {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  .trackIcon {
+    font-size: $font-size-sm;
+  }
+}
+
+.timeslotCell {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.raceCount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  
+  .raceIcon {
+    font-size: $font-size-sm;
+  }
+}

@@ -1,0 +1,148 @@
+@import '../../../styles/tokens';
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  border-radius: 9999px;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+  transition: all 200ms ease;
+  
+  // Size variations
+  &.size-small {
+    padding: 2px $spacing-xs;
+    font-size: $font-size-xs;
+    
+    .dot {
+      width: 6px;
+      height: 6px;
+    }
+  }
+  
+  &.size-medium {
+    padding: $spacing-xxs $spacing-sm;
+    font-size: $font-size-sm;
+    
+    .dot {
+      width: 8px;
+      height: 8px;
+    }
+  }
+  
+  &.size-large {
+    padding: $spacing-xs $spacing-md;
+    font-size: $font-size-md;
+    
+    .dot {
+      width: 10px;
+      height: 10px;
+    }
+  }
+  
+  // Variant styles
+  &.variant-success {
+    background: rgba($success, 0.12);
+    color: darken($success, 10%);
+    
+    .dot {
+      background: $success;
+    }
+    
+    &.outline {
+      background: transparent;
+      border: 1px solid $success;
+      color: $success;
+    }
+  }
+  
+  &.variant-warning {
+    background: rgba($warning, 0.12);
+    color: darken($warning, 20%);
+    
+    .dot {
+      background: $warning;
+    }
+    
+    &.outline {
+      background: transparent;
+      border: 1px solid $warning;
+      color: darken($warning, 10%);
+    }
+  }
+  
+  &.variant-error {
+    background: rgba($error, 0.12);
+    color: darken($error, 10%);
+    
+    .dot {
+      background: $error;
+    }
+    
+    &.outline {
+      background: transparent;
+      border: 1px solid $error;
+      color: $error;
+    }
+  }
+  
+  &.variant-info {
+    background: rgba($info, 0.12);
+    color: darken($info, 10%);
+    
+    .dot {
+      background: $info;
+    }
+    
+    &.outline {
+      background: transparent;
+      border: 1px solid $info;
+      color: $info;
+    }
+  }
+  
+  &.variant-neutral {
+    background: $neutral-200;
+    color: $neutral-800;
+    
+    .dot {
+      background: $neutral-600;
+    }
+    
+    &.outline {
+      background: transparent;
+      border: 1px solid $neutral-400;
+      color: $neutral-700;
+    }
+  }
+  
+  &.variant-primary {
+    background: rgba($brand-primary, 0.12);
+    color: darken($brand-primary, 10%);
+    
+    .dot {
+      background: $brand-primary;
+    }
+    
+    &.outline {
+      background: transparent;
+      border: 1px solid $brand-primary;
+      color: $brand-primary;
+    }
+  }
+}
+
+.dot {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.text {
+  line-height: 1;
+}

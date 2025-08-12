@@ -1,0 +1,400 @@
+@import '../../../../enterprise-ui/styles/tokens';
+
+.contestantsView {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, lighten($racing-contestants, 40%), lighten($racing-contestants, 45%));
+  border-radius: 8px;
+  border-left: 4px solid $racing-contestants;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  align-self: flex-start;
+  
+  &:hover {
+    background: var(--bg-secondary);
+    border-color: $racing-contestants;
+    color: $racing-contestants;
+    transform: translateX(-2px);
+  }
+}
+
+.raceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.raceTitle {
+  @include typography('h2');
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.raceDetails {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.meetingContext {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+  
+  .trackIcon {
+    font-size: $font-size-md;
+  }
+  
+  .separator {
+    margin: 0 $spacing-xs;
+    color: var(--text-tertiary);
+  }
+}
+
+// Podium section
+.podium {
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, #fff4e6, #fffbf5);
+  border-radius: 8px;
+  border: 1px solid #ffd4a3;
+}
+
+.podiumTitle {
+  @include typography('h3');
+  color: var(--text-primary);
+  margin: 0 0 $spacing-md 0;
+  text-align: center;
+}
+
+.winners {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+  
+  @include media-down('sm') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.winner {
+  padding: $spacing-md;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 200ms ease;
+  
+  &.place1 {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border: 2px solid #ffc107;
+  }
+  
+  &.place2 {
+    background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+    border: 2px solid #9e9e9e;
+  }
+  
+  &.place3 {
+    background: linear-gradient(135deg, #cd7f32, #e4a853);
+    border: 2px solid #a0522d;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.placeNumber {
+  @include typography('h3');
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-xs;
+}
+
+.winnerName {
+  @include typography('body');
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-xs;
+}
+
+.winnerDetails {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  margin-bottom: $spacing-xs;
+}
+
+.winnerPrize {
+  @include typography('body');
+  font-weight: $font-weight-bold;
+  color: $success;
+}
+
+// Stats bar
+.statsBar {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: $shadow-sm;
+  overflow-x: auto;
+  
+  @include media-down('md') {
+    padding: $spacing-md;
+    gap: $spacing-sm;
+  }
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: 0 $spacing-lg;
+  border-right: 1px solid var(--border-light);
+  
+  &:first-child {
+    padding-left: 0;
+  }
+  
+  &:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+  
+  @include media-down('sm') {
+    padding: 0 $spacing-sm;
+    gap: $spacing-sm;
+  }
+}
+
+.statIcon {
+  font-size: 24px;
+  
+  @include media-down('sm') {
+    font-size: 20px;
+  }
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  @include typography('h4');
+  color: $racing-contestants;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+.statLabel {
+  @include typography('caption');
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+// Filters
+.filters {
+  display: flex;
+  gap: $spacing-md;
+  align-items: center;
+  padding: $spacing-md;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  flex-wrap: wrap;
+  
+  @include media-down('md') {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.filterGroup {
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchInput,
+.filterSelect {
+  width: 100%;
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  background: var(--bg-primary);
+  transition: all 200ms ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $racing-contestants;
+    box-shadow: 0 0 0 2px rgba($racing-contestants, 0.1);
+  }
+  
+  &:hover {
+    border-color: var(--border-hover);
+  }
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  cursor: pointer;
+  white-space: nowrap;
+  
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+  
+  &:hover {
+    color: $racing-contestants;
+  }
+}
+
+.clearButton {
+  padding: $spacing-xs $spacing-md;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  white-space: nowrap;
+  
+  &:hover {
+    border-color: $error;
+    color: $error;
+    background: rgba($error, 0.08);
+  }
+  
+  @include media-down('md') {
+    width: 100%;
+  }
+}
+
+// Custom cell styles
+.rugNumber {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rugBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: $racing-contestants;
+  color: white;
+  border-radius: 50%;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+}
+
+.greyhound {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  
+  .dogIcon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+}
+
+.dogInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dogName {
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+}
+
+.dogGrade {
+  font-size: $font-size-xs;
+  color: var(--text-tertiary);
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  .personIcon {
+    font-size: $font-size-sm;
+    opacity: 0.6;
+  }
+}
+
+.personName {
+  color: var(--text-secondary);
+}
+
+.weight,
+.margin {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+  
+  .value {
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+  }
+  
+  .unit {
+    font-size: $font-size-xs;
+    color: var(--text-tertiary);
+  }
+}
+
+.prize {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-xs;
+  
+  .prizeIcon {
+    font-size: $font-size-sm;
+  }
+  
+  .amount {
+    font-weight: $font-weight-semibold;
+    color: $success;
+  }
+}
+
+.noData {
+  color: var(--text-tertiary);
+  font-style: italic;
+}

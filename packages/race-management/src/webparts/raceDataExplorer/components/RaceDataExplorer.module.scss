@@ -1,0 +1,169 @@
+@import '../../../enterprise-ui/styles/tokens';
+@import '../../../enterprise-ui/styles/mixins/layout';
+
+.raceDataExplorer {
+  padding: $spacing-lg;
+  background: var(--bg-secondary);
+  min-height: 500px;
+  
+  &.theme-meeting {
+    --primary-accent: #{$racing-meetings};
+  }
+  
+  &.theme-race {
+    --primary-accent: #{$racing-races};
+  }
+  
+  &.theme-contestant {
+    --primary-accent: #{$racing-contestants};
+  }
+  
+  &.theme-neutral {
+    --primary-accent: #{$brand-primary};
+  }
+}
+
+.searchBar {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  background: var(--bg-primary);
+  padding: $spacing-md;
+  border-radius: 8px;
+  box-shadow: $shadow-sm;
+}
+
+.searchInput {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-md;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-accent, $brand-primary);
+    box-shadow: 0 0 0 2px rgba(var(--primary-accent, $brand-primary), 0.2);
+  }
+}
+
+.searchButton {
+  padding: $spacing-sm $spacing-lg;
+  background: var(--primary-accent, $brand-primary);
+  color: var(--text-on-brand);
+  border: none;
+  border-radius: 4px;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: darken($brand-primary, 10%);
+  }
+}
+
+.breadcrumb {
+  margin-bottom: $spacing-md;
+}
+
+.mainContent {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: $spacing-lg;
+  
+  @include media-down('lg') {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filterPanel {
+  width: 280px;
+  
+  @include media-down('lg') {
+    width: 100%;
+  }
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  
+  label {
+    @include typography('label');
+    color: var(--text-secondary);
+  }
+}
+
+.filterInput {
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  background: var(--bg-primary);
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-accent, $brand-primary);
+  }
+}
+
+.applyButton {
+  width: 100%;
+  padding: $spacing-sm;
+  background: var(--primary-accent, $brand-primary);
+  color: var(--text-on-brand);
+  border: none;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 200ms ease;
+  margin-top: $spacing-sm;
+  
+  &:hover {
+    background: darken($brand-primary, 10%);
+  }
+}
+
+.dataContainer {
+  flex: 1;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+}
+
+.searchResults {
+  padding: $spacing-lg;
+  
+  h3 {
+    @include typography('h3');
+    color: var(--text-primary);
+    margin-bottom: $spacing-lg;
+  }
+  
+  h4 {
+    @include typography('h4');
+    color: var(--text-primary);
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 2px solid var(--border-light);
+  }
+}
+
+.resultSection {
+  margin-bottom: $spacing-xl;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.noResults {
+  @include flex-center;
+  padding: $spacing-xxl;
+  color: var(--text-secondary);
+  font-size: $font-size-lg;
+}

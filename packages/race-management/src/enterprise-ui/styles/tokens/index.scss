@@ -1,0 +1,26 @@
+// Enterprise Design Tokens
+// ========================
+// Central import file for all design tokens
+
+@import './colors';
+@import './spacing';
+@import './typography';
+@import './shadows';
+@import './breakpoints';
+@import './borders';
+
+// Export all tokens for use in components
+// This file should be imported at the top of any component SCSS file
+// that needs access to the design system tokens
+
+// Example usage in component:
+// @import '../../styles/tokens';
+// 
+// .my-component {
+//   color: $text-primary;
+//   padding: $spacing-md;
+//   @include typography('body');
+//   @include media-up('md') {
+//     padding: $spacing-lg;
+//   }
+// }

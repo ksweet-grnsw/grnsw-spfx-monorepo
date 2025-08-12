@@ -12,5 +12,8 @@ export interface IRaceMeetingsProps {
   selectedTrackId: string;
   showPastMeetings: boolean;
   showFutureMeetings: boolean;
+  description?: string;
+  multiSelect?: boolean;
+  multiSelectDelimiter?: string;
   onUpdateFilters?: (authority: string, trackId: string) => void;
 }

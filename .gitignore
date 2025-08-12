@@ -19,6 +19,14 @@ temp/
 # TypeScript cache
 *.tsbuildinfo
 
+# Generated TypeScript files in src
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
+!packages/*/src/**/*.module.scss.ts
+!packages/*/src/**/loc/*.js
+
 # Optional npm cache directory
 .npm
 

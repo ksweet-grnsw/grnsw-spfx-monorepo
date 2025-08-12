@@ -11,7 +11,9 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
 import * as strings from 'RaceMeetingsWebPartStrings';
-import RaceMeetings from './components/RaceMeetings';
+// Using compatibility wrapper for safe migration between versions
+// This automatically handles fallback to original if Enterprise UI fails
+import RaceMeetings from './components/RaceMeetingsCompatibility';
 import { IRaceMeetingsProps } from './components/IRaceMeetingsProps';
 import { RaceMeetingService } from '../../services/RaceMeetingService';
 import { AUTHORITIES, CalendarView } from '../../models/IRaceMeeting';
@@ -24,6 +26,8 @@ export interface IRaceMeetingsWebPartProps {
   selectedTrackId: string;
   showPastMeetings: boolean;
   showFutureMeetings: boolean;
+  multiSelect: boolean;
+  multiSelectDelimiter: string;
 }
 
 export default class RaceMeetingsWebPart extends BaseClientSideWebPart<IRaceMeetingsWebPartProps> {
@@ -47,6 +51,8 @@ export default class RaceMeetingsWebPart extends BaseClientSideWebPart<IRaceMeet
         selectedTrackId: this.properties.selectedTrackId,
         showPastMeetings: this.properties.showPastMeetings,
         showFutureMeetings: this.properties.showFutureMeetings,
+        multiSelect: this.properties.multiSelect ?? true,
+        multiSelectDelimiter: this.properties.multiSelectDelimiter ?? ',',
         onUpdateFilters: this.updateFilters.bind(this)
       }
     );
@@ -195,6 +201,10 @@ export default class RaceMeetingsWebPart extends BaseClientSideWebPart<IRaceMeet
             {
               groupName: 'Filter Settings',
               groupFields: [
+                PropertyPaneToggle('multiSelect', {
+                  label: 'Enable Multi-Select Filters',
+                  checked: this.properties.multiSelect ?? true
+                }),
                 PropertyPaneDropdown('selectedAuthority', {
                   label: 'Filter by Authority',
                   options: authorityOptions,

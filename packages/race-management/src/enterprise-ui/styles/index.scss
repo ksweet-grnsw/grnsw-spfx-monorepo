@@ -1,0 +1,21 @@
+// Enterprise UI Styles
+// ====================
+// Main entry point for all enterprise UI styles
+
+// Import design tokens
+@import './tokens';
+
+// Import themes
+@import './themes/light';
+@import './themes/domain-themes';
+
+// Import base styles
+@import './base/reset';
+@import './base/utilities';
+
+// Import mixins
+@import './mixins/layout';
+
+// Export everything for use in components
+// This file should be imported once in the main application
+// Individual components should import only what they need from tokens/mixins

@@ -1,0 +1,228 @@
+@import '../../../../enterprise-ui/styles/tokens';
+@import '../../../../enterprise-ui/styles/mixins/layout';
+
+.searchView {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  min-height: 400px;
+}
+
+// Loading, Error, Empty states
+.loadingState,
+.errorState,
+.emptyState,
+.noResults {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-xxxl;
+  text-align: center;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  min-height: 300px;
+  
+  h3 {
+    @include typography('h3');
+    color: var(--text-primary);
+    margin: $spacing-md 0 $spacing-sm;
+  }
+  
+  p {
+    @include typography('body');
+    color: var(--text-secondary);
+    max-width: 400px;
+    margin: 0 auto $spacing-md;
+  }
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-light);
+  border-top-color: $brand-primary;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: $spacing-md;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorIcon,
+.searchIcon,
+.noResultsIcon {
+  font-size: 48px;
+  margin-bottom: $spacing-sm;
+}
+
+.errorIcon {
+  color: $error;
+}
+
+.searchIcon,
+.noResultsIcon {
+  color: var(--text-tertiary);
+}
+
+.retryButton,
+.clearButton {
+  padding: $spacing-sm $spacing-lg;
+  background: $brand-primary;
+  color: var(--text-on-brand);
+  border: none;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: darken($brand-primary, 10%);
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.suggestion {
+  font-size: $font-size-sm;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+// Main content
+.header {
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, lighten($brand-primary, 45%), lighten($brand-primary, 50%));
+  border-radius: 8px;
+  border-left: 4px solid $brand-primary;
+}
+
+.title {
+  @include typography('h2');
+  color: var(--text-primary);
+  margin: 0 0 $spacing-sm 0;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  
+  @include media-down('sm') {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.count {
+  @include typography('body');
+  color: var(--text-secondary);
+  
+  &::before {
+    content: '📊';
+    margin-right: $spacing-xs;
+  }
+}
+
+.clearSearchButton {
+  padding: $spacing-xs $spacing-md;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    border-color: $brand-primary;
+    color: $brand-primary;
+    background: rgba($brand-primary, 0.08);
+  }
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.resultSection {
+  background: var(--bg-primary);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-light);
+}
+
+.sectionIcon {
+  font-size: 24px;
+}
+
+.sectionTitle {
+  @include typography('h4');
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+}
+
+// Reference cells
+.meetingReference {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  
+  .date {
+    font-size: $font-size-xs;
+    color: var(--text-tertiary);
+  }
+}
+
+.raceReference {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  
+  .meetingInfo {
+    font-size: $font-size-xs;
+    color: var(--text-tertiary);
+  }
+}
+
+// Result type indicators
+.resultSection {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+  }
+  
+  &:has(.sectionIcon:contains('📅'))::before {
+    background: $racing-meetings;
+  }
+  
+  &:has(.sectionIcon:contains('🏁'))::before {
+    background: $racing-races;
+  }
+  
+  &:has(.sectionIcon:contains('🐕'))::before {
+    background: $racing-contestants;
+  }
+}

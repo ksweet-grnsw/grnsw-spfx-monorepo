@@ -1,0 +1,137 @@
+// Enterprise Color Palette for GRNSW SPFx Solutions
+// ===================================================
+
+// Primary Brand Colors
+$brand-primary: #0078d4;         // Microsoft blue - primary action color
+$brand-secondary: #005a9e;       // Darker blue - secondary elements
+$brand-accent: #40e0d0;          // Turquoise accent - highlights
+
+// Functional Colors
+$success: #107c10;               // Green - success states
+$warning: #ffb900;               // Orange - warning states
+$error: #d13438;                 // Red - error states
+$info: #0078d4;                  // Blue - information states
+
+// Domain-Specific Colors (Contextual themes)
+$racing-meetings: #0078d4;       // Blue theme for meetings
+$racing-races: #107c10;          // Green theme for races
+$racing-contestants: #d83b01;    // Orange theme for contestants
+$financial: #6b69d6;             // Purple theme for financial
+$reporting: #8764b8;             // Magenta theme for reporting
+$users: #00bcf2;                 // Cyan theme for user management
+$weather: #005a9e;               // Dark blue for weather
+$health: #107c10;                // Green for health tracking
+
+// Neutral Palette
+$neutral-900: #323130;           // Primary text
+$neutral-800: #605e5c;           // Secondary text
+$neutral-700: #797775;           // Tertiary text
+$neutral-600: #8a8886;           // Disabled text
+$neutral-500: #a19f9d;           // Placeholder text
+$neutral-400: #c8c6c4;           // Borders
+$neutral-300: #d2d0ce;           // Light borders
+$neutral-200: #f3f2f1;           // Light background
+$neutral-100: #faf9f8;           // Page background
+$neutral-000: #ffffff;           // Pure white
+
+// Semantic Color Maps
+$semantic-colors: (
+  'primary': $brand-primary,
+  'secondary': $brand-secondary,
+  'accent': $brand-accent,
+  'success': $success,
+  'warning': $warning,
+  'error': $error,
+  'info': $info
+);
+
+// Domain Color Maps
+$domain-colors: (
+  'meetings': $racing-meetings,
+  'races': $racing-races,
+  'contestants': $racing-contestants,
+  'financial': $financial,
+  'reporting': $reporting,
+  'users': $users,
+  'weather': $weather,
+  'health': $health
+);
+
+// Background Color Variations
+$bg-primary: $neutral-000;
+$bg-secondary: $neutral-100;
+$bg-tertiary: $neutral-200;
+$bg-hover: rgba($brand-primary, 0.08);
+$bg-selected: rgba($brand-primary, 0.12);
+$bg-disabled: rgba($neutral-600, 0.08);
+
+// Text Color Variations
+$text-primary: $neutral-900;
+$text-secondary: $neutral-800;
+$text-tertiary: $neutral-700;
+$text-disabled: $neutral-600;
+$text-placeholder: $neutral-500;
+$text-on-brand: $neutral-000;
+
+// Border Colors
+$border-default: $neutral-400;
+$border-light: $neutral-300;
+$border-hover: $brand-primary;
+$border-focus: $brand-primary;
+$border-error: $error;
+$border-success: $success;
+
+// Shadow Colors
+$shadow-light: rgba(0, 0, 0, 0.05);
+$shadow-medium: rgba(0, 0, 0, 0.1);
+$shadow-dark: rgba(0, 0, 0, 0.2);
+
+// Chart Colors (for data visualization)
+$chart-colors: (
+  $brand-primary,
+  $success,
+  $warning,
+  $error,
+  $brand-secondary,
+  $brand-accent,
+  $financial,
+  $reporting,
+  $users,
+  $weather
+);
+
+// Export as CSS custom properties for runtime theming
+:root {
+  // Brand colors
+  --brand-primary: #{$brand-primary};
+  --brand-secondary: #{$brand-secondary};
+  --brand-accent: #{$brand-accent};
+  
+  // Functional colors
+  --color-success: #{$success};
+  --color-warning: #{$warning};
+  --color-error: #{$error};
+  --color-info: #{$info};
+  
+  // Domain colors
+  --domain-meetings: #{$racing-meetings};
+  --domain-races: #{$racing-races};
+  --domain-contestants: #{$racing-contestants};
+  --domain-financial: #{$financial};
+  --domain-reporting: #{$reporting};
+  --domain-users: #{$users};
+  --domain-weather: #{$weather};
+  --domain-health: #{$health};
+  
+  // Neutral colors
+  --neutral-900: #{$neutral-900};
+  --neutral-800: #{$neutral-800};
+  --neutral-700: #{$neutral-700};
+  --neutral-600: #{$neutral-600};
+  --neutral-500: #{$neutral-500};
+  --neutral-400: #{$neutral-400};
+  --neutral-300: #{$neutral-300};
+  --neutral-200: #{$neutral-200};
+  --neutral-100: #{$neutral-100};
+  --neutral-000: #{$neutral-000};
+}

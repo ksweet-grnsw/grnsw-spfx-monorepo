@@ -1,0 +1,219 @@
+// Layout Mixins
+// =============
+
+@import '../tokens';
+
+// Center content using flexbox
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Center content horizontally
+@mixin flex-center-x {
+  display: flex;
+  justify-content: center;
+}
+
+// Center content vertically
+@mixin flex-center-y {
+  display: flex;
+  align-items: center;
+}
+
+// Absolute center
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// Cover parent element
+@mixin cover-parent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// Clearfix
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+// Aspect ratio container
+@mixin aspect-ratio($width, $height) {
+  position: relative;
+  
+  &::before {
+    content: "";
+    display: block;
+    padding-bottom: percentage($height / $width);
+  }
+  
+  > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Grid layout
+@mixin grid($columns: 12, $gap: $grid-gutter) {
+  display: grid;
+  grid-template-columns: repeat($columns, 1fr);
+  gap: $gap;
+}
+
+// Flex grid
+@mixin flex-grid($columns: 3, $gap: $grid-gutter) {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -$gap / 2;
+  
+  > * {
+    flex: 0 0 calc(#{100% / $columns} - #{$gap});
+    margin: $gap / 2;
+  }
+}
+
+// Sticky footer
+@mixin sticky-footer($footer-height: $layout-footer-height) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  
+  > main {
+    flex: 1 0 auto;
+  }
+  
+  > footer {
+    flex-shrink: 0;
+    height: $footer-height;
+  }
+}
+
+// Sidebar layout
+@mixin sidebar-layout($sidebar-width: $layout-sidebar-width, $gap: $spacing-lg) {
+  display: grid;
+  grid-template-columns: $sidebar-width 1fr;
+  gap: $gap;
+  
+  @include media-down('lg') {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Card grid
+@mixin card-grid($min-width: 300px, $gap: $spacing-md) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($min-width, 1fr));
+  gap: $gap;
+}
+
+// Masonry layout (CSS only)
+@mixin masonry($columns: 3, $gap: $spacing-md) {
+  column-count: $columns;
+  column-gap: $gap;
+  
+  > * {
+    break-inside: avoid;
+    margin-bottom: $gap;
+  }
+  
+  @include media-down('md') {
+    column-count: 2;
+  }
+  
+  @include media-down('sm') {
+    column-count: 1;
+  }
+}
+
+// Split layout
+@mixin split-layout($gap: $spacing-lg) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $gap;
+  
+  @include media-down('md') {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Holy grail layout
+@mixin holy-grail-layout {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "nav main aside"
+    "footer footer footer";
+  grid-template-columns: 200px 1fr 200px;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  
+  > header {
+    grid-area: header;
+  }
+  
+  > nav {
+    grid-area: nav;
+  }
+  
+  > main {
+    grid-area: main;
+  }
+  
+  > aside {
+    grid-area: aside;
+  }
+  
+  > footer {
+    grid-area: footer;
+  }
+  
+  @include media-down('lg') {
+    grid-template-areas:
+      "header"
+      "nav"
+      "main"
+      "aside"
+      "footer";
+    grid-template-columns: 1fr;
+  }
+}
+
+// Stack layout with spacing
+@mixin stack($gap: $spacing-md) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+// Inline layout with spacing
+@mixin inline($gap: $spacing-sm) {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: $gap;
+  align-items: center;
+}
+
+// Cluster layout
+@mixin cluster($gap: $spacing-sm) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap;
+  align-items: center;
+}
