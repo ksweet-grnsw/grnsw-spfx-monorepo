@@ -1,4 +1,5 @@
-import { HttpClient, HttpClientResponse, IHttpClientOptions } from '@microsoft/sp-http';
+import { HttpClient, HttpClientResponse, IHttpClientOptions, AadHttpClient } from '@microsoft/sp-http';
+import { WebPartContext } from '@microsoft/sp-webpart-base';
 import {
   IMeeting,
   IRace,
@@ -10,58 +11,68 @@ import {
   IDataverseResponse,
   IDataverseError
 } from '../models/IRaceData';
+import { dataverseConfig } from './SharedAuthService';
 
 export class RaceDataService {
   private httpClient: HttpClient;
+  private context: WebPartContext | null = null;
+  private aadClient: AadHttpClient | null = null;
   private dataverseUrl: string;
-  private accessToken: string | null = null;
-  private tokenExpiry: Date | null = null;
   private readonly apiVersion = 'v9.1';
 
-  constructor(httpClient: HttpClient, dataverseUrl: string) {
+  constructor(httpClient: HttpClient, dataverseUrl?: string, context?: WebPartContext) {
     this.httpClient = httpClient;
-    this.dataverseUrl = dataverseUrl;
+    this.context = context || null;
+    // Use provided URL or fall back to configured URL
+    this.dataverseUrl = dataverseUrl || dataverseConfig.apiUrl;
   }
 
-  // Token management
-  private async getAccessToken(): Promise<string> {
-    if (this.accessToken && this.tokenExpiry && this.tokenExpiry > new Date()) {
-      return this.accessToken;
+  // Get AAD client for authenticated requests
+  private async getAadClient(): Promise<AadHttpClient> {
+    if (!this.aadClient && this.context) {
+      this.aadClient = await this.context.aadHttpClientFactory.getClient(dataverseConfig.resourceUrl);
     }
-
-    // In production, this would get the token from Azure AD
-    // For now, we'll use a placeholder
-    // TODO: Implement proper Azure AD authentication
-    this.accessToken = 'placeholder-token';
-    this.tokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
-    
-    return this.accessToken;
+    if (!this.aadClient) {
+      throw new Error('AAD client not available. Please ensure context is provided.');
+    }
+    return this.aadClient;
   }
 
-  // HTTP request helper
+  // HTTP request helper using AAD authentication
   private async makeRequest<T>(url: string): Promise<T> {
-    const token = await this.getAccessToken();
-    
-    const options: IHttpClientOptions = {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'OData-MaxVersion': '4.0',
-        'OData-Version': '4.0',
-        'Accept': 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
-        'Prefer': 'odata.include-annotations="*"'
-      }
-    };
-
     try {
-      const response: HttpClientResponse = await this.httpClient.get(url, HttpClient.configurations.v1, options);
-      
-      if (!response.ok) {
-        const error: IDataverseError = await response.json();
-        throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+      // Use AAD client if available, otherwise use HttpClient
+      if (this.context) {
+        const aadClient = await this.getAadClient();
+        const response = await aadClient.get(url, AadHttpClient.configurations.v1);
+        
+        if (!response.ok) {
+          const error: IDataverseError = await response.json();
+          throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json();
+      } else {
+        // Fallback to HttpClient (less secure, for testing only)
+        const options: IHttpClientOptions = {
+          headers: {
+            'OData-MaxVersion': '4.0',
+            'OData-Version': '4.0',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
+            'Prefer': 'odata.include-annotations="*"'
+          }
+        };
+        
+        const response: HttpClientResponse = await this.httpClient.get(url, HttpClient.configurations.v1, options);
+        
+        if (!response.ok) {
+          const error: IDataverseError = await response.json();
+          throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json();
       }
-      
-      return await response.json();
     } catch (error) {
       console.error('Dataverse API Error:', error);
       throw error;
@@ -98,7 +109,7 @@ export class RaceDataService {
       filterParts.push(`cr4cc_meetingdate le '${filters.dateTo.toISOString()}'`);
     }
     if (filters?.track) {
-      filterParts.push(`cr4cc_trackheld eq '${encodeURIComponent(filters.track)}'`);
+      filterParts.push(`cr4cc_trackname eq '${encodeURIComponent(filters.track)}'`);
     }
     if (filters?.authority) {
       filterParts.push(`cr4cc_authority eq '${encodeURIComponent(filters.authority)}'`);
@@ -107,21 +118,30 @@ export class RaceDataService {
       filterParts.push(`cr4cc_status eq '${encodeURIComponent(filters.status)}'`);
     }
     
-    const filterQuery = filterParts.length > 0 ? `$filter=${filterParts.join(' and ')}` : '';
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetingses?${filterQuery}&$orderby=cr4cc_meetingdate desc`;
+    const queryParts: string[] = [];
+    if (filterParts.length > 0) {
+      queryParts.push(`$filter=${filterParts.join(' and ')}`);
+    }
+    queryParts.push('$orderby=cr4cc_meetingdate desc');
+    
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?${queryParts.join('&')}`;
     
     const response = await this.makeRequest<IDataverseResponse<IMeeting>>(url);
     return response.value;
   }
 
   public async getMeetingById(meetingId: string): Promise<IMeeting> {
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetingses(${meetingId})`;
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings(${meetingId})`;
     return await this.makeRequest<IMeeting>(url);
   }
 
   // Race operations
   public async getRacesForMeeting(meetingId: string): Promise<IRace[]> {
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=_cr616_meeting_value eq '${meetingId}'&$orderby=cr616_racenumber`;
+    if (!meetingId) {
+      console.warn('getRacesForMeeting called with undefined meetingId');
+      return [];
+    }
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=_cr616_meeting_value eq ${meetingId}&$orderby=cr616_racenumber`;
     const response = await this.makeRequest<IDataverseResponse<IRace>>(url);
     return response.value;
   }
@@ -130,7 +150,7 @@ export class RaceDataService {
     const filterParts: string[] = [];
     
     if (filters?.meetingId) {
-      filterParts.push(`_cr616_meeting_value eq '${filters.meetingId}'`);
+      filterParts.push(`_cr616_meeting_value eq ${filters.meetingId}`);
     }
     if (filters?.distance) {
       filterParts.push(`cr616_distance eq ${filters.distance}`);
@@ -142,22 +162,31 @@ export class RaceDataService {
       filterParts.push(`cr616_status eq '${encodeURIComponent(filters.status)}'`);
     }
     
-    const filterQuery = filterParts.length > 0 ? `$filter=${filterParts.join(' and ')}` : '';
-    const expandQuery = '$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackheld)';
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?${filterQuery}&${expandQuery}&$orderby=cr616_racenumber`;
+    const queryParts: string[] = [];
+    if (filterParts.length > 0) {
+      queryParts.push(`$filter=${filterParts.join(' and ')}`);
+    }
+    queryParts.push('$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname)');
+    queryParts.push('$orderby=cr616_racenumber');
+    
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?${queryParts.join('&')}`;
     
     const response = await this.makeRequest<IDataverseResponse<IRace>>(url);
     return response.value;
   }
 
   public async getRaceById(raceId: string): Promise<IRace> {
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses(${raceId})?$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackheld)`;
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses(${raceId})?$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname)`;
     return await this.makeRequest<IRace>(url);
   }
 
   // Contestant operations
   public async getContestantsForRace(raceId: string): Promise<IContestant[]> {
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$filter=_cr616_race_value eq '${raceId}'&$orderby=cr616_rugnumber`;
+    if (!raceId) {
+      console.warn('getContestantsForRace called with undefined raceId');
+      return [];
+    }
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
     const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
     return response.value;
   }
@@ -166,7 +195,7 @@ export class RaceDataService {
     const filterParts: string[] = [];
     
     if (filters?.raceId) {
-      filterParts.push(`_cr616_race_value eq '${filters.raceId}'`);
+      filterParts.push(`_cr616_race_value eq ${filters.raceId}`);
     }
     if (filters?.greyhoundName) {
       filterParts.push(`contains(cr616_greyhoundname,'${encodeURIComponent(filters.greyhoundName)}')`);
@@ -181,17 +210,22 @@ export class RaceDataService {
       filterParts.push(`cr616_status eq '${encodeURIComponent(filters.status)}'`);
     }
     
-    const filterQuery = filterParts.length > 0 ? `$filter=${filterParts.join(' and ')}` : '';
-    const expandQuery = '$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackheld))';
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?${filterQuery}&${expandQuery}&$orderby=cr616_rugnumber`;
+    const queryParts: string[] = [];
+    if (filterParts.length > 0) {
+      queryParts.push(`$filter=${filterParts.join(' and ')}`);
+    }
+    queryParts.push('$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname))');
+    queryParts.push('$orderby=cr616_rugnumber');
+    
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?${queryParts.join('&')}`;
     
     const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
     return response.value;
   }
 
   public async getContestantById(contestantId: string): Promise<IContestant> {
-    const expandQuery = '$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackheld))';
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses(${contestantId})?${expandQuery}`;
+    const expandQuery = '$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname))';
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants(${contestantId})?${expandQuery}`;
     return await this.makeRequest<IContestant>(url);
   }
 
@@ -209,13 +243,13 @@ export class RaceDataService {
     const encodedTerm = encodeURIComponent(searchTerm);
     
     // Search meetings
-    const meetingsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetingses?$filter=contains(cr4cc_trackheld,'${encodedTerm}') or contains(cr4cc_racename,'${encodedTerm}')&$top=10`;
+    const meetingsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$filter=contains(cr4cc_trackname,'${encodedTerm}') or contains(cr4cc_racename,'${encodedTerm}')&$top=10`;
     
     // Search races
-    const racesUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=contains(cr616_racename,'${encodedTerm}') or contains(cr616_racetitle,'${encodedTerm}')&$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackheld)&$top=10`;
+    const racesUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=contains(cr616_racename,'${encodedTerm}') or contains(cr616_racetitle,'${encodedTerm}')&$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname)&$top=10`;
     
     // Search contestants
-    const contestantsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$filter=contains(cr616_greyhoundname,'${encodedTerm}') or contains(cr616_ownername,'${encodedTerm}') or contains(cr616_trainername,'${encodedTerm}')&$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackheld))&$top=10`;
+    const contestantsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?$filter=contains(cr616_greyhoundname,'${encodedTerm}') or contains(cr616_ownername,'${encodedTerm}') or contains(cr616_trainername,'${encodedTerm}')&$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname))&$top=10`;
     
     try {
       const [meetingsResponse, racesResponse, contestantsResponse] = await Promise.all([
@@ -245,13 +279,13 @@ export class RaceDataService {
 
   // Get all unique tracks
   public async getTracks(): Promise<string[]> {
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetingses?$select=cr4cc_trackheld&$filter=cr4cc_trackheld ne null&$orderby=cr4cc_trackheld`;
-    const response = await this.makeRequest<IDataverseResponse<{cr4cc_trackheld: string}>>(url);
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$select=cr4cc_trackname&$filter=cr4cc_trackname ne null&$orderby=cr4cc_trackname`;
+    const response = await this.makeRequest<IDataverseResponse<{cr4cc_trackname: string}>>(url);
     
     const tracks = new Set<string>();
     response.value.forEach(item => {
-      if (item.cr4cc_trackheld) {
-        tracks.add(item.cr4cc_trackheld);
+      if (item.cr4cc_trackname) {
+        tracks.add(item.cr4cc_trackname);
       }
     });
     
@@ -260,7 +294,7 @@ export class RaceDataService {
 
   // Get all unique authorities
   public async getAuthorities(): Promise<string[]> {
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetingses?$select=cr4cc_authority&$filter=cr4cc_authority ne null&$orderby=cr4cc_authority`;
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$select=cr4cc_authority&$filter=cr4cc_authority ne null&$orderby=cr4cc_authority`;
     const response = await this.makeRequest<IDataverseResponse<{cr4cc_authority: string}>>(url);
     
     const authorities = new Set<string>();

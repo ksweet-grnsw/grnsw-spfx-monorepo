@@ -5,7 +5,7 @@ export interface IMeeting {
   cr4cc_racemeetingid: string;
   cr4cc_racename: string;
   cr4cc_meetingdate: Date | string;
-  cr4cc_trackheld: string;
+  cr4cc_trackname: string;
   cr4cc_authority: string;
   cr4cc_timeslot: string;
   cr4cc_meetingtype: string;

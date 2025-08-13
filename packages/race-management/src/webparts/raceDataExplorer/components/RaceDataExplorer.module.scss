@@ -50,7 +50,7 @@
 .searchButton {
   padding: $spacing-sm $spacing-lg;
   background: var(--primary-accent, $brand-primary);
-  color: var(--text-on-brand);
+  color: #ffffff !important;
   border: none;
   border-radius: 4px;
   font-size: $font-size-md;
@@ -113,7 +113,7 @@
   width: 100%;
   padding: $spacing-sm;
   background: var(--primary-accent, $brand-primary);
-  color: var(--text-on-brand);
+  color: #ffffff !important;
   border: none;
   border-radius: 4px;
   font-size: $font-size-sm;

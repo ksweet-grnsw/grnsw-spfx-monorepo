@@ -300,7 +300,7 @@ export const ContestantsView: React.FC<IContestantsViewProps> = ({
           {meeting && (
             <div className={styles.meetingContext}>
               <span className={styles.trackIcon}>📍</span>
-              <span>{meeting.cr4cc_trackheld}</span>
+              <span>{meeting.cr4cc_trackname}</span>
               <span className={styles.separator}>•</span>
               <span>{new Date(meeting.cr4cc_meetingdate).toLocaleDateString()}</span>
             </div>

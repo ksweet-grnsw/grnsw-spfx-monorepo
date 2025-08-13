@@ -231,7 +231,7 @@ export const RacesView: React.FC<IRacesViewProps> = ({
         
         <div className={styles.meetingInfo}>
           <h2 className={styles.meetingTitle}>
-            {meeting.cr4cc_trackheld} - {new Date(meeting.cr4cc_meetingdate).toLocaleDateString()}
+            {meeting.cr4cc_trackname} - {new Date(meeting.cr4cc_meetingdate).toLocaleDateString()}
           </h2>
           <div className={styles.meetingDetails}>
             <StatusBadge status={meeting.cr4cc_authority} variant="info" size="small" />

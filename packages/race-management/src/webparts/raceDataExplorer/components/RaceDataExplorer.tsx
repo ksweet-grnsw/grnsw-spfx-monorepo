@@ -47,11 +47,9 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
 
   // Initialize service
   const dataService = useMemo(() => {
-    if (dataverseUrl && httpClient) {
-      return new RaceDataService(httpClient, dataverseUrl);
-    }
-    return null;
-  }, [dataverseUrl, httpClient]);
+    // Always create the service, it will use default URL if none provided
+    return new RaceDataService(httpClient, dataverseUrl || undefined, props.context);
+  }, [dataverseUrl, httpClient, props.context]);
 
   // Load meetings
   const loadMeetings = useCallback(async () => {
@@ -161,7 +159,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
 
     if (viewState.type === 'races' && viewState.meeting) {
       items.push({
-        label: `${viewState.meeting.cr4cc_trackheld} - ${new Date(viewState.meeting.cr4cc_meetingdate).toLocaleDateString()}`,
+        label: `${viewState.meeting.cr4cc_trackname} - ${new Date(viewState.meeting.cr4cc_meetingdate).toLocaleDateString()}`,
         onClick: () => loadRaces(viewState.meeting!)
       });
     }
@@ -169,7 +167,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
     if (viewState.type === 'contestants' && viewState.race) {
       if (viewState.meeting) {
         items.push({
-          label: `${viewState.meeting.cr4cc_trackheld} - ${new Date(viewState.meeting.cr4cc_meetingdate).toLocaleDateString()}`,
+          label: `${viewState.meeting.cr4cc_trackname} - ${new Date(viewState.meeting.cr4cc_meetingdate).toLocaleDateString()}`,
           onClick: () => loadRaces(viewState.meeting!)
         });
       }
@@ -199,7 +197,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       render: (value: string) => new Date(value).toLocaleDateString()
     },
     {
-      key: 'cr4cc_trackheld',
+      key: 'cr4cc_trackname',
       label: 'Track',
       sortable: true,
       width: '150px'

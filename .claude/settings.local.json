@@ -22,7 +22,13 @@
       "Bash(npm run check-version:*)",
       "Bash(dir:*)",
       "Bash(mv:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(npm install)",
+      "Bash(gulp serve:*)",
+      "Bash(gulp build)",
+      "Bash(taskkill:*)",
+      "Bash(powershell:*)",
+      "Bash(unzip:*)"
     ],
     "deny": []
   }

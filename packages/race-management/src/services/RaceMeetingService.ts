@@ -1,5 +1,5 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { AuthService, dataverseConfig } from '@grnsw/shared';
+import { AuthService, dataverseConfig } from './SharedAuthService';
 import { Logger, ErrorHandler } from '../utils';
 import { IRaceMeeting, IRaceMeetingFilter } from '../models/IRaceMeeting';
 

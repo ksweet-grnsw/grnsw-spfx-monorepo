@@ -90,7 +90,7 @@ export const SearchView: React.FC<ISearchViewProps> = ({
       render: (value: string) => new Date(value).toLocaleDateString()
     },
     {
-      key: 'cr4cc_trackheld',
+      key: 'cr4cc_trackname',
       label: 'Track',
       width: '150px'
     },
@@ -144,7 +144,7 @@ export const SearchView: React.FC<ISearchViewProps> = ({
         if (!value) return '-';
         return (
           <div className={styles.meetingReference}>
-            <span>{value.cr4cc_trackheld}</span>
+            <span>{value.cr4cc_trackname}</span>
             <span className={styles.date}>
               {new Date(value.cr4cc_meetingdate).toLocaleDateString()}
             </span>
@@ -199,7 +199,7 @@ export const SearchView: React.FC<ISearchViewProps> = ({
             <span>R{value.cr616_racenumber} - {value.cr616_racename}</span>
             {meeting && (
               <span className={styles.meetingInfo}>
-                {meeting.cr4cc_trackheld} • {new Date(meeting.cr4cc_meetingdate).toLocaleDateString()}
+                {meeting.cr4cc_trackname} • {new Date(meeting.cr4cc_meetingdate).toLocaleDateString()}
               </span>
             )}
           </div>

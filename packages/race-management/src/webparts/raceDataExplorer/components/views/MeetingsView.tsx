@@ -123,7 +123,7 @@ export const MeetingsView: React.FC<IMeetingsViewProps> = ({
       }
     },
     {
-      key: 'cr4cc_trackheld',
+      key: 'cr4cc_trackname',
       label: 'Track',
       sortable: true,
       width: '150px',

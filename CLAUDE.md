@@ -313,7 +313,9 @@ Before committing any changes:
 - Build greyhound-health: `cd packages/greyhound-health && gulp bundle --ship && gulp package-solution --ship`
 - Clean and rebuild: `gulp clean && gulp bundle --ship && gulp package-solution --ship`
 - Create production package: `gulp package-solution --ship` (MUST run `gulp bundle --ship` first!)
-- Serve locally: `gulp serve`
+- Serve locally: `gulp serve` (opens https://grnsw21.sharepoint.com/_layouts/workbench.aspx)
+- Serve with no browser: `gulp serve --nobrowser`
+- Test in SharePoint Online workbench: Navigate to https://grnsw21.sharepoint.com/_layouts/workbench.aspx
 
 ## API Considerations
 - The Dataverse API returns many `null` values that must be preserved
@@ -321,12 +323,101 @@ Before committing any changes:
 - Track names in API use spaces (e.g., "Wentworth Park")
 - API fields are prefixed with cr8e9_
 
+## SharePoint Environment
+- **Tenant:** grnsw21.sharepoint.com
+- **Tenant ID:** grnsw21
+- **SharePoint URL:** https://grnsw21.sharepoint.com
+- **App Catalog:** https://grnsw21.sharepoint.com/sites/appcatalog
+- **Workbench URL:** https://grnsw21.sharepoint.com/_layouts/workbench.aspx
+
+## Dataverse Environments
+Each package connects to a specific Dataverse environment:
+
+### 1. Racing Data Environment
+- **URL:** https://racingdata.crm6.dynamics.com/
+- **Base URL:** https://racingdata.crm6.dynamics.com
+- **API Endpoint:** https://racingdata.crm6.dynamics.com/api/data/v9.1
+- **Used By:** race-management package
+- **Tables:**
+  | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
+  |-------------|------------------------|-------------------------------|-------------|
+  | Meeting | cr4cc_racemeeting | cr4cc_racemeetings | Race meeting information |
+  | Races | cr616_race | cr616_races | Individual race details |
+  | Contestants | cr616_contestant | cr616_contestants | Greyhound contestants in races |
+
+### 2. Weather Data Production Environment
+- **URL:** https://org98489e5d.crm6.dynamics.com/
+- **API Endpoint:** https://org98489e5d.crm6.dynamics.com/api/data/v9.1
+- **Used By:** track-conditions-spfx package
+- **Tables:**
+  | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
+  |-------------|------------------------|-------------------------------|-------------|
+  | Weather Data | cr4cc_weatherdata | cr4cc_weatherdatas | Weather station data with 180+ fields |
+  
+  **Note:** Weather data includes extensive fields for temperature, rainfall, wind, humidity, solar radiation, battery status, and more.
+
+### 3. Injury Data Environment
+- **URL:** https://orgfc8a11f1.crm6.dynamics.com/
+- **API Endpoint:** https://orgfc8a11f1.crm6.dynamics.com/api/data/v9.1
+- **Used By:** greyhound-health package
+- **Tables:**
+  | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
+  |-------------|------------------------|-------------------------------|-------------|
+  | Injury Data | cra5e_injurydata | cra5e_injurydatas | Greyhound injury tracking records |
+  | Injuries | cr4cc_injury | cr4cc_injuries | Alternative injury table (legacy) |
+
+### 4. GAP Environment (Greyhound Adoption Program)
+- **URL:** https://org16bdb053.crm6.dynamics.com/
+- **API Endpoint:** https://org16bdb053.crm6.dynamics.com/api/data/v9.1
+- **Used By:** gap-spfx package
+- **Tables:** Not yet configured
+
 ## Data Integration
 - **Primary Source:** Microsoft Dataverse (formerly CDS)
 - **Authentication:** Azure AD via AuthService
 - **API Version:** v9.1
-- **Tables:** cr8e9_iotenvironmentaldatas
-- **Weather Station IDs:** Multiple stations reporting to Dataverse
+- **Multiple Environments:** Each functional area has its own Dataverse environment
+
+## Important Dataverse Notes
+### Table Naming Conventions
+- **Singular vs Plural:** Dataverse uses singular names internally but plural names for API endpoints
+- **Example:** Table "Meeting" (cr4cc_racemeeting) becomes "cr4cc_racemeetings" in API calls
+- **CRITICAL:** Never add extra "es" to already plural table names (e.g., NOT "cr4cc_racemeetingses")
+
+### Key Field Mappings for Racing Data
+#### Meeting Table (cr4cc_racemeetings)
+- cr4cc_racemeetingid: Unique identifier
+- cr4cc_meetingdate: Date of the race meeting
+- cr4cc_trackheld: Track name (e.g., "Wentworth Park")
+- cr4cc_authority: Racing authority (e.g., "NSW")
+- cr4cc_timeslot: Time slot (Morning/Afternoon/Evening)
+- cr4cc_meetingtype: Meeting type (TAB/Non-TAB)
+- cr4cc_status: Meeting status
+
+#### Races Table (cr616_races)
+- cr616_raceid: Unique identifier
+- cr616_racenumber: Race number in sequence
+- cr616_racename: Name of the race
+- cr616_racetitle: Full title of the race
+- cr616_distance: Race distance in meters
+- cr616_racegrading: Grade of the race
+- cr616_starttime: Scheduled start time
+- cr616_noofcontestants: Number of contestants
+- cr616_prize1: First place prize money
+- _cr616_meeting_value: Foreign key to Meeting
+
+#### Contestants Table (cr616_contestants)
+- cr616_contestantid: Unique identifier
+- cr616_rugnumber: Rug/box number (1-8)
+- cr616_greyhoundname: Name of the greyhound
+- cr616_ownername: Owner's name
+- cr616_trainername: Trainer's name
+- cr616_doggrade: Grade of the dog
+- cr616_placement: Final placement
+- cr616_margin: Margin of victory/defeat
+- cr616_weight: Weight of the greyhound
+- cr616_status: Contestant status
+- _cr616_race_value: Foreign key to Race
 
 ## Known Issues
 - Some IDataverseWeatherData fields must remain as `any | null` due to unpredictable API responses

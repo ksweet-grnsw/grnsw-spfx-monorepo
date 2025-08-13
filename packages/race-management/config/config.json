@@ -9,10 +9,19 @@
           "manifest": "./src/webparts/raceMeetings/RaceMeetingsWebPart.manifest.json"
         }
       ]
+    },
+    "race-data-explorer-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/raceDataExplorer/RaceDataExplorerWebPart.js",
+          "manifest": "./src/webparts/raceDataExplorer/RaceDataExplorerWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
-    "RaceMeetingsWebPartStrings": "lib/webparts/raceMeetings/loc/{locale}.js"
+    "RaceMeetingsWebPartStrings": "lib/webparts/raceMeetings/loc/{locale}.js",
+    "RaceDataExplorerWebPartStrings": "lib/webparts/raceDataExplorer/loc/{locale}.js"
   }
 }
