@@ -66,6 +66,30 @@ grnsw-spfx-monorepo/
 - **Node:** 22.14.0+ (< 23.0.0)
 - **UI:** Fluent UI React 8.106.4
 
+## ⚠️⚠️⚠️ STOP AND READ - CRITICAL BUILD PROCESS ⚠️⚠️⚠️
+# VERSION MUST BE UPDATED BEFORE BUILDING
+# THIS IS THE #1 CAUSE OF FAILED DEPLOYMENTS
+# FAILURE TO FOLLOW THIS WILL RESULT IN WRONG VERSION IN SHAREPOINT
+
+## 🚨 MANDATORY PRE-BUILD CHECKLIST - DO NOT SKIP 🚨
+Before ANY build operation, you MUST complete this checklist IN ORDER:
+- [ ] CHECK: Run `cat package.json | grep version` to see current version
+- [ ] CHECK: Run `cat config/package-solution.json | grep version` to verify both versions match
+- [ ] UPDATE: If creating new release, update BOTH files to new version FIRST
+- [ ] VERIFY: Run the version check commands again to confirm updates
+- [ ] CLEAN: Run `gulp clean` to remove ALL old artifacts
+- [ ] BUILD: Run `gulp bundle --ship` (MUST have --ship flag)
+- [ ] PACKAGE: Run `gulp package-solution --ship` (MUST have --ship flag)
+- [ ] COPY: Copy .sppkg to release folder ONLY after successful build
+
+## ❌ CRITICAL FAILURES - NEVER DO THESE ❌
+1. **NEVER** build before updating version - SharePoint will show old version
+2. **NEVER** run gulp bundle without --ship for production
+3. **NEVER** skip gulp clean after version update
+4. **NEVER** trust that the version is correct without checking
+5. **NEVER** update version AFTER building - the package will have wrong version
+6. **NEVER** proceed if package.json and package-solution.json versions don't match
+
 ## Build and Release Process
 
 ### ⚠️ CRITICAL: Version Update Sequence ⚠️
@@ -342,8 +366,8 @@ Each package connects to a specific Dataverse environment:
   | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
   |-------------|------------------------|-------------------------------|-------------|
   | Meeting | cr4cc_racemeeting | cr4cc_racemeetings | Race meeting information |
-  | Races | cr616_race | cr616_races | Individual race details |
-  | Contestants | cr616_contestant | cr616_contestants | Greyhound contestants in races |
+  | Races | cr616_races | cr616_raceses | Individual race details (NOTE: double plural!) |
+  | Contestants | cr616_contestants | cr616_contestantses | Greyhound contestants (NOTE: double plural!) |
 
 ### 2. Weather Data Production Environment
 - **URL:** https://org98489e5d.crm6.dynamics.com/
@@ -382,32 +406,76 @@ Each package connects to a specific Dataverse environment:
 ### Table Naming Conventions
 - **Singular vs Plural:** Dataverse uses singular names internally but plural names for API endpoints
 - **Example:** Table "Meeting" (cr4cc_racemeeting) becomes "cr4cc_racemeetings" in API calls
-- **CRITICAL:** Never add extra "es" to already plural table names (e.g., NOT "cr4cc_racemeetingses")
+- **CRITICAL:** Some tables use DOUBLE PLURAL forms - this is NOT a mistake:
+  - Table "Races" (cr616_races) becomes "cr616_raceses" in API calls (YES, double plural!)
+  - Table "Contestants" (cr616_contestants) becomes "cr616_contestantses" in API calls (YES, double plural!)
+- **VERIFIED:** These double-plural names have been tested and confirmed working as of August 2025
 
-### Key Field Mappings for Racing Data
-#### Meeting Table (cr4cc_racemeetings)
+### Key Field Mappings for Racing Data (VERIFIED via API Discovery - August 2025)
+
+#### Meeting Table (cr4cc_racemeetings) - 50 fields total
+**Key Fields:**
 - cr4cc_racemeetingid: Unique identifier
-- cr4cc_meetingdate: Date of the race meeting
-- cr4cc_trackheld: Track name (e.g., "Wentworth Park")
+- cr4cc_meetingdate: Date of the race meeting (includes time)
+- cr4cc_trackname: Track name (e.g., "Wentworth Park") - **CONFIRMED FIELD NAME**
 - cr4cc_authority: Racing authority (e.g., "NSW")
 - cr4cc_timeslot: Time slot (Morning/Afternoon/Evening)
-- cr4cc_meetingtype: Meeting type (TAB/Non-TAB)
-- cr4cc_status: Meeting status
+- cr4cc_type: Meeting type
+- cr4cc_meetingname: Meeting name
+- cr4cc_cancelled: Boolean for cancelled meetings
+- cr4cc_salesforceid: Salesforce integration ID
 
-#### Races Table (cr616_races)
-- cr616_raceid: Unique identifier
+**Additional Fields:**
+- cr616_weather: Weather conditions
+- cr616_stewardcomment: Steward's comments
+- cr616_trackcondition: Track condition
+- statecode: State code (active/inactive)
+- statuscode: Status code
+- versionnumber: Version number for concurrency
+- modifiedon: Last modified timestamp
+- createdon: Creation timestamp
+- _ownerid_value: Owner ID
+- _owningbusinessunit_value: Business unit ID
+- _modifiedby_value: Modified by user ID
+- _createdby_value: Created by user ID
+
+#### Races Table (cr616_raceses) - 84 fields total - NOTE: API uses "raceses" (double plural!)
+**Key Fields:**
+- cr616_racesid: Unique identifier (NOTE: not "raceid")
 - cr616_racenumber: Race number in sequence
 - cr616_racename: Name of the race
 - cr616_racetitle: Full title of the race
 - cr616_distance: Race distance in meters
-- cr616_racegrading: Grade of the race
+- cr616_racegrading: Grade of the race (corrected from cr616_racegrading)
 - cr616_starttime: Scheduled start time
-- cr616_noofcontestants: Number of contestants
-- cr616_prize1: First place prize money
+- cr616_numberofcontestants: Number of contestants (corrected from cr616_noofcontestants)
+- cr616_racedate: Date of the race
 - _cr616_meeting_value: Foreign key to Meeting
 
-#### Contestants Table (cr616_contestants)
-- cr616_contestantid: Unique identifier
+**Prize Money Fields:**
+- cr616_prize1: First place prize money
+- cr616_prize2: Second place prize money
+- cr616_prize3: Third place prize money
+- cr616_prize4: Fourth place prize money
+- cr616_prize1_base: Base currency value
+- cr616_prize2_base: Base currency value
+- cr616_prize3_base: Base currency value
+- cr616_prize4_base: Base currency value
+
+**Additional Fields:**
+- cr616_trackheld: Track where race was held
+- cr616_sfraceid: Salesforce race ID
+- cr616_firstsectionaltime: First sectional time
+- cr616_secondsectiontime: Second section time
+- cr616_racesectionaloverview: Sectional overview
+- cr616_status: Race status
+- cr616_stewardracecomment: Steward's race comment
+- _transactioncurrencyid_value: Currency ID
+- exchangerate: Exchange rate
+
+#### Contestants Table (cr616_contestantses) - 78 fields total - NOTE: API uses "contestantses" (double plural!)
+**Key Fields:**
+- cr616_contestantsid: Unique identifier (NOTE: not "contestantid")
 - cr616_rugnumber: Rug/box number (1-8)
 - cr616_greyhoundname: Name of the greyhound
 - cr616_ownername: Owner's name
@@ -418,6 +486,23 @@ Each package connects to a specific Dataverse environment:
 - cr616_weight: Weight of the greyhound
 - cr616_status: Contestant status
 - _cr616_race_value: Foreign key to Race
+- _cr616_meeting_value: Foreign key to Meeting
+
+**Performance Fields:**
+- cr616_finishtime: Finish time
+- cr616_dayssincelastrace: Days since last race
+- cr616_totalnumberofwinds: Total number of wins
+- cr616_failedtofinish: Boolean for DNF
+- cr616_racewithin2days: Raced within 2 days flag
+
+**Additional Fields:**
+- cr616_trackheld: Track where race was held
+- cr616_meetingdate: Meeting date
+- cr616_racenumber: Race number
+- cr616_leftearbrand: Left ear brand
+- cr616_sfcontestantid: Salesforce contestant ID
+- cr616_prizemoney: Prize money won
+- cr616_prizemoney_base: Base currency value
 
 ## Known Issues
 - Some IDataverseWeatherData fields must remain as `any | null` due to unpredictable API responses

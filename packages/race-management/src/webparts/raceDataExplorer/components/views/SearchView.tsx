@@ -13,6 +13,7 @@ export interface ISearchViewProps {
   onRaceClick: (race: IRace) => void;
   onContestantClick?: (contestant: IContestant) => void;
   onClearSearch: () => void;
+  onTestApi?: () => void;
 }
 
 export const SearchView: React.FC<ISearchViewProps> = ({

@@ -18,7 +18,7 @@ export interface BreadcrumbProps {
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   items,
-  separator = '/',
+  separator = '›',
   className = '',
   maxItems,
   theme = 'neutral'

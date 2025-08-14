@@ -67,7 +67,7 @@ export const RacesView: React.FC<IRacesViewProps> = ({
     }, 0);
     
     const totalContestants = filteredRaces.reduce((sum, race) => {
-      return sum + (race.cr616_noofcontestants || 0);
+      return sum + (race.cr616_numberofcontestants || 0);
     }, 0);
     
     const distances = filteredRaces.map(r => r.cr616_distance).filter(d => d);

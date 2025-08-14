@@ -28,8 +28,11 @@
       "Bash(gulp build)",
       "Bash(taskkill:*)",
       "Bash(powershell:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "Bash(npm version:*)",
+      "Bash(node:*)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   }
 }

@@ -1,7 +1,13 @@
 @import '../../../styles/tokens';
 
 .breadcrumb {
-  padding: $spacing-sm 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: $spacing-lg;
   
   &.theme-meeting {
     --breadcrumb-color: #{$racing-meetings};
@@ -27,7 +33,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: $spacing-xxs;
+  gap: $spacing-sm;
 }
 
 .item {
@@ -40,18 +46,24 @@
   display: inline-flex;
   align-items: center;
   gap: $spacing-xs;
-  color: var(--breadcrumb-color, $brand-primary);
-  text-decoration: none;
-  background: none;
-  border: none;
-  padding: $spacing-xxs $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background: #ffffff;
+  border: 1px solid #d0d0d0;
   border-radius: 4px;
+  color: #333333;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
   cursor: pointer;
   transition: all 200ms ease;
   
   &:hover {
-    background: rgba(var(--breadcrumb-color, $brand-primary), 0.08);
-    text-decoration: underline;
+    background: var(--breadcrumb-color, $brand-primary);
+    color: white;
+    border-color: var(--breadcrumb-color, $brand-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
   }
   
   &:focus {
@@ -64,13 +76,18 @@
   display: inline-flex;
   align-items: center;
   gap: $spacing-xs;
-  color: $text-primary;
-  font-weight: $font-weight-semibold;
-  padding: $spacing-xxs $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background: var(--breadcrumb-color, $brand-primary);
+  color: white;
+  border: 1px solid var(--breadcrumb-color, $brand-primary);
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
 }
 
 .separator {
-  color: $text-tertiary;
+  color: #999;
+  font-size: $font-size-lg;
   margin: 0 $spacing-xs;
   user-select: none;
 }

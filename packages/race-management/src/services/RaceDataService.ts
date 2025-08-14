@@ -74,7 +74,11 @@ export class RaceDataService {
         return await response.json();
       }
     } catch (error) {
-      console.error('Dataverse API Error:', error);
+      console.error('Dataverse API Error:', {
+        url,
+        error,
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
       throw error;
     }
   }
@@ -127,12 +131,17 @@ export class RaceDataService {
     const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?${queryParts.join('&')}`;
     
     const response = await this.makeRequest<IDataverseResponse<IMeeting>>(url);
-    return response.value;
+    // Map cr4cc_trackheld to cr4cc_trackname for UI compatibility
+    // No mapping needed - cr4cc_trackname is the actual field
+    const meetings = response.value;
+    return meetings;
   }
 
   public async getMeetingById(meetingId: string): Promise<IMeeting> {
     const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings(${meetingId})`;
-    return await this.makeRequest<IMeeting>(url);
+    const meeting = await this.makeRequest<IMeeting>(url);
+    // No mapping needed - cr4cc_trackname is the actual field
+    return meeting;
   }
 
   // Race operations
@@ -166,7 +175,7 @@ export class RaceDataService {
     if (filterParts.length > 0) {
       queryParts.push(`$filter=${filterParts.join(' and ')}`);
     }
-    queryParts.push('$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname)');
+    queryParts.push('$expand=cr616_Meeting($select=cr4cc_meetingdate,cr4cc_trackname)');
     queryParts.push('$orderby=cr616_racenumber');
     
     const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?${queryParts.join('&')}`;
@@ -176,7 +185,7 @@ export class RaceDataService {
   }
 
   public async getRaceById(raceId: string): Promise<IRace> {
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses(${raceId})?$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname)`;
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses(${raceId})?$expand=cr616_Meeting($select=cr4cc_meetingdate,cr4cc_trackname)`;
     return await this.makeRequest<IRace>(url);
   }
 
@@ -186,7 +195,7 @@ export class RaceDataService {
       console.warn('getContestantsForRace called with undefined raceId');
       return [];
     }
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
     const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
     return response.value;
   }
@@ -214,18 +223,18 @@ export class RaceDataService {
     if (filterParts.length > 0) {
       queryParts.push(`$filter=${filterParts.join(' and ')}`);
     }
-    queryParts.push('$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname))');
+    queryParts.push('$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_meetingdate,cr4cc_trackname))');
     queryParts.push('$orderby=cr616_rugnumber');
     
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?${queryParts.join('&')}`;
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?${queryParts.join('&')}`;
     
     const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
     return response.value;
   }
 
   public async getContestantById(contestantId: string): Promise<IContestant> {
-    const expandQuery = '$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname))';
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants(${contestantId})?${expandQuery}`;
+    const expandQuery = '$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_meetingdate,cr4cc_trackname))';
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses(${contestantId})?${expandQuery}`;
     return await this.makeRequest<IContestant>(url);
   }
 
@@ -240,41 +249,164 @@ export class RaceDataService {
       };
     }
 
-    const encodedTerm = encodeURIComponent(searchTerm);
+    // Don't encode the search term for contains - just escape single quotes
+    const escapedTerm = searchTerm.trim().replace(/'/g, "''");
     
-    // Search meetings
-    const meetingsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$filter=contains(cr4cc_trackname,'${encodedTerm}') or contains(cr4cc_racename,'${encodedTerm}')&$top=10`;
+    // Search meetings - using startswith for better compatibility
+    const meetingsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$filter=startswith(cr4cc_trackname,'${escapedTerm}')&$top=10`;
     
-    // Search races
-    const racesUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=contains(cr616_racename,'${encodedTerm}') or contains(cr616_racetitle,'${encodedTerm}')&$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname)&$top=10`;
+    // Search races - using correct table name cr616_raceses (double plural!)
+    // Note: Navigation properties in OData are case-sensitive and don't use underscores in expand
+    const racesUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=startswith(cr616_racename,'${escapedTerm}') or startswith(cr616_racetitle,'${escapedTerm}')&$top=10`;
     
-    // Search contestants
-    const contestantsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?$filter=contains(cr616_greyhoundname,'${encodedTerm}') or contains(cr616_ownername,'${encodedTerm}') or contains(cr616_trainername,'${encodedTerm}')&$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_racename,cr4cc_meetingdate,cr4cc_trackname))&$top=10`;
+    // Search contestants - using correct table name cr616_contestantses (double plural!)
+    const contestantsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$filter=startswith(cr616_greyhoundname,'${escapedTerm}') or startswith(cr616_ownername,'${escapedTerm}') or startswith(cr616_trainername,'${escapedTerm}')&$top=10`;
+    
+    console.log('Search URLs:', {
+      meetings: meetingsUrl,
+      races: racesUrl,
+      contestants: contestantsUrl
+    });
     
     try {
-      const [meetingsResponse, racesResponse, contestantsResponse] = await Promise.all([
-        this.makeRequest<IDataverseResponse<IMeeting>>(meetingsUrl),
-        this.makeRequest<IDataverseResponse<IRace>>(racesUrl),
-        this.makeRequest<IDataverseResponse<IContestant>>(contestantsUrl)
-      ]);
+      // Fetch all results, handling failures individually
+      let meetingsResponse: IDataverseResponse<IMeeting> = { value: [] };
+      let racesResponse: IDataverseResponse<IRace> = { value: [] };
+      let contestantsResponse: IDataverseResponse<IContestant> = { value: [] };
+      
+      try {
+        meetingsResponse = await this.makeRequest<IDataverseResponse<IMeeting>>(meetingsUrl);
+      } catch (error) {
+        console.error('Meetings search failed:', error);
+      }
+      
+      try {
+        racesResponse = await this.makeRequest<IDataverseResponse<IRace>>(racesUrl);
+      } catch (error) {
+        console.error('Races search failed:', error);
+      }
+      
+      try {
+        contestantsResponse = await this.makeRequest<IDataverseResponse<IContestant>>(contestantsUrl);
+      } catch (error) {
+        console.error('Contestants search failed:', error);
+      }
+      
+      // No mapping needed - cr4cc_trackname is the actual field
+      const mappedMeetings = meetingsResponse?.value || [];
+      
+      // No mapping needed - cr4cc_trackname is the actual field
+      const mappedRaces = racesResponse?.value || [];
+      
+      // No mapping needed - cr4cc_trackname is the actual field
+      const mappedContestants = contestantsResponse?.value || [];
+      
+      console.log('Search results:', {
+        meetingsCount: mappedMeetings.length,
+        racesCount: mappedRaces.length,
+        contestantsCount: mappedContestants.length
+      });
       
       const results: ISearchResults = {
-        meetings: meetingsResponse.value,
-        races: racesResponse.value,
-        contestants: contestantsResponse.value,
-        totalResults: meetingsResponse.value.length + racesResponse.value.length + contestantsResponse.value.length
+        meetings: mappedMeetings,
+        races: mappedRaces,
+        contestants: mappedContestants,
+        totalResults: mappedMeetings.length + mappedRaces.length + mappedContestants.length
       };
       
       return results;
     } catch (error) {
-      console.error('Search error:', error);
-      return {
-        meetings: [],
-        races: [],
-        contestants: [],
-        totalResults: 0
-      };
+      console.error('Search error details:', {
+        error,
+        searchTerm,
+        urls: {
+          meetings: meetingsUrl,
+          races: racesUrl,
+          contestants: contestantsUrl
+        }
+      });
+      // Re-throw to let the component handle the error
+      throw new Error(`Search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+  }
+
+  // Test API connectivity and authentication
+  public async testApiConnection(): Promise<{success: boolean; message: string; details?: any}> {
+    console.log('=== COMPREHENSIVE API DISCOVERY TEST ===');
+    const results: any[] = [];
+    
+    // Test all possible table name combinations
+    const tableTests = [
+      // Meetings variations
+      { name: 'Meetings (cr4cc_racemeetings)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$top=1` },
+      { name: 'Meetings (cr4cc_racemeeting)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeeting?$top=1` },
+      { name: 'Meetings (cr4cc_meetings)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_meetings?$top=1` },
+      { name: 'Meetings (cr4cc_meeting)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_meeting?$top=1` },
+      
+      // Races variations with cr616 prefix
+      { name: 'Races (cr616_races)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_races?$top=1` },
+      { name: 'Races (cr616_race)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_race?$top=1` },
+      { name: 'Races (cr616_raceses)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$top=1` },
+      
+      // Races variations with cr4cc prefix
+      { name: 'Races (cr4cc_races)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_races?$top=1` },
+      { name: 'Races (cr4cc_race)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_race?$top=1` },
+      
+      // Contestants variations with cr616 prefix
+      { name: 'Contestants (cr616_contestants)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?$top=1` },
+      { name: 'Contestants (cr616_contestant)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestant?$top=1` },
+      { name: 'Contestants (cr616_contestantses)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$top=1` },
+      
+      // Contestants variations with cr4cc prefix
+      { name: 'Contestants (cr4cc_contestants)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_contestants?$top=1` },
+      { name: 'Contestants (cr4cc_contestant)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_contestant?$top=1` }
+    ];
+    
+    console.log('Testing', tableTests.length, 'different table name variations...');
+    
+    for (const test of tableTests) {
+      try {
+        const response = await this.makeRequest<any>(test.url);
+        console.log(`✅ ${test.name}: SUCCESS`, response);
+        
+        // If successful, try to get field names
+        if (response && response.value && response.value.length > 0) {
+          const fields = Object.keys(response.value[0]);
+          console.log(`   ✅ WORKING TABLE! Fields found:`, fields);
+          
+          // Check specifically for track field variations
+          const trackFields = fields.filter(f => f.includes('track'));
+          if (trackFields.length > 0) {
+            console.log(`   📍 Track-related fields:`, trackFields);
+          }
+          
+          results.push({ 
+            name: test.name, 
+            success: true, 
+            url: test.url,
+            fields: fields.slice(0, 15), // First 15 fields
+            trackFields: trackFields
+          });
+        } else {
+          results.push({ name: test.name, success: true, url: test.url, empty: true });
+        }
+      } catch (error) {
+        console.error(`❌ ${test.name}: FAILED`, error);
+        results.push({ 
+          name: test.name, 
+          success: false, 
+          url: test.url, 
+          error: error instanceof Error ? error.message : error 
+        });
+      }
+    }
+    
+    const successCount = results.filter(r => r.success).length;
+    return {
+      success: successCount > 0,
+      message: `API test: ${successCount}/${results.length} tests passed. Check console for details.`,
+      details: results
+    };
   }
 
   // Get all unique tracks

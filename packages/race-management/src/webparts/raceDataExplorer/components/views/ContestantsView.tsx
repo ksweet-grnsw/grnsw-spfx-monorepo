@@ -262,7 +262,7 @@ export const ContestantsView: React.FC<IContestantsViewProps> = ({
         <h3 className={styles.podiumTitle}>🏆 Race Results</h3>
         <div className={styles.winners}>
           {winners.map((winner, index) => (
-            <div key={winner.cr616_contestantid} className={`${styles.winner} ${styles[`place${index + 1}`]}`}>
+            <div key={winner.cr616_contestantsid} className={`${styles.winner} ${styles[`place${index + 1}`]}`}>
               <div className={styles.placeNumber}>{formatPlacement(winner.cr616_placement)}</div>
               <div className={styles.winnerName}>{winner.cr616_greyhoundname}</div>
               <div className={styles.winnerDetails}>

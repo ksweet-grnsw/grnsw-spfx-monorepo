@@ -5,6 +5,7 @@
   padding: $spacing-lg;
   background: var(--bg-secondary);
   min-height: 500px;
+  width: 100%;
   
   &.theme-meeting {
     --primary-accent: #{$racing-meetings};
@@ -23,27 +24,61 @@
   }
 }
 
+.mainTitle {
+  @include typography('h1');
+  color: var(--text-primary);
+  margin: 0 0 $spacing-lg 0;
+  padding-bottom: $spacing-md;
+  border-bottom: 2px solid var(--border-light);
+}
+
 .searchBar {
   display: flex;
   gap: $spacing-sm;
   margin-bottom: $spacing-lg;
-  background: var(--bg-primary);
+  background: #f5f5f5;
   padding: $spacing-md;
   border-radius: 8px;
   box-shadow: $shadow-sm;
+  border: 1px solid #e0e0e0;
+}
+
+.searchInputWrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .searchInput {
-  flex: 1;
+  width: 100%;
   padding: $spacing-sm $spacing-md;
-  border: 1px solid var(--border-default);
+  padding-right: $spacing-xxl; // Space for clear button
+  border: 1px solid #d0d0d0;
   border-radius: 4px;
   font-size: $font-size-md;
+  background: #ffffff;
   
   &:focus {
     outline: none;
     border-color: var(--primary-accent, $brand-primary);
     box-shadow: 0 0 0 2px rgba(var(--primary-accent, $brand-primary), 0.2);
+  }
+}
+
+.clearButton {
+  position: absolute;
+  right: $spacing-sm;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: $font-size-lg;
+  cursor: pointer;
+  padding: $spacing-xs;
+  transition: color 200ms ease;
+  
+  &:hover {
+    color: var(--text-primary);
   }
 }
 
@@ -63,25 +98,40 @@
   }
 }
 
-.breadcrumb {
-  margin-bottom: $spacing-md;
-}
-
-.mainContent {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: $spacing-lg;
+.homeButton {
+  padding: $spacing-sm $spacing-md;
+  background: $success;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 4px;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 200ms ease;
   
-  @include media-down('lg') {
-    grid-template-columns: 1fr;
+  &:hover {
+    background: darken($success, 10%);
   }
 }
 
-.filterPanel {
-  width: 280px;
+
+.mainContent {
+  width: 100%;
+}
+
+.filterBar {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md;
+  background: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: $shadow-sm;
+  border: 1px solid #e0e0e0;
   
-  @include media-down('lg') {
-    width: 100%;
+  @include media-down('md') {
+    flex-wrap: wrap;
   }
 }
 
@@ -89,29 +139,61 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-xs;
+  flex: 0 0 auto;
+  min-width: 120px;
   
   label {
     @include typography('label');
     color: var(--text-secondary);
+    font-size: $font-size-sm;
+  }
+  
+  &:has(select) {
+    flex: 1;
+    min-width: 180px;
   }
 }
 
 .filterInput {
   padding: $spacing-xs $spacing-sm;
-  border: 1px solid var(--border-default);
+  border: 1px solid #d0d0d0;
   border-radius: 4px;
   font-size: $font-size-sm;
-  background: var(--bg-primary);
+  background: #ffffff;
+  color: var(--text-primary);
+  cursor: pointer;
+  min-width: 140px;
+  
+  &[type="date"] {
+    position: relative;
+    
+    &::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 1;
+    }
+    
+    &::-webkit-datetime-edit {
+      padding: 0;
+    }
+    
+    &::-webkit-datetime-edit-fields-wrapper {
+      padding: 0;
+    }
+  }
+  
+  &:hover {
+    border-color: var(--text-secondary);
+  }
   
   &:focus {
     outline: none;
     border-color: var(--primary-accent, $brand-primary);
+    box-shadow: 0 0 0 2px rgba($brand-primary, 0.1);
   }
 }
 
 .applyButton {
-  width: 100%;
-  padding: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
   background: var(--primary-accent, $brand-primary);
   color: #ffffff !important;
   border: none;
@@ -120,10 +202,27 @@
   font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: all 200ms ease;
-  margin-top: $spacing-sm;
+  align-self: flex-end;
   
   &:hover {
     background: darken($brand-primary, 10%);
+  }
+}
+
+.clearFiltersButton {
+  padding: $spacing-sm $spacing-md;
+  background: #6c757d;
+  color: #ffffff !important;
+  border: none;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 200ms ease;
+  align-self: flex-end;
+  
+  &:hover {
+    background: #5a6268;
   }
 }
 
@@ -166,4 +265,292 @@
   padding: $spacing-xxl;
   color: var(--text-secondary);
   font-size: $font-size-lg;
+}
+
+.contentSection {
+  width: 100%;
+  
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg $spacing-lg $spacing-md $spacing-lg;
+    background: var(--bg-primary);
+    margin-bottom: $spacing-lg;
+  }
+  
+  .sectionTitle {
+    @include typography('h2');
+    color: var(--text-primary);
+    margin: 0;
+  }
+}
+
+.actionButton {
+  padding: $spacing-xs $spacing-sm;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: $font-size-md;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-accent, $brand-primary);
+  }
+}
+
+.actionIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  
+  &.detailsIcon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.returnButton {
+  padding: $spacing-xs $spacing-md;
+  background: #ffffff;
+  color: #333333;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 200ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  &:hover {
+    background: var(--primary-accent, $brand-primary);
+    color: white;
+    border-color: var(--primary-accent, $brand-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:before {
+    content: '‹';
+    font-size: $font-size-lg;
+    font-weight: bold;
+  }
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 10000;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 2px solid #e0e0e0;
+  background: #f8f9fa;
+  
+  h2 {
+    @include typography('h2');
+    margin: 0;
+    color: #333333;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+}
+
+.modalLogo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  font-size: $font-size-xxl;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+}
+
+.modalBody {
+  padding: $spacing-lg;
+  background: #ffffff;
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: $spacing-md;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid #e0e0e0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.detailLabel {
+  @include typography('label');
+  color: #666666;
+  font-weight: $font-weight-semibold;
+}
+
+.detailValue {
+  @include typography('body');
+  color: #333333;
+}
+
+// Rug number styles
+.rugBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+  border: 2px solid #333;
+  
+  &.rug1 {
+    background-color: #DC143C; // Crimson Red
+    color: white;
+  }
+  
+  &.rug2 {
+    background: repeating-linear-gradient(
+      0deg,
+      #000 0,
+      #000 7px,
+      #FFF 7px,
+      #FFF 14px
+    ); // Black and White vertical stripes
+    color: #FF0000;
+    font-weight: 900;
+  }
+  
+  &.rug3 {
+    background-color: #FFFFFF; // White
+    color: black;
+    border-color: #333;
+  }
+  
+  &.rug4 {
+    background-color: #0073CF; // Blue
+    color: white;
+  }
+  
+  &.rug5 {
+    background-color: #FFD700; // Yellow/Gold
+    color: black;
+  }
+  
+  &.rug6 {
+    background-color: #228B22; // Green
+    color: #FF0000; // Red text
+  }
+  
+  &.rug7 {
+    background-color: #000000; // Black
+    color: #FFD700; // Yellow text
+  }
+  
+  &.rug8 {
+    background-color: #FF69B4; // Pink
+    color: #000000; // Black text
+  }
+  
+  &.rug9 {
+    background: repeating-linear-gradient(
+      -45deg,
+      #228B22 0,
+      #228B22 5px,
+      #FFF 5px,
+      #FFF 10px
+    ); // Green and White diagonal stripes (135 degree angle - top-left to bottom-right)
+    color: #000;
+    font-weight: 900;
+  }
+  
+  &.rug10 {
+    background: linear-gradient(
+      90deg,
+      #0073CF 0,
+      #0073CF 33.33%,
+      #FFF 33.33%,
+      #FFF 66.66%,
+      #FF0000 66.66%,
+      #FF0000 100%
+    ); // Blue, White, Red vertical thirds
+    color: #000;
+    font-weight: 900;
+  }
+}
+
+// Placement medal styles
+.placementBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+  color: #000000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  
+  &.gold {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: 2px solid #B8860B;
+  }
+  
+  &.silver {
+    background: linear-gradient(135deg, #C0C0C0, #808080);
+    border: 2px solid #696969;
+  }
+  
+  &.bronze {
+    background: linear-gradient(135deg, #CD7F32, #8B4513);
+    border: 2px solid #654321;
+  }
 }
