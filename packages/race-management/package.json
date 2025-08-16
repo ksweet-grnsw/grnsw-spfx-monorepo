@@ -1,6 +1,6 @@
 {
   "name": "@grnsw/race-management-spfx",
-  "version": "1.1.46",
+  "version": "1.1.47",
   "private": true,
   "main": "lib/index.js",
   "engines": {
