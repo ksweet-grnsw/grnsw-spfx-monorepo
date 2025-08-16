@@ -30,7 +30,8 @@
       "Bash(powershell:*)",
       "Bash(unzip:*)",
       "Bash(npm version:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(az:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

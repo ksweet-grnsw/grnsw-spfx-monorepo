@@ -1,5 +1,10 @@
 # Claude Instructions for GRNSW SPFx Monorepo
 
+## 🔍 Quick References
+- **Field Documentation:** `docs/dataverse/dataverse-fields-latest.md` - Complete dictionary of all Dataverse fields
+- **Discovery Tool:** Run `npm run discover:fields` to update field documentation
+- **Pluralization Guide:** `docs/dataverse/README.md` - Explains Dataverse's weird pluralization rules
+
 ## Project Overview
 This is a SharePoint Framework (SPFx) monorepo containing weather tracking and race management web parts for Greyhound Racing NSW.
 
@@ -354,6 +359,21 @@ Before committing any changes:
 - **App Catalog:** https://grnsw21.sharepoint.com/sites/appcatalog
 - **Workbench URL:** https://grnsw21.sharepoint.com/_layouts/workbench.aspx
 
+## 📚 COMPREHENSIVE FIELD DOCUMENTATION AVAILABLE
+**IMPORTANT:** Having trouble with Dataverse field names? We now have complete field documentation!
+- **Location:** `docs/dataverse/` folder
+- **Latest Fields:** `docs/dataverse/dataverse-fields-latest.md` (human-readable)
+- **JSON Format:** `docs/dataverse/dataverse-fields-latest.json` (for programmatic use)
+- **Discovery Tools:** Run `npm run discover:fields` to update field documentation
+- **README:** See `docs/dataverse/README.md` for usage instructions and pluralization guide
+
+This documentation includes:
+- All field names for every table
+- Correct API endpoint pluralization (e.g., cr616_races NOT cr616_raceses)
+- Sample values and data types
+- Foreign key relationships
+- Troubleshooting guide for common issues
+
 ## Dataverse Environments
 Each package connects to a specific Dataverse environment:
 
@@ -366,8 +386,8 @@ Each package connects to a specific Dataverse environment:
   | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
   |-------------|------------------------|-------------------------------|-------------|
   | Meeting | cr4cc_racemeeting | cr4cc_racemeetings | Race meeting information |
-  | Races | cr616_races | cr616_raceses | Individual race details (NOTE: double plural!) |
-  | Contestants | cr616_contestants | cr616_contestantses | Greyhound contestants (NOTE: double plural!) |
+  | Races | cr616_races | cr616_races (no extra plural!) | Individual race details |
+  | Contestants | cr616_contestants | cr616_contestants OR cr616_contestantses (test both!) | Greyhound contestants |
 
 ### 2. Weather Data Production Environment
 - **URL:** https://org98489e5d.crm6.dynamics.com/
@@ -389,6 +409,8 @@ Each package connects to a specific Dataverse environment:
   |-------------|------------------------|-------------------------------|-------------|
   | Injury Data | cra5e_injurydata | cra5e_injurydatas | Greyhound injury tracking records |
   | Injuries | cr4cc_injury | cr4cc_injuries | Alternative injury table (legacy) |
+  | Greyhound | cra5e_greyhound | cra5e_greyhounds | Greyhound information and profiles |
+  | Health Check | cra5e_heathcheck | cra5e_heathchecks | Health check records (note: misspelled in system) |
 
 ### 4. GAP Environment (Greyhound Adoption Program)
 - **URL:** https://org16bdb053.crm6.dynamics.com/
@@ -403,13 +425,39 @@ Each package connects to a specific Dataverse environment:
 - **Multiple Environments:** Each functional area has its own Dataverse environment
 
 ## Important Dataverse Notes
-### Table Naming Conventions
-- **Singular vs Plural:** Dataverse uses singular names internally but plural names for API endpoints
-- **Example:** Table "Meeting" (cr4cc_racemeeting) becomes "cr4cc_racemeetings" in API calls
-- **CRITICAL:** Some tables use DOUBLE PLURAL forms - this is NOT a mistake:
-  - Table "Races" (cr616_races) becomes "cr616_raceses" in API calls (YES, double plural!)
-  - Table "Contestants" (cr616_contestants) becomes "cr616_contestantses" in API calls (YES, double plural!)
+### Table Naming Conventions - CRITICAL PLURALIZATION RULES
+Dataverse has extremely quirky pluralization behavior that MUST be understood:
+
+#### Standard Pluralization
+- **Normal tables:** singular → plural (e.g., cr4cc_racemeeting → cr4cc_racemeetings)
+- **Tables ending in 'y':** y → ies (e.g., cr4cc_injury → cr4cc_injuries)
+- **Tables ending in 'data':** data → datas (e.g., cr4cc_weatherdata → cr4cc_weatherdatas)
+
+#### Double Pluralization (Dataverse Weirdness!)
+**CRITICAL:** Dataverse pluralization is INCONSISTENT! Sometimes it adds 'es', sometimes it doesn't:
+
+**Tables that MAY or MAY NOT get double pluralized:**
+- **Races table:** cr616_races → might stay as cr616_races OR become cr616_raceses
+- **Contestants table:** cr616_contestants → might stay as cr616_contestants OR become cr616_contestantses
+- **Meetings (if plural):** cr4cc_racemeetings → might stay as cr4cc_racemeetings OR become cr4cc_racemeetingses
+
+**Why the inconsistency?**
+- If the entity was created with a plural name, Dataverse MIGHT not pluralize it again
+- If the entity was created with a singular name but looks plural, it MIGHT get double pluralized
+- The behavior depends on how the entity was originally created in Dataverse
+- You MUST test both forms to be sure!
+
+#### Why This Happens
+- Dataverse automatically pluralizes entity names for API endpoints
+- If the entity logical name is already plural (like "races"), it still applies pluralization rules
+- This results in double plurals like "raceses" and "contestantses"
 - **VERIFIED:** These double-plural names have been tested and confirmed working as of August 2025
+
+#### Discovery Scripts
+The utility scripts in `/scripts` automatically try multiple plural forms to handle this:
+- They test both normal and double-plural forms
+- They report which plural form actually works
+- Always check the "actualPluralForm" in the discovery output
 
 ### Key Field Mappings for Racing Data (VERIFIED via API Discovery - August 2025)
 
@@ -439,7 +487,7 @@ Each package connects to a specific Dataverse environment:
 - _modifiedby_value: Modified by user ID
 - _createdby_value: Created by user ID
 
-#### Races Table (cr616_raceses) - 84 fields total - NOTE: API uses "raceses" (double plural!)
+#### Races Table (cr616_races) - 84 fields total - NOTE: API might use cr616_races OR cr616_raceses
 **Key Fields:**
 - cr616_racesid: Unique identifier (NOTE: not "raceid")
 - cr616_racenumber: Race number in sequence
@@ -473,7 +521,7 @@ Each package connects to a specific Dataverse environment:
 - _transactioncurrencyid_value: Currency ID
 - exchangerate: Exchange rate
 
-#### Contestants Table (cr616_contestantses) - 78 fields total - NOTE: API uses "contestantses" (double plural!)
+#### Contestants Table (cr616_contestants) - 78 fields total - NOTE: API might use cr616_contestants OR cr616_contestantses
 **Key Fields:**
 - cr616_contestantsid: Unique identifier (NOTE: not "contestantid")
 - cr616_rugnumber: Rug/box number (1-8)

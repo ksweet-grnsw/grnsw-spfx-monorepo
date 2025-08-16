@@ -103,6 +103,7 @@ export interface ISearchResults {
   meetings: IMeeting[];
   races: IRace[];
   contestants: IContestant[];
+  greyhounds?: IGreyhound[];
   totalResults: number;
 }
 
@@ -123,4 +124,84 @@ export interface IDataverseError {
       stacktrace: string;
     };
   };
+}
+
+// Greyhound information from Injury Data environment
+export interface IGreyhound {
+  cra5e_greyhoundid: string;
+  cra5e_name: string; // Greyhound name
+  cra5e_microchip?: string;
+  cra5e_leftearbrand?: string;
+  cra5e_rightearbrand?: string;
+  cra5e_colour?: string;
+  cra5e_gender?: string;
+  cra5e_age?: number;
+  cra5e_whelpeddate?: Date | string;
+  cra5e_sire?: string;
+  cra5e_dam?: string;
+  cra5e_ownername?: string;
+  cra5e_trainername?: string;
+  cra5e_status?: string; // Racing, Retired, etc.
+  cra5e_breedingstatus?: string;
+  cra5e_desexed?: boolean;
+  cra5e_c5vaccinationdate?: Date | string;
+  cra5e_c5valid?: boolean;
+  cra5e_latestcheckin?: Date | string;
+  cra5e_nextcheckindue?: Date | string;
+  cra5e_prizemoney?: number;
+  cra5e_retirementdate?: Date | string;
+  cra5e_deceaseddate?: Date | string;
+  cra5e_statebred?: string;
+  cra5e_stateregistered?: string;
+  cra5e_sfid?: string; // Salesforce ID
+  cra5e_intransfer?: boolean;
+  cra5e_pannus?: boolean;
+  cra5e_validcheckin?: boolean;
+}
+
+// Health Check information from Injury Data environment
+export interface IHealthCheck {
+  cra5e_heathcheckid: string; // Note: misspelled in system
+  cra5e_name?: string; // HC-00XXXXXX
+  _cra5e_greyhound_value: string; // Foreign key to Greyhound
+  cra5e_datechecked: Date | string;
+  cra5e_type?: string; // Race Meeting Exam, etc.
+  cra5e_trackname?: string;
+  cra5e_racenumber?: number;
+  cra5e_distance?: number;
+  cra5e_boxnumber?: number;
+  cra5e_injured?: boolean;
+  cra5e_injuryclassification?: string; // Cat A, B, C, D
+  cra5e_determinedaseriousinjury?: string;
+  cra5e_standdowndays?: number;
+  cra5e_standdowndaysenddate?: Date | string;
+  cra5e_died?: boolean;
+  cra5e_euthanased?: boolean;
+  cra5e_examiningvet?: string;
+  cra5e_followupinformation?: string;
+  cra5e_treatmentinformation?: string;
+  cra5e_wasfollowedup?: boolean;
+  cra5e_vetcomments?: string; // Vet comments if available
+  cra5e_stewardcomments?: string; // Steward comments if available
+  cra5e_notes?: string; // General notes if available
+  cra5e_veterinaryclearance?: boolean;
+  cra5e_vetclearancerequired?: boolean;
+  cra5e_healthcheckauthority?: string;
+  cra5e_healthcheckstatus?: string;
+  cra5e_sfid?: string;
+  // Specific health issues
+  cra5e_cardiovascularissue?: boolean;
+  cra5e_dehydration?: boolean;
+  cra5e_exhaustion?: boolean;
+  cra5e_gastrointestinalissue?: boolean;
+  cra5e_heatstress?: boolean;
+  cra5e_musculoskeletalissue?: boolean;
+  cra5e_neurologicalissue?: boolean;
+  cra5e_respiratoryissue?: boolean;
+  cra5e_poorperformance?: boolean;
+  cra5e_racingincident?: boolean;
+  cra5e_medicationadministered?: boolean;
+  cra5e_medications?: string;
+  cra5e_sedatives?: boolean;
+  cra5e_sutures?: boolean;
 }

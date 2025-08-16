@@ -27,7 +27,9 @@
     "version:health": "cd packages/greyhound-health-spfx && npm version",
     "version:gap": "cd packages/gap-spfx && npm version",
     "fix-builds": "node scripts/fix-spfx-builds.js",
-    "setup": "npm install && npm run fix-builds && npm run build:shared"
+    "setup": "npm install && npm run fix-builds && npm run build:shared",
+    "discover:fields": "node scripts/run-field-discovery.js",
+    "discover:fields:powershell": "powershell -ExecutionPolicy Bypass -File scripts/Dataverse-FieldDiscovery.ps1"
   },
   "devDependencies": {
     "@microsoft/eslint-config-spfx": "1.21.1",

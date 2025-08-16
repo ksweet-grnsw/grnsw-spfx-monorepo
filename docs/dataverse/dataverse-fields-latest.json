@@ -1,0 +1,5395 @@
+{
+  "Racing Data": {
+    "url": "https://racingdata.crm6.dynamics.com",
+    "apiEndpoint": "https://racingdata.crm6.dynamics.com/api/data/v9.1",
+    "tables": [
+      {
+        "displayName": "Meeting",
+        "singularName": "cr4cc_racemeeting",
+        "logicalName": "cr4cc_racemeetings",
+        "possiblePlurals": [
+          "cr4cc_racemeetings",
+          "cr4cc_racemeetingses"
+        ],
+        "tableName": "cr4cc_racemeetings",
+        "actualPluralForm": "cr4cc_racemeetings",
+        "fieldCount": 50,
+        "fields": [
+          {
+            "name": "_createdby_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_createdonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_modifiedby_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_ownerid_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "ownerid",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value",
+            "type": "string",
+            "sampleValue": "30baa0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "owningbusinessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "businessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "racingdata",
+            "isNull": false
+          },
+          {
+            "name": "_owningteam_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_owninguser_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_owninguser_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "@odata.etag",
+            "type": "string",
+            "sampleValue": "W/\"3399930\"",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_authority",
+            "type": "string",
+            "sampleValue": "NSW",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_cancelled",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_cancelled@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_lastmodified",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_meetingdate",
+            "type": "string",
+            "sampleValue": "2024-07-04T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_meetingdate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "7/4/2024 10:00 AM",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_meetingname",
+            "type": "string",
+            "sampleValue": "M-0000016607",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_racemeetingid",
+            "type": "string",
+            "sampleValue": "9ee39cc8-3b78-f011-b4cc-000d3a6aa64c",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_salesforceid",
+            "type": "string",
+            "sampleValue": "aALId00000000g7OAA",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_timeslot",
+            "type": "string",
+            "sampleValue": "Night",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_trackname",
+            "type": "string",
+            "sampleValue": "Wentworth",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_type",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr616_stewardcomment",
+            "type": "string",
+            "sampleValue": "Trainer Mr Neil Staines has provided evidence as d",
+            "isNull": false
+          },
+          {
+            "name": "cr616_trackcondition",
+            "type": "string",
+            "sampleValue": "Good",
+            "isNull": false
+          },
+          {
+            "name": "cr616_weather",
+            "type": "string",
+            "sampleValue": "Overcast",
+            "isNull": false
+          },
+          {
+            "name": "createdon",
+            "type": "string",
+            "sampleValue": "2025-08-13T11:51:02Z",
+            "isNull": false
+          },
+          {
+            "name": "createdon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/13/2025 9:51 PM",
+            "isNull": false
+          },
+          {
+            "name": "importsequencenumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "modifiedon",
+            "type": "string",
+            "sampleValue": "2025-08-13T11:51:02Z",
+            "isNull": false
+          },
+          {
+            "name": "modifiedon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/13/2025 9:51 PM",
+            "isNull": false
+          },
+          {
+            "name": "overriddencreatedon",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "statecode",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "statecode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "statuscode",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "statuscode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "utcconversiontimezonecode",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "versionnumber",
+            "type": "number",
+            "sampleValue": "3399930",
+            "isNull": false
+          },
+          {
+            "name": "versionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3,399,930",
+            "isNull": false
+          }
+        ]
+      },
+      {
+        "displayName": "Races",
+        "singularName": "cr616_races",
+        "logicalName": "cr616_races",
+        "possiblePlurals": [
+          "cr616_races",
+          "cr616_raceses"
+        ],
+        "tableName": "cr616_races",
+        "actualPluralForm": "cr616_raceses",
+        "fieldCount": 84,
+        "fields": [
+          {
+            "name": "_cr616_meeting_value",
+            "type": "string",
+            "sampleValue": "5aa1a9b5-3978-f011-b4cc-000d3ad1741b",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_meeting_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "cr616_meeting",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_meeting_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "cr4cc_racemeeting",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_meeting_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "aALId00000000e2OAA",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_createdonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_modifiedby_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_ownerid_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "ownerid",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value",
+            "type": "string",
+            "sampleValue": "30baa0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "owningbusinessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "businessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "racingdata",
+            "isNull": false
+          },
+          {
+            "name": "_owningteam_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_owninguser_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_owninguser_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value",
+            "type": "string",
+            "sampleValue": "15cc91a2-a070-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "transactioncurrencyid",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "transactioncurrency",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Australian Dollar",
+            "isNull": false
+          },
+          {
+            "name": "@odata.etag",
+            "type": "string",
+            "sampleValue": "W/\"3397947\"",
+            "isNull": false
+          },
+          {
+            "name": "cr616_createddate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr616_distance",
+            "type": "number",
+            "sampleValue": "440",
+            "isNull": false
+          },
+          {
+            "name": "cr616_distance@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "440",
+            "isNull": false
+          },
+          {
+            "name": "cr616_firstsectionaltime",
+            "type": "number",
+            "sampleValue": "5.84",
+            "isNull": false
+          },
+          {
+            "name": "cr616_firstsectionaltime@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5.84",
+            "isNull": false
+          },
+          {
+            "name": "cr616_numberofcontestants",
+            "type": "number",
+            "sampleValue": "8",
+            "isNull": false
+          },
+          {
+            "name": "cr616_numberofcontestants@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize1",
+            "type": "number",
+            "sampleValue": "600",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize1_base",
+            "type": "number",
+            "sampleValue": "600",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize1_base@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$600.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize1@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$600.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize2",
+            "type": "number",
+            "sampleValue": "170",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize2_base",
+            "type": "number",
+            "sampleValue": "170",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize2_base@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$170.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize2@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$170.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize3",
+            "type": "number",
+            "sampleValue": "100",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize3_base",
+            "type": "number",
+            "sampleValue": "100",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize3_base@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$100.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize3@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$100.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize4",
+            "type": "number",
+            "sampleValue": "75",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize4_base",
+            "type": "number",
+            "sampleValue": "75",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize4_base@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$75.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prize4@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$75.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racedate",
+            "type": "string",
+            "sampleValue": "2024-07-01T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racedate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "7/1/2024 10:00 AM",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racegrading",
+            "type": "string",
+            "sampleValue": "Maiden",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racename",
+            "type": "string",
+            "sampleValue": "(1) - WOW AT STUD MAIDEN",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racenumber",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racenumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racesectionaloverview",
+            "type": "string",
+            "sampleValue": "14.032 [5.84] [11.57]",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racesid",
+            "type": "string",
+            "sampleValue": "73ca86b8-3978-f011-b4cc-000d3a6aa64c",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racetitle",
+            "type": "string",
+            "sampleValue": "WOW AT STUD MAIDEN",
+            "isNull": false
+          },
+          {
+            "name": "cr616_secondsectiontime",
+            "type": "number",
+            "sampleValue": "11.57",
+            "isNull": false
+          },
+          {
+            "name": "cr616_secondsectiontime@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "11.57",
+            "isNull": false
+          },
+          {
+            "name": "cr616_sfraceid",
+            "type": "string",
+            "sampleValue": "aANId00000002GcOAI",
+            "isNull": false
+          },
+          {
+            "name": "cr616_starttime",
+            "type": "string",
+            "sampleValue": "00:37 PM",
+            "isNull": false
+          },
+          {
+            "name": "cr616_status",
+            "type": "string",
+            "sampleValue": "Results Approved",
+            "isNull": false
+          },
+          {
+            "name": "cr616_stewardracecomment",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr616_trackheld",
+            "type": "string",
+            "sampleValue": "Goulburn",
+            "isNull": false
+          },
+          {
+            "name": "createdon",
+            "type": "string",
+            "sampleValue": "2025-08-13T11:36:16Z",
+            "isNull": false
+          },
+          {
+            "name": "createdon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/13/2025 9:36 PM",
+            "isNull": false
+          },
+          {
+            "name": "exchangerate",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "exchangerate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1.000000000000",
+            "isNull": false
+          },
+          {
+            "name": "importsequencenumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "modifiedon",
+            "type": "string",
+            "sampleValue": "2025-08-13T11:36:16Z",
+            "isNull": false
+          },
+          {
+            "name": "modifiedon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/13/2025 9:36 PM",
+            "isNull": false
+          },
+          {
+            "name": "overriddencreatedon",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "statecode",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "statecode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "statuscode",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "statuscode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "utcconversiontimezonecode",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "versionnumber",
+            "type": "number",
+            "sampleValue": "3397947",
+            "isNull": false
+          },
+          {
+            "name": "versionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3,397,947",
+            "isNull": false
+          }
+        ]
+      },
+      {
+        "displayName": "Contestants",
+        "singularName": "cr616_contestants",
+        "logicalName": "cr616_contestants",
+        "possiblePlurals": [
+          "cr616_contestants",
+          "cr616_contestantses"
+        ],
+        "tableName": "cr616_contestants",
+        "actualPluralForm": "cr616_contestantses",
+        "fieldCount": 78,
+        "fields": [
+          {
+            "name": "_cr616_meeting_value",
+            "type": "string",
+            "sampleValue": "5aa1a9b5-3978-f011-b4cc-000d3ad1741b",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_meeting_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "cr616_Meeting",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_meeting_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "cr4cc_racemeeting",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_meeting_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "aALId00000000e2OAA",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_race_value",
+            "type": "string",
+            "sampleValue": "74ca86b8-3978-f011-b4cc-000d3a6aa64c",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_race_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "cr616_Race",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_race_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "cr616_races",
+            "isNull": false
+          },
+          {
+            "name": "_cr616_race_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "aANId00000002GdOAI",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_createdonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_modifiedby_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_ownerid_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "ownerid",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value",
+            "type": "string",
+            "sampleValue": "30baa0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "owningbusinessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "businessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "racingdata",
+            "isNull": false
+          },
+          {
+            "name": "_owningteam_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_owninguser_value",
+            "type": "string",
+            "sampleValue": "2ac1a0d5-6b70-f011-b4cc-002248970bd2",
+            "isNull": false
+          },
+          {
+            "name": "_owninguser_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "@odata.etag",
+            "type": "string",
+            "sampleValue": "W/\"3397966\"",
+            "isNull": false
+          },
+          {
+            "name": "cr616_contestantsid",
+            "type": "string",
+            "sampleValue": "75ca86b8-3978-f011-b4cc-000d3a6aa64c",
+            "isNull": false
+          },
+          {
+            "name": "cr616_dayssincelastrace",
+            "type": "number",
+            "sampleValue": "419",
+            "isNull": false
+          },
+          {
+            "name": "cr616_dayssincelastrace@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "419",
+            "isNull": false
+          },
+          {
+            "name": "cr616_doggrade",
+            "type": "string",
+            "sampleValue": "Maiden",
+            "isNull": false
+          },
+          {
+            "name": "cr616_failedtofinish",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cr616_failedtofinish@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cr616_finishtime",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr616_finishtime@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.00",
+            "isNull": false
+          },
+          {
+            "name": "cr616_greyhoundname",
+            "type": "string",
+            "sampleValue": "Always Brave",
+            "isNull": false
+          },
+          {
+            "name": "cr616_leftearbrand",
+            "type": "string",
+            "sampleValue": "NLDVR",
+            "isNull": false
+          },
+          {
+            "name": "cr616_margin",
+            "type": "number",
+            "sampleValue": "3.25",
+            "isNull": false
+          },
+          {
+            "name": "cr616_margin@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3.25",
+            "isNull": false
+          },
+          {
+            "name": "cr616_meetingdate",
+            "type": "string",
+            "sampleValue": "2024-07-01T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cr616_meetingdate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "7/1/2024 10:00 AM",
+            "isNull": false
+          },
+          {
+            "name": "cr616_ownername",
+            "type": "string",
+            "sampleValue": "David Smith",
+            "isNull": false
+          },
+          {
+            "name": "cr616_placement",
+            "type": "number",
+            "sampleValue": "5",
+            "isNull": false
+          },
+          {
+            "name": "cr616_placement@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5",
+            "isNull": false
+          },
+          {
+            "name": "cr616_prizemoney",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr616_prizemoney_base",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr616_racenumber",
+            "type": "number",
+            "sampleValue": "2",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racenumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racewithin2days",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cr616_racewithin2days@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cr616_rugnumber",
+            "type": "number",
+            "sampleValue": "3",
+            "isNull": false
+          },
+          {
+            "name": "cr616_rugnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3",
+            "isNull": false
+          },
+          {
+            "name": "cr616_sfcontestantid",
+            "type": "string",
+            "sampleValue": "aAKId0000000HvSOAU",
+            "isNull": false
+          },
+          {
+            "name": "cr616_status",
+            "type": "string",
+            "sampleValue": "Runner",
+            "isNull": false
+          },
+          {
+            "name": "cr616_totalnumberofwinds",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr616_totalnumberofwinds@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr616_trackheld",
+            "type": "string",
+            "sampleValue": "Goulburn",
+            "isNull": false
+          },
+          {
+            "name": "cr616_trainername",
+            "type": "string",
+            "sampleValue": "David Smith",
+            "isNull": false
+          },
+          {
+            "name": "cr616_weight",
+            "type": "number",
+            "sampleValue": "28.5",
+            "isNull": false
+          },
+          {
+            "name": "cr616_weight@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "28.50",
+            "isNull": false
+          },
+          {
+            "name": "createdon",
+            "type": "string",
+            "sampleValue": "2025-08-13T11:36:23Z",
+            "isNull": false
+          },
+          {
+            "name": "createdon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/13/2025 9:36 PM",
+            "isNull": false
+          },
+          {
+            "name": "exchangerate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "importsequencenumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "modifiedon",
+            "type": "string",
+            "sampleValue": "2025-08-13T11:36:23Z",
+            "isNull": false
+          },
+          {
+            "name": "modifiedon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/13/2025 9:36 PM",
+            "isNull": false
+          },
+          {
+            "name": "overriddencreatedon",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "statecode",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "statecode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "statuscode",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "statuscode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "utcconversiontimezonecode",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "versionnumber",
+            "type": "number",
+            "sampleValue": "3397966",
+            "isNull": false
+          },
+          {
+            "name": "versionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3,397,966",
+            "isNull": false
+          }
+        ]
+      }
+    ]
+  },
+  "Weather Data Production": {
+    "url": "https://org98489e5d.crm6.dynamics.com",
+    "apiEndpoint": "https://org98489e5d.crm6.dynamics.com/api/data/v9.1",
+    "tables": [
+      {
+        "displayName": "Weather Data",
+        "singularName": "cr4cc_weatherdata",
+        "logicalName": "cr4cc_weatherdatas",
+        "possiblePlurals": [
+          "cr4cc_weatherdatas",
+          "cr4cc_weatherdatases"
+        ],
+        "tableName": "cr4cc_weatherdatas",
+        "actualPluralForm": "cr4cc_weatherdatas",
+        "fieldCount": 315,
+        "fields": [
+          {
+            "name": "_createdby_value",
+            "type": "string",
+            "sampleValue": "fd179684-9e5d-f011-bec2-0022481146c8",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_createdonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_modifiedby_value",
+            "type": "string",
+            "sampleValue": "fd179684-9e5d-f011-bec2-0022481146c8",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_ownerid_value",
+            "type": "string",
+            "sampleValue": "fd179684-9e5d-f011-bec2-0022481146c8",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "ownerid",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value",
+            "type": "string",
+            "sampleValue": "0b119684-9e5d-f011-bec2-0022481146c8",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "owningbusinessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "businessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "org98489e5d",
+            "isNull": false
+          },
+          {
+            "name": "_owningteam_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_owninguser_value",
+            "type": "string",
+            "sampleValue": "fd179684-9e5d-f011-bec2-0022481146c8",
+            "isNull": false
+          },
+          {
+            "name": "_owninguser_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "@odata.etag",
+            "type": "string",
+            "sampleValue": "W/\"2918393\"",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_alert_level",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_app_uptime",
+            "type": "number",
+            "sampleValue": "1411758",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_app_uptime@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1,411,758",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_bar_absolute",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_bar_offset",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_bar_sea_level",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_bar_trend",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_battery_condition",
+            "type": "number",
+            "sampleValue": "2",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_condition@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_current",
+            "type": "number",
+            "sampleValue": "-0.001",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_current@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "-0.00100",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_cycle_count",
+            "type": "number",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_cycle_count@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_percent",
+            "type": "number",
+            "sampleValue": "100",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_percent@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "100",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_status",
+            "type": "number",
+            "sampleValue": "5",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_status_text",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_battery_status@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_temp",
+            "type": "number",
+            "sampleValue": "25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_temp@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_voltage",
+            "type": "number",
+            "sampleValue": "4309",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_battery_voltage@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "4,309",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_bgn",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_bootloader_version",
+            "type": "number",
+            "sampleValue": "131074",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_bootloader_version@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "131,074",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_cdd_day",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_cdd_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.00000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_charger_plugged",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_charger_plugged@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_clock_source",
+            "type": "number",
+            "sampleValue": "2",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_clock_source@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_comfort_index",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_connection_uptime",
+            "type": "number",
+            "sampleValue": "18861",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_connection_uptime@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "18,861",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_console_api_level",
+            "type": "number",
+            "sampleValue": "28",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_console_api_level@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "28",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_console_os_version",
+            "type": "string",
+            "sampleValue": "1.3.9",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_console_radio_version",
+            "type": "string",
+            "sampleValue": "10.3.12.106",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_console_sw_version",
+            "type": "string",
+            "sampleValue": "1.4.70",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_crc_errors_day",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_crc_errors_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_created_by",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_data_age_minutes",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_data_quality_score",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_database_kilobytes",
+            "type": "number",
+            "sampleValue": "38817",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_database_kilobytes@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "38,817",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_dew_point",
+            "type": "number",
+            "sampleValue": "56.4",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_dew_point_celsius",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_dew_point_celsius@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.00000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_dew_point_in",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_dew_point@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "56.40000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_display_summary",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_dns_type_used",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_et_day",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_et_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.00",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_et_month",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_et_month@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.00",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_et_year",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_et_year@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.00",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_free_mem",
+            "type": "number",
+            "sampleValue": "720580",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_free_mem@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "720,580",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_freq_error_current",
+            "type": "number",
+            "sampleValue": "9",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_freq_error_current@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "9",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_freq_error_total",
+            "type": "number",
+            "sampleValue": "149",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_freq_error_total@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "149",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_freq_index",
+            "type": "number",
+            "sampleValue": "14",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_freq_index@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "14",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_gnss_sip_tx_id",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_gnss_sip_tx_id@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_hdd_day",
+            "type": "number",
+            "sampleValue": "5.626",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_hdd_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5.62600",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_health_version",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_health_version@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_heat_index",
+            "type": "number",
+            "sampleValue": "60.3",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_heat_index_celsius",
+            "type": "number",
+            "sampleValue": "15.72222",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_heat_index_celsius@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "15.72222",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_heat_index_in",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_heat_index@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "60.30000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_hour_bucket",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_hum",
+            "type": "number",
+            "sampleValue": "87.7",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_hum_in",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_hum@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "87.7",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_import_batch_id",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_internal_free_space",
+            "type": "number",
+            "sampleValue": "2252165",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_internal_free_space@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2,252,165",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_ip_address_type",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_ip_v4_address",
+            "type": "string",
+            "sampleValue": "192.168.76.200",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_ip_v4_gateway",
+            "type": "string",
+            "sampleValue": "192.168.76.1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_ip_v4_netmask",
+            "type": "string",
+            "sampleValue": "255.255.255.0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_is_current_reading",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_is_current_reading@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_json_payload",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_last_packet_received_timestamp",
+            "type": "number",
+            "sampleValue": "1754278197",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_last_packet_received_timestamp@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1,754,278,197",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_link_uptime",
+            "type": "number",
+            "sampleValue": "1411754",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_link_uptime@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1,411,754",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_local_api_queries",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_mobile_summary",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_os_uptime",
+            "type": "number",
+            "sampleValue": "3020166",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_os_uptime@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3,020,166",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_missed_day",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_missed_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_missed_streak",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_missed_streak_hi_day",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_missed_streak_hi_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_missed_streak@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_received_day",
+            "type": "number",
+            "sampleValue": "18966",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_received_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "18,966",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_received_streak",
+            "type": "number",
+            "sampleValue": "28180",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_received_streak_hi_day",
+            "type": "number",
+            "sampleValue": "28180",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_received_streak_hi_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "28,180",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_packets_received_streak@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "28,180",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_pressure_hpa",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_pressure_hpa@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.00000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_pressure_trend_description",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_queue_kilobytes",
+            "type": "number",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_queue_kilobytes@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_clicks",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_in",
+            "type": "number",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_last_15_min_clicks",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_last_15_min_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_last_15_min_in",
+            "type": "number",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_last_15_min_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_last_15_min_mm",
+            "type": "number",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_last_15_min_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_mm",
+            "type": "number",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_hi_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_last_clicks",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_last_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_last_in",
+            "type": "number",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_last_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_last_mm",
+            "type": "number",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_rate_last_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_size",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_size@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_current_clicks",
+            "type": "number",
+            "sampleValue": "525",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_current_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "525.00000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_current_in",
+            "type": "number",
+            "sampleValue": "5.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_current_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5.25000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_current_mm",
+            "type": "number",
+            "sampleValue": "133.35",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_current_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "133.35000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_clicks",
+            "type": "number",
+            "sampleValue": "76",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "76",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_end_at",
+            "type": "number",
+            "sampleValue": "1753994017",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_end_at@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1,753,994,017",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_in",
+            "type": "number",
+            "sampleValue": "0.76",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.76000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_mm",
+            "type": "number",
+            "sampleValue": "19.304",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "19.30400",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_start_at",
+            "type": "number",
+            "sampleValue": "1753842762",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rain_storm_last_start_at@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1,753,842,762",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_day_clicks",
+            "type": "number",
+            "sampleValue": "5",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_day_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_day_in",
+            "type": "number",
+            "sampleValue": "0.05",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_day_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.05",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_day_mm",
+            "type": "number",
+            "sampleValue": "1.27",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_day_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1.27",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_15_min_clicks",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_15_min_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_15_min_in",
+            "type": "number",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_15_min_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_15_min_mm",
+            "type": "number",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_15_min_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_24_hr_clicks",
+            "type": "number",
+            "sampleValue": "34",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_24_hr_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "34",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_24_hr_in",
+            "type": "number",
+            "sampleValue": "0.34",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_24_hr_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.34",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_24_hr_mm",
+            "type": "number",
+            "sampleValue": "8.64",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_24_hr_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8.64",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_60_min_clicks",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_60_min_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_60_min_in",
+            "type": "number",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_60_min_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.01",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_60_min_mm",
+            "type": "number",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_last_60_min_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_month_clicks",
+            "type": "number",
+            "sampleValue": "525",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_month_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "525",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_month_in",
+            "type": "number",
+            "sampleValue": "5.25",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_month_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5.25000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_month_mm",
+            "type": "number",
+            "sampleValue": "133.35",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_month_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "133.35000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_status",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_rainfall_year_clicks",
+            "type": "number",
+            "sampleValue": "1640",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_year_clicks@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1,640",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_year_in",
+            "type": "number",
+            "sampleValue": "16.4",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_year_in@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "16.40000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_year_mm",
+            "type": "number",
+            "sampleValue": "416.56",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rainfall_year_mm@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "416.56000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_reception_day",
+            "type": "number",
+            "sampleValue": "100",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_reception_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "100",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_record_id",
+            "type": "string",
+            "sampleValue": "0ecf47fe-26d7-4bd7-b768-a001551b2b94",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_resyncs_day",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_resyncs_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rssi_last",
+            "type": "number",
+            "sampleValue": "-76",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rssi_last@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "-76",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rx_kilobytes",
+            "type": "number",
+            "sampleValue": "258850",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rx_kilobytes@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "258,850",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rx_state",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_rx_state@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_solar_energy_day",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_solar_energy_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_solar_panel_volt",
+            "type": "number",
+            "sampleValue": "2.362",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_solar_panel_volt@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2.36200",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_solar_rad",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_spars_rpm",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_spars_volt",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_station_health_status",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_station_id",
+            "type": "string",
+            "sampleValue": "210459",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_supercap_volt",
+            "type": "number",
+            "sampleValue": "2.497",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_supercap_volt@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2.49700",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_system_free_space",
+            "type": "number",
+            "sampleValue": "740962",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_system_free_space@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "740,962",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_temp",
+            "type": "number",
+            "sampleValue": "60.1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_temp_celsius",
+            "type": "number",
+            "sampleValue": "15.61",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_temp_celsius@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "15.61",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_temp_in",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_temp@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "60.10000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_thsw_index",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_thw_index",
+            "type": "number",
+            "sampleValue": "60.3",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_thw_index@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "60.30000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_track_name",
+            "type": "string",
+            "sampleValue": "Lithgow",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_trans_battery_flag",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_trans_battery_flag@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_trans_battery_volt",
+            "type": "number",
+            "sampleValue": "2.983",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_trans_battery_volt@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2.98300",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_ts",
+            "type": "number",
+            "sampleValue": "1754278200",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_ts@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1,754,278,200",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_tx_id",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_tx_id@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_tx_kilobytes",
+            "type": "number",
+            "sampleValue": "102572",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_tx_kilobytes@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "102,572",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_tz_offset",
+            "type": "number",
+            "sampleValue": "36000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_tz_offset@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "36,000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_uv_dose_day",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_uv_dose_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_uv_index",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_wbgt",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_wbgt_in",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_weather_icon",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_weatherdataid",
+            "type": "string",
+            "sampleValue": "4514140b-e470-f011-b4cd-000d3acc5ae2",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wet_bulb",
+            "type": "number",
+            "sampleValue": "57.9",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wet_bulb_in",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_wet_bulb@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "57.90000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wifi_rssi",
+            "type": "number",
+            "sampleValue": "-54",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wifi_rssi@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "-54",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_chill",
+            "type": "number",
+            "sampleValue": "60.1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_chill@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "60.1",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_description",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_wind_dir_at_hi_speed_last_10_min",
+            "type": "number",
+            "sampleValue": "79",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_at_hi_speed_last_10_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "79",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_at_hi_speed_last_2_min",
+            "type": "number",
+            "sampleValue": "164",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_at_hi_speed_last_2_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "164",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_last",
+            "type": "number",
+            "sampleValue": "195",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_last@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "195",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_scalar_avg_last_1_min",
+            "type": "number",
+            "sampleValue": "130",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_scalar_avg_last_1_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "130",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_scalar_avg_last_10_min",
+            "type": "number",
+            "sampleValue": "136",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_scalar_avg_last_10_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "136",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_scalar_avg_last_2_min",
+            "type": "number",
+            "sampleValue": "164",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_dir_scalar_avg_last_2_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "164",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_direction_cardinal",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cr4cc_wind_run_day",
+            "type": "number",
+            "sampleValue": "16.52",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_run_day@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "16.52000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_avg_last_1_min",
+            "type": "number",
+            "sampleValue": "1.86",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_avg_last_1_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1.86000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_avg_last_10_min",
+            "type": "number",
+            "sampleValue": "2.32",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_avg_last_10_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2.32000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_avg_last_2_min",
+            "type": "number",
+            "sampleValue": "1.73",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_avg_last_2_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1.73000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_hi_kmh",
+            "type": "number",
+            "sampleValue": "5.43957",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_hi_kmh@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5.43957",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_hi_last_10_min",
+            "type": "number",
+            "sampleValue": "6.13",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_hi_last_10_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "6.13000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_hi_last_2_min",
+            "type": "number",
+            "sampleValue": "3.38",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_hi_last_2_min@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3.38000",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_kmh",
+            "type": "number",
+            "sampleValue": "2.51",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_kmh@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2.51",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_last",
+            "type": "number",
+            "sampleValue": "1.56",
+            "isNull": false
+          },
+          {
+            "name": "cr4cc_wind_speed_last@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1.56000",
+            "isNull": false
+          },
+          {
+            "name": "createdon",
+            "type": "string",
+            "sampleValue": "2025-08-04T03:35:25Z",
+            "isNull": false
+          },
+          {
+            "name": "createdon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/4/2025 1:35 PM",
+            "isNull": false
+          },
+          {
+            "name": "importsequencenumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "modifiedon",
+            "type": "string",
+            "sampleValue": "2025-08-04T03:35:25Z",
+            "isNull": false
+          },
+          {
+            "name": "modifiedon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/4/2025 1:35 PM",
+            "isNull": false
+          },
+          {
+            "name": "overriddencreatedon",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "statecode",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "statecode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "statuscode",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "statuscode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "utcconversiontimezonecode",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "versionnumber",
+            "type": "number",
+            "sampleValue": "2918393",
+            "isNull": false
+          },
+          {
+            "name": "versionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2,918,393",
+            "isNull": false
+          }
+        ]
+      }
+    ]
+  },
+  "Injury Data": {
+    "url": "https://orgfc8a11f1.crm6.dynamics.com",
+    "apiEndpoint": "https://orgfc8a11f1.crm6.dynamics.com/api/data/v9.1",
+    "tables": [
+      {
+        "displayName": "Injury Data",
+        "singularName": "cra5e_injurydata",
+        "logicalName": "cra5e_injurydatas",
+        "possiblePlurals": [
+          "cra5e_injurydatas",
+          "cra5e_injurydatases"
+        ],
+        "tableName": "cra5e_injurydatas",
+        "actualPluralForm": "cra5e_injurydatas",
+        "fieldCount": 74,
+        "fields": [
+          {
+            "name": "_createdby_value",
+            "type": "string",
+            "sampleValue": "83d53be2-3a73-f011-b4cc-002248108e82",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "# SharePoint Colab Access",
+            "isNull": false
+          },
+          {
+            "name": "_createdonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_modifiedby_value",
+            "type": "string",
+            "sampleValue": "83d53be2-3a73-f011-b4cc-002248108e82",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "# SharePoint Colab Access",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_ownerid_value",
+            "type": "string",
+            "sampleValue": "83d53be2-3a73-f011-b4cc-002248108e82",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "ownerid",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "# SharePoint Colab Access",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value",
+            "type": "string",
+            "sampleValue": "2648d078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "owningbusinessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "businessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "orgfc8a11f1",
+            "isNull": false
+          },
+          {
+            "name": "_owningteam_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_owninguser_value",
+            "type": "string",
+            "sampleValue": "83d53be2-3a73-f011-b4cc-002248108e82",
+            "isNull": false
+          },
+          {
+            "name": "_owninguser_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "@odata.etag",
+            "type": "string",
+            "sampleValue": "W/\"3137208\"",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_ageofdog",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_datechecked",
+            "type": "string",
+            "sampleValue": "2025-07-27T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_datechecked@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "7/27/2025 10:00 AM",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_determinedserious",
+            "type": "string",
+            "sampleValue": "Yes",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_distancetype",
+            "type": "string",
+            "sampleValue": "Short",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_doggender",
+            "type": "string",
+            "sampleValue": "Male",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_doggrade",
+            "type": "string",
+            "sampleValue": "Grade 5",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_examreason",
+            "type": "string",
+            "sampleValue": "Steward Requested",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_examstage",
+            "type": "string",
+            "sampleValue": "Post-Race",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_failedtofinish",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_followupinformation",
+            "type": "string",
+            "sampleValue": "Follow up by Kasia Hunter:\r\n\r\nFollowing stabilisat",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_greyhoundname",
+            "type": "string",
+            "sampleValue": "Phantom Bill",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_injurycategory",
+            "type": "string",
+            "sampleValue": "Cat D",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_injurydataid",
+            "type": "string",
+            "sampleValue": "d4473546-3d73-f011-b4cc-002248108e82",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_injuryreport",
+            "type": "string",
+            "sampleValue": "Phantom Bill - 27 July 2025",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_injurystate",
+            "type": "string",
+            "sampleValue": "Injured",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_microchip",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_microchipnumber",
+            "type": "string",
+            "sampleValue": "956000013032361",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_numberofcontestants",
+            "type": "number",
+            "sampleValue": "7",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_numberofcontestants@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "7",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_placement",
+            "type": "number",
+            "sampleValue": "350",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_placement@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "350",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racedate",
+            "type": "string",
+            "sampleValue": "2025-07-27T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racedate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "7/27/2025 10:00 AM",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racedistance",
+            "type": "number",
+            "sampleValue": "350",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racedistance@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "350",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racenumber",
+            "type": "number",
+            "sampleValue": "3",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racenumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_runbox",
+            "type": "number",
+            "sampleValue": "6",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_runbox@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "6",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_runstage",
+            "type": "string",
+            "sampleValue": "Turn into home straight (1st time)",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sfcontestantnumber",
+            "type": "string",
+            "sampleValue": "C-0001318809",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_standdowndays",
+            "type": "number",
+            "sampleValue": "60",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_standdowndays@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "60",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_stewartcomment",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_trackname",
+            "type": "string",
+            "sampleValue": "Grafton",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_traineratexam",
+            "type": "string",
+            "sampleValue": "William Gilbert",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_videolink",
+            "type": "string",
+            "sampleValue": "https://www.thedogs.com.au/racing/grafton/2025-07-",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_whelpeddate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "createdon",
+            "type": "string",
+            "sampleValue": "2025-08-07T03:19:07Z",
+            "isNull": false
+          },
+          {
+            "name": "createdon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/7/2025 1:19 PM",
+            "isNull": false
+          },
+          {
+            "name": "importsequencenumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "modifiedon",
+            "type": "string",
+            "sampleValue": "2025-08-07T04:03:45Z",
+            "isNull": false
+          },
+          {
+            "name": "modifiedon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/7/2025 2:03 PM",
+            "isNull": false
+          },
+          {
+            "name": "overriddencreatedon",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "statecode",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "statecode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "statuscode",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "statuscode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber",
+            "type": "number",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "utcconversiontimezonecode",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "versionnumber",
+            "type": "number",
+            "sampleValue": "3137208",
+            "isNull": false
+          },
+          {
+            "name": "versionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3,137,208",
+            "isNull": false
+          }
+        ]
+      },
+      {
+        "displayName": "Injuries",
+        "singularName": "cr4cc_injury",
+        "logicalName": "cr4cc_injuries",
+        "possiblePlurals": [
+          "cr4cc_injuries",
+          "cr4cc_injurieses"
+        ],
+        "tableName": "cr4cc_injuries",
+        "triedPlurals": [
+          "cr4cc_injuries",
+          "cr4cc_injurieses"
+        ],
+        "error": "API request failed with status 404: {\"error\":{\"code\":\"0x80060888\",\"message\":\"Resource not found for the segment 'cr4cc_injurieses'.\"}}",
+        "fields": []
+      },
+      {
+        "displayName": "Greyhound",
+        "singularName": "cra5e_greyhound",
+        "logicalName": "cra5e_greyhounds",
+        "possiblePlurals": [
+          "cra5e_greyhounds",
+          "cra5e_greyhoundses"
+        ],
+        "tableName": "cra5e_greyhounds",
+        "actualPluralForm": "cra5e_greyhounds",
+        "fieldCount": 165,
+        "fields": [
+          {
+            "name": "_createdby_value",
+            "type": "string",
+            "sampleValue": "184fd078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_createdonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_modifiedby_value",
+            "type": "string",
+            "sampleValue": "184fd078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_ownerid_value",
+            "type": "string",
+            "sampleValue": "184fd078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "ownerid",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value",
+            "type": "string",
+            "sampleValue": "2648d078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "owningbusinessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "businessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "orgfc8a11f1",
+            "isNull": false
+          },
+          {
+            "name": "_owningteam_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_owninguser_value",
+            "type": "string",
+            "sampleValue": "184fd078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_owninguser_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value",
+            "type": "string",
+            "sampleValue": "a51bc882-1f6d-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "transactioncurrencyid",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "transactioncurrency",
+            "isNull": false
+          },
+          {
+            "name": "_transactioncurrencyid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Australian Dollar",
+            "isNull": false
+          },
+          {
+            "name": "@odata.etag",
+            "type": "string",
+            "sampleValue": "W/\"3313342\"",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_activelease",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_activelease@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_activity",
+            "type": "string",
+            "sampleValue": "Training",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_age",
+            "type": "number",
+            "sampleValue": "49",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_age@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "49",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_breedingexemption",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_breedingexemption@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_breedingexemptionvet",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_breedingregistrationdate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_breedingstatus",
+            "type": "string",
+            "sampleValue": "Not Registered",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_breedingtype",
+            "type": "string",
+            "sampleValue": "Frozen Semen Insemination",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_c5vaccinationdate",
+            "type": "string",
+            "sampleValue": "2024-09-19T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_c5vaccinationdate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "9/19/2024",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_c5valid",
+            "type": "boolean",
+            "sampleValue": "true",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_c5valid@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Yes",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_certificatedate",
+            "type": "string",
+            "sampleValue": "2023-03-09T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_certificatedate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3/9/2023",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_certificatenumber",
+            "type": "string",
+            "sampleValue": "23551290",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_checkinvalidation",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_checkinvalidation@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_clearedracedate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_colour",
+            "type": "string",
+            "sampleValue": "Red & Fawn",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_colourcode",
+            "type": "string",
+            "sampleValue": "RF",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_country",
+            "type": "string",
+            "sampleValue": "\"",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_dam",
+            "type": "string",
+            "sampleValue": "02i6F00000EJLBxQAP",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_dayssincecheckin",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_dayssincecheckin@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_daysuntilcheckindue",
+            "type": "number",
+            "sampleValue": "183",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_daysuntilcheckindue@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "183",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_deceaseddate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_desexed",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_desexed@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_dnaexemptiondate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_dnanumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_dnasampledate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_earbrandkey",
+            "type": "string",
+            "sampleValue": "NKDYF",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_escapecheckin",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_escapecheckin@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_externalgender",
+            "type": "string",
+            "sampleValue": "Female",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_firstracedate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_gender",
+            "type": "string",
+            "sampleValue": "Bitch/Female",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_gendercode",
+            "type": "string",
+            "sampleValue": "Bitch",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_greyhoundid",
+            "type": "string",
+            "sampleValue": "08ee0a08-7879-f011-b4cc-002248108e82",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_greyhoundowner",
+            "type": "string",
+            "sampleValue": "Alan Tutt",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_greyhoundtrainer",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_gwicnumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_healthfitnessdate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_healthfitnessvalid",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_healthfitnessvalid@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_identificationcombo",
+            "type": "string",
+            "sampleValue": "Sandave Jeanie - NKDYF - 956000013022817",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_installdate",
+            "type": "string",
+            "sampleValue": "2021-07-21T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_installdate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "7/21/2021",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_intransfer",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_intransfer@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_isbreeding",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_isbreeding@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_l135penalty",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_l135penalty@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_lastweight",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_latename",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_latestcheckin",
+            "type": "string",
+            "sampleValue": "2025-08-15T01:34:46Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_latestcheckin@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/15/2025",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_latesttrainertransferdate",
+            "type": "string",
+            "sampleValue": "2025-05-30T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_latesttrainertransferdate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5/30/2025",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_latesttransferdate",
+            "type": "string",
+            "sampleValue": "2025-05-30T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_latesttransferdate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "5/30/2025",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_leftearbrand",
+            "type": "string",
+            "sampleValue": "NKDYF",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_locationlatitude",
+            "type": "number",
+            "sampleValue": "-29.53",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_locationlatitude@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "-29.53",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_locationlongitude",
+            "type": "number",
+            "sampleValue": "152.92",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_locationlongitude@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "152.92",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_locationstartdate",
+            "type": "string",
+            "sampleValue": "2025-01-07T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_locationstartdate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1/7/2025",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_microchip",
+            "type": "string",
+            "sampleValue": "956000013022817",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_microchip2",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_microchip2date",
+            "type": "string",
+            "sampleValue": "2022-11-11T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_microchip2date@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "11/11/2022",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_microchipdate",
+            "type": "string",
+            "sampleValue": "2022-11-11T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_microchipdate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "11/11/2022",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_monthcheckin",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_monthcheckin@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_name",
+            "type": "string",
+            "sampleValue": "Sandave Jeanie",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_namerequested",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_namerequested@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_namereuseddate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_nextcheckindue",
+            "type": "string",
+            "sampleValue": "2026-02-14T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_nextcheckindue@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "2/14/2026",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_ownercalc",
+            "type": "string",
+            "sampleValue": "Alan Tutt",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_owneridnumber",
+            "type": "string",
+            "sampleValue": "227869",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_ownername",
+            "type": "string",
+            "sampleValue": "Alan Tutt",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_ownerstate",
+            "type": "string",
+            "sampleValue": "NSW",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_pannus",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_pannus@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_previoustrainertransfer",
+            "type": "string",
+            "sampleValue": "2024-12-06T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_previoustrainertransfer@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "12/6/2024",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_prizemoney",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_prizemoney_base",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_prizemoney_base@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$0.00",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_prizemoney@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "$0.00",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_proofoflife2024",
+            "type": "number",
+            "sampleValue": "10",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_proofoflife2024@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "10",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_rehomeddate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_retirementdate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_rightearbrand",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_sfid",
+            "type": "string",
+            "sampleValue": "02i2s000000hRL2AAM",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_showonmap",
+            "type": "boolean",
+            "sampleValue": "true",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_showonmap@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Yes",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sire",
+            "type": "string",
+            "sampleValue": "02i6F00000EJO5WQAX",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sixmonthcheckin",
+            "type": "boolean",
+            "sampleValue": "true",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sixmonthcheckin@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Yes",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_statebred",
+            "type": "string",
+            "sampleValue": "NSW",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_stateregistered",
+            "type": "string",
+            "sampleValue": "NSW",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_status",
+            "type": "string",
+            "sampleValue": "Racing",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_statuscode",
+            "type": "string",
+            "sampleValue": "racing",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_studsire",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_studsire@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_traineridnumber",
+            "type": "string",
+            "sampleValue": "227869",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_trainername",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_trainerstate",
+            "type": "string",
+            "sampleValue": "NSW",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_trainertransferpause",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_trainertransferpause@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_validcheckin",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_validcheckin@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_whelpeddayofweek",
+            "type": "string",
+            "sampleValue": "Wednesday",
+            "isNull": false
+          },
+          {
+            "name": "createdon",
+            "type": "string",
+            "sampleValue": "2025-08-15T01:34:49Z",
+            "isNull": false
+          },
+          {
+            "name": "createdon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/15/2025 11:34 AM",
+            "isNull": false
+          },
+          {
+            "name": "exchangerate",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "exchangerate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "1.000000000000",
+            "isNull": false
+          },
+          {
+            "name": "importsequencenumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "modifiedon",
+            "type": "string",
+            "sampleValue": "2025-08-15T01:34:49Z",
+            "isNull": false
+          },
+          {
+            "name": "modifiedon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/15/2025 11:34 AM",
+            "isNull": false
+          },
+          {
+            "name": "overriddencreatedon",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "statecode",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "statecode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "statuscode",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "statuscode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber",
+            "type": "number",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "utcconversiontimezonecode",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "versionnumber",
+            "type": "number",
+            "sampleValue": "3313342",
+            "isNull": false
+          },
+          {
+            "name": "versionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3,313,342",
+            "isNull": false
+          }
+        ]
+      },
+      {
+        "displayName": "Health Check",
+        "singularName": "cra5e_heathcheck",
+        "logicalName": "cra5e_heathchecks",
+        "possiblePlurals": [
+          "cra5e_heathchecks",
+          "cra5e_heathcheckses"
+        ],
+        "tableName": "cra5e_heathchecks",
+        "actualPluralForm": "cra5e_heathchecks",
+        "fieldCount": 110,
+        "fields": [
+          {
+            "name": "_cra5e_greyhound_value",
+            "type": "string",
+            "sampleValue": "3cb90660-9079-f011-b4cc-7c1e522a939b",
+            "isNull": false
+          },
+          {
+            "name": "_cra5e_greyhound_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "cra5e_Greyhound",
+            "isNull": false
+          },
+          {
+            "name": "_cra5e_greyhound_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "cra5e_greyhound",
+            "isNull": false
+          },
+          {
+            "name": "_cra5e_greyhound_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "02i2s000000MsXEAA0",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value",
+            "type": "string",
+            "sampleValue": "184fd078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_createdby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_createdonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_modifiedby_value",
+            "type": "string",
+            "sampleValue": "184fd078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedby_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_modifiedonbehalfby_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_ownerid_value",
+            "type": "string",
+            "sampleValue": "184fd078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "ownerid",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "_ownerid_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Kevin Sweet",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value",
+            "type": "string",
+            "sampleValue": "2648d078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.associatednavigationproperty",
+            "type": "string",
+            "sampleValue": "owningbusinessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "businessunit",
+            "isNull": false
+          },
+          {
+            "name": "_owningbusinessunit_value@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "orgfc8a11f1",
+            "isNull": false
+          },
+          {
+            "name": "_owningteam_value",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "_owninguser_value",
+            "type": "string",
+            "sampleValue": "184fd078-ec6c-f011-b4cc-002248958f69",
+            "isNull": false
+          },
+          {
+            "name": "_owninguser_value@Microsoft.Dynamics.CRM.lookuplogicalname",
+            "type": "string",
+            "sampleValue": "systemuser",
+            "isNull": false
+          },
+          {
+            "name": "@odata.etag",
+            "type": "string",
+            "sampleValue": "W/\"3321570\"",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_ageatexam",
+            "type": "number",
+            "sampleValue": "25",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_ageatexam@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "25",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_boxnumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_cardiovascularissue",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_cardiovascularissue@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_datechecked",
+            "type": "string",
+            "sampleValue": "2024-07-04T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_datechecked@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "7/4/2024 10:00 AM",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_dehydration",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_dehydration@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_desexingdate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_determinedaseriousinjury",
+            "type": "string",
+            "sampleValue": "Serious Injury",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_died",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_died@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_distance",
+            "type": "number",
+            "sampleValue": "411",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_distance@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "411",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_euthanased",
+            "type": "boolean",
+            "sampleValue": "true",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_euthanased@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Yes",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_examiningvet",
+            "type": "string",
+            "sampleValue": "0052s000002HKA4AAO",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_exhaustion",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_exhaustion@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_followupinformation",
+            "type": "string",
+            "sampleValue": "Euthanased by private vet.\r\nFollowing stabilisatio",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_gastrointestinalissue",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_gastrointestinalissue@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_healthcheckauthority",
+            "type": "string",
+            "sampleValue": "NSW",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_healthcheckstatus",
+            "type": "string",
+            "sampleValue": "Complete",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_heathcheckid",
+            "type": "string",
+            "sampleValue": "b1bc19a8-9279-f011-b4cc-002248108e82",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_heatstress",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_heatstress@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_injured",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_injured@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_injurycategory",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_injuryclassification",
+            "type": "string",
+            "sampleValue": "Cat D",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_lame",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_medicationadministered",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_medicationadministered@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_medications",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_musculoskeletalissue",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_musculoskeletalissue@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_name",
+            "type": "string",
+            "sampleValue": "HC-00265192",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_neurologicalissue",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_neurologicalissue@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_poorperformance",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_poorperformance@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racenumber",
+            "type": "number",
+            "sampleValue": "8",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racenumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racetype",
+            "type": "string",
+            "sampleValue": "Race",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racingincident",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_racingincident@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_respiratoryissue",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_respiratoryissue@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sedatives",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sedatives@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sfid",
+            "type": "string",
+            "sampleValue": "a8nId00000004zLIAQ",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_standdowndays",
+            "type": "number",
+            "sampleValue": "90",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_standdowndays@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "90",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_standdowndaysenddate",
+            "type": "string",
+            "sampleValue": "2024-10-02T00:00:00Z",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_standdowndaysenddate@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "10/2/2024",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sutures",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_sutures@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_trackname",
+            "type": "string",
+            "sampleValue": "Casino",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_treatmentinformation",
+            "type": "string",
+            "sampleValue": "1.3mL Methadone IV + 0.5mL Medetomidine IV on arri",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_type",
+            "type": "string",
+            "sampleValue": "Race Meeting Exam",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_vaccinationdate",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_vetclearancerequired",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_vetclearancerequired@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_veterinarianname",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "cra5e_veterinaryclearance",
+            "type": "boolean",
+            "sampleValue": "false",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_veterinaryclearance@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "No",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_wasfollowedup",
+            "type": "boolean",
+            "sampleValue": "true",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_wasfollowedup@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Yes",
+            "isNull": false
+          },
+          {
+            "name": "cra5e_weightkg",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "createdon",
+            "type": "string",
+            "sampleValue": "2025-08-15T04:45:25Z",
+            "isNull": false
+          },
+          {
+            "name": "createdon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/15/2025 2:45 PM",
+            "isNull": false
+          },
+          {
+            "name": "importsequencenumber",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "modifiedon",
+            "type": "string",
+            "sampleValue": "2025-08-15T04:45:25Z",
+            "isNull": false
+          },
+          {
+            "name": "modifiedon@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "8/15/2025 2:45 PM",
+            "isNull": false
+          },
+          {
+            "name": "overriddencreatedon",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "statecode",
+            "type": "number",
+            "sampleValue": "0",
+            "isNull": false
+          },
+          {
+            "name": "statecode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "statuscode",
+            "type": "number",
+            "sampleValue": "1",
+            "isNull": false
+          },
+          {
+            "name": "statuscode@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "Active",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber",
+            "type": "number",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "timezoneruleversionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "4",
+            "isNull": false
+          },
+          {
+            "name": "utcconversiontimezonecode",
+            "type": "object",
+            "sampleValue": null,
+            "isNull": true
+          },
+          {
+            "name": "versionnumber",
+            "type": "number",
+            "sampleValue": "3321570",
+            "isNull": false
+          },
+          {
+            "name": "versionnumber@OData.Community.Display.V1.FormattedValue",
+            "type": "string",
+            "sampleValue": "3,321,570",
+            "isNull": false
+          }
+        ]
+      }
+    ]
+  },
+  "GAP (Greyhound Adoption Program)": {
+    "url": "https://org16bdb053.crm6.dynamics.com",
+    "apiEndpoint": "https://org16bdb053.crm6.dynamics.com/api/data/v9.1",
+    "tables": []
+  }
+}

@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import styles from './RaceDataExplorer.module.scss';
 import { IRaceDataExplorerProps } from './IRaceDataExplorerProps';
 import { RaceDataService } from '../../../services/RaceDataService';
-import { IMeeting, IRace, IContestant, ISearchResults } from '../../../models/IRaceData';
+import { IMeeting, IRace, IContestant, IGreyhound, IHealthCheck, ISearchResults } from '../../../models/IRaceData';
 import { DataGrid, DataGridColumn } from '../../../enterprise-ui/components/DataDisplay/DataGrid';
 import { StatusBadge } from '../../../enterprise-ui/components/DataDisplay/StatusIndicator/StatusBadge';
 import { Breadcrumb } from '../../../enterprise-ui/components/Navigation/Breadcrumb/Breadcrumb';
@@ -50,11 +50,26 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   const [showRaceModal, setShowRaceModal] = useState(false);
   const [selectedContestant, setSelectedContestant] = useState<IContestant | null>(null);
   const [showContestantModal, setShowContestantModal] = useState(false);
+  const [selectedGreyhound, setSelectedGreyhound] = useState<IGreyhound | null>(null);
+  const [showGreyhoundModal, setShowGreyhoundModal] = useState(false);
+  const [selectedHealthCheck, setSelectedHealthCheck] = useState<IHealthCheck | null>(null);
+  const [showHealthCheckModal, setShowHealthCheckModal] = useState(false);
+  const [greyhoundHealthChecks, setGreyhoundHealthChecks] = useState<IHealthCheck[]>([]);
+  const [greyhoundInjuries, setGreyhoundInjuries] = useState<Map<string, boolean>>(new Map());
+  const [greyhoundMatches, setGreyhoundMatches] = useState<Map<string, IGreyhound>>(new Map());
+  const [parentGreyhounds, setParentGreyhounds] = useState<Map<string, IGreyhound>>(new Map());
+  const [greyhoundHistory, setGreyhoundHistory] = useState<IGreyhound[]>([]);
   
   // Filter states
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [selectedTrack, setSelectedTrack] = useState<string>('');
+  
+  // Injury filter states
+  const [showInjuryFilter, setShowInjuryFilter] = useState(false);
+  const [selectedInjuryCategories, setSelectedInjuryCategories] = useState<string[]>(['Cat D', 'Cat E']);
+  const [meetingInjurySummaries, setMeetingInjurySummaries] = useState<Map<string, {total: number; byCategory: Record<string, number>}>>(new Map());
+  const [raceInjurySummaries, setRaceInjurySummaries] = useState<Map<string, number>>(new Map());
   
   // Helper function to render placement with medal style
   const renderPlacement = (placement: number | string | null | undefined) => {
@@ -82,22 +97,61 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   const loadMeetings = useCallback(async () => {
     if (!dataService) return;
     
+    console.log('loadMeetings called - showInjuryFilter:', showInjuryFilter, 'categories:', selectedInjuryCategories);
+    
     setLoading(true);
     setError('');
     
     try {
-      const data = await dataService.getMeetings({
-        dateFrom,
-        dateTo,
-        track: selectedTrack
-      });
+      let data: IMeeting[];
+      
+      if (showInjuryFilter) {
+        console.log('Loading meetings with injuries, categories:', selectedInjuryCategories);
+        // Load only meetings with injuries in selected categories
+        data = await dataService.getMeetingsWithInjuries(selectedInjuryCategories);
+        
+        // Also apply regular filters if set
+        if (dateFrom) {
+          data = data.filter(m => new Date(m.cr4cc_meetingdate) >= dateFrom);
+        }
+        if (dateTo) {
+          data = data.filter(m => new Date(m.cr4cc_meetingdate) <= dateTo);
+        }
+        if (selectedTrack) {
+          data = data.filter(m => m.cr4cc_trackname === selectedTrack);
+        }
+        
+        // Load injury summaries for each meeting
+        const summaries = new Map<string, {total: number; byCategory: Record<string, number>}>();
+        for (const meeting of data) {
+          if (meeting.cr4cc_trackname) {
+            const summary = await dataService.getInjurySummaryForMeeting(
+              meeting.cr4cc_trackname,
+              meeting.cr4cc_meetingdate
+            );
+            summaries.set(meeting.cr4cc_racemeetingid, summary);
+          }
+        }
+        setMeetingInjurySummaries(summaries);
+      } else {
+        // Regular meeting load
+        data = await dataService.getMeetings({
+          dateFrom,
+          dateTo,
+          track: selectedTrack
+        });
+        setMeetingInjurySummaries(new Map());
+      }
+      
+      console.log('Setting meetings data:', data.length, 'meetings');
       setMeetings(data);
     } catch (err) {
+      console.error('Error loading meetings:', err);
       setError(`Failed to load meetings: ${err}`);
     } finally {
       setLoading(false);
     }
-  }, [dataService, dateFrom, dateTo, selectedTrack]);
+  }, [dataService, dateFrom, dateTo, selectedTrack, showInjuryFilter, selectedInjuryCategories]);
 
   // Load races for a meeting
   const loadRaces = useCallback(async (meeting: IMeeting) => {
@@ -110,12 +164,30 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       const data = await dataService.getRacesForMeeting(meeting.cr4cc_racemeetingid);
       setRaces(data);
       setViewState({ type: 'races', meeting });
+      
+      // Load injury information for each race if injury filter is active
+      if (showInjuryFilter && meeting.cr4cc_trackname) {
+        const raceSummaries = new Map<string, number>();
+        for (const race of data) {
+          const injuries = await dataService.getInjuriesForRace(
+            meeting.cr4cc_trackname,
+            meeting.cr4cc_meetingdate,
+            race.cr616_racenumber
+          );
+          if (injuries.length > 0) {
+            raceSummaries.set(race.cr616_racesid, injuries.length);
+          }
+        }
+        setRaceInjurySummaries(raceSummaries);
+      } else {
+        setRaceInjurySummaries(new Map());
+      }
     } catch (err) {
       setError(`Failed to load races: ${err}`);
     } finally {
       setLoading(false);
     }
-  }, [dataService]);
+  }, [dataService, showInjuryFilter]);
 
   // Load contestants for a race
   const loadContestants = useCallback(async (race: IRace) => {
@@ -128,6 +200,29 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       const data = await dataService.getContestantsForRace(race.cr616_racesid);
       setContestants(data);
       setViewState({ type: 'contestants', meeting: viewState.meeting, race });
+      
+      // Check for greyhounds and injuries for each contestant
+      const injuryMap = new Map<string, boolean>();
+      const matchMap = new Map<string, IGreyhound>();
+      for (const contestant of data) {
+        if (contestant.cr616_greyhoundname) {
+          try {
+            const greyhound = await dataService.getGreyhoundByName(
+              contestant.cr616_greyhoundname,
+              contestant.cr616_leftearbrand
+            );
+            if (greyhound) {
+              matchMap.set(contestant.cr616_contestantsid, greyhound);
+              const hasInjury = await dataService.hasInjuries(greyhound.cra5e_greyhoundid);
+              injuryMap.set(contestant.cr616_contestantsid, hasInjury);
+            }
+          } catch (error) {
+            console.error('Error checking greyhound for', contestant.cr616_greyhoundname, error);
+          }
+        }
+      }
+      setGreyhoundMatches(matchMap);
+      setGreyhoundInjuries(injuryMap);
     } catch (err) {
       setError(`Failed to load contestants: ${err}`);
     } finally {
@@ -248,9 +343,107 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   }, []);
 
   // Show contestant info
-  const showContestantInfo = useCallback((contestant: IContestant) => {
+  const showContestantInfo = useCallback(async (contestant: IContestant) => {
     setSelectedContestant(contestant);
     setShowContestantModal(true);
+    
+    // Try to fetch greyhound information
+    if (contestant.cr616_greyhoundname && dataService) {
+      try {
+        const greyhound = await dataService.getGreyhoundByName(
+          contestant.cr616_greyhoundname,
+          contestant.cr616_leftearbrand
+        );
+        if (greyhound) {
+          setSelectedGreyhound(greyhound);
+          // Check for injuries
+          const hasInjury = await dataService.hasInjuries(greyhound.cra5e_greyhoundid);
+          setGreyhoundInjuries(new Map([[greyhound.cra5e_greyhoundid, hasInjury]]));
+        }
+      } catch (error) {
+        console.error('Error fetching greyhound info:', error);
+      }
+    }
+  }, [dataService]);
+  
+  // Show greyhound details
+  const showGreyhoundInfo = useCallback(async (greyhound: IGreyhound, addToHistory: boolean = true) => {
+    setShowGreyhoundModal(true);
+    setSelectedGreyhound(greyhound);
+    
+    // Add to history if navigating to parent
+    if (addToHistory && selectedGreyhound) {
+      setGreyhoundHistory(prev => [...prev, selectedGreyhound]);
+    }
+    
+    // Fetch health checks and check for parents
+    if (dataService) {
+      try {
+        // Fetch health checks
+        const healthChecks = await dataService.getHealthChecksForGreyhound(greyhound.cra5e_greyhoundid);
+        setGreyhoundHealthChecks(healthChecks);
+        
+        // Check if sire exists in database
+        if (greyhound.cra5e_sire && !parentGreyhounds.has(greyhound.cra5e_sire)) {
+          const sireGreyhound = await dataService.getGreyhoundBySireOrDam(greyhound.cra5e_sire);
+          if (sireGreyhound) {
+            setParentGreyhounds(prev => new Map(prev).set(greyhound.cra5e_sire!, sireGreyhound));
+          }
+        }
+        
+        // Check if dam exists in database
+        if (greyhound.cra5e_dam && !parentGreyhounds.has(greyhound.cra5e_dam)) {
+          const damGreyhound = await dataService.getGreyhoundBySireOrDam(greyhound.cra5e_dam);
+          if (damGreyhound) {
+            setParentGreyhounds(prev => new Map(prev).set(greyhound.cra5e_dam!, damGreyhound));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching greyhound data:', error);
+      }
+    }
+  }, [dataService, parentGreyhounds, selectedGreyhound]);
+  
+  // Show health check details
+  const showHealthCheckInfo = useCallback(async (healthCheck: IHealthCheck) => {
+    setSelectedHealthCheck(healthCheck);
+    setShowHealthCheckModal(true);
+    
+    // If there's a race number and track, try to fetch the race to get steward comments
+    if (healthCheck.cra5e_racenumber && healthCheck.cra5e_trackname && healthCheck.cra5e_datechecked && dataService) {
+      try {
+        // Find the meeting for this date and track
+        const meetings = await dataService.getMeetings({
+          track: healthCheck.cra5e_trackname,
+          dateFrom: new Date(healthCheck.cra5e_datechecked),
+          dateTo: new Date(healthCheck.cra5e_datechecked)
+        });
+        
+        if (meetings.length > 0) {
+          // Get races for the meeting
+          const races = await dataService.getRacesForMeeting(meetings[0].cr4cc_racemeetingid);
+          // Find the specific race
+          const race = races.find(r => r.cr616_racenumber === healthCheck.cra5e_racenumber);
+          if (race && race.cr616_stewardracecomment) {
+            // Store the steward comment in the health check object for display
+            (healthCheck as any).raceStewardComment = race.cr616_stewardracecomment;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching race steward comments:', error);
+      }
+    }
+  }, [dataService]);
+  
+  // Close modals
+  const closeGreyhoundModal = useCallback(() => {
+    setShowGreyhoundModal(false);
+    setGreyhoundHealthChecks([]);
+    setGreyhoundHistory([]);
+  }, []);
+  
+  const closeHealthCheckModal = useCallback(() => {
+    setShowHealthCheckModal(false);
   }, []);
 
   // Column definitions for meetings
@@ -266,7 +459,54 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       key: 'cr4cc_trackname',
       label: 'Track',
       sortable: true,
-      width: '150px'
+      width: '150px',
+      render: (value: string, row: IMeeting) => {
+        const injurySummary = meetingInjurySummaries.get(row.cr4cc_racemeetingid);
+        if (injurySummary && injurySummary.total > 0) {
+          // Show serious injuries (Cat D and E) with red indicator
+          const seriousInjuries = (injurySummary.byCategory['Cat D'] || 0) + (injurySummary.byCategory['Cat E'] || 0);
+          const otherInjuries = injurySummary.total - seriousInjuries;
+          
+          return (
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {value}
+              {seriousInjuries > 0 && (
+                <span 
+                  className={styles.injuryIndicator} 
+                  style={{ color: '#dc143c', fontWeight: 'bold' }}
+                  title={`${seriousInjuries} serious injuries (Cat D/E)`}
+                >
+                  <span style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '900', 
+                    fontFamily: 'Arial Black, sans-serif',
+                    display: 'inline-block',
+                    lineHeight: '1'
+                  }}>+</span>
+                  {seriousInjuries}
+                </span>
+              )}
+              {otherInjuries > 0 && (
+                <span 
+                  className={styles.injuryIndicator}
+                  style={{ color: '#ff9800' }}
+                  title={`${otherInjuries} minor injuries`}
+                >
+                  <span style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '900', 
+                    fontFamily: 'Arial Black, sans-serif',
+                    display: 'inline-block',
+                    lineHeight: '1'
+                  }}>+</span>
+                  {otherInjuries}
+                </span>
+              )}
+            </span>
+          );
+        }
+        return value;
+      }
     },
     {
       key: 'cr4cc_authority',
@@ -344,7 +584,32 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       key: 'cr616_racenumber',
       label: 'Race #',
       sortable: true,
-      width: '80px'
+      width: '80px',
+      render: (value: number, row: IRace) => {
+        const injuryCount = raceInjurySummaries.get(row.cr616_racesid);
+        if (injuryCount && injuryCount > 0) {
+          return (
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {value}
+              <span 
+                className={styles.injuryIndicator}
+                style={{ color: '#dc143c', fontWeight: 'bold' }}
+                title={`${injuryCount} injury(s) in this race`}
+              >
+                <span style={{ 
+                  fontSize: '14px', 
+                  fontWeight: '900', 
+                  fontFamily: 'Arial Black, sans-serif',
+                  display: 'inline-block',
+                  lineHeight: '1'
+                }}>+</span>
+                {injuryCount}
+              </span>
+            </span>
+          );
+        }
+        return value;
+      }
     },
     {
       key: 'cr616_racetitle',
@@ -490,23 +755,66 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
     },
     {
       key: 'actions',
-      label: 'Details',
-      width: '80px',
+      label: 'Actions',
+      width: '150px',
       align: 'center',
       render: (_: any, row: IContestant) => (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            showContestantInfo(row);
-          }}
-          className={styles.actionButton}
-          title="Contestant Details"
-        >
-          <img src={detailsIconUrl} alt="Details" className={styles.actionIcon} />
-        </button>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              showContestantInfo(row);
+            }}
+            className={styles.actionButton}
+            title="Contestant Details"
+          >
+            <img src={detailsIconUrl} alt="Details" className={`${styles.actionIcon} ${styles.detailsIcon}`} />
+          </button>
+          {greyhoundMatches.get(row.cr616_contestantsid) && (
+            <button
+              onClick={async (e) => {
+                e.stopPropagation();
+                const greyhound = greyhoundMatches.get(row.cr616_contestantsid);
+                if (greyhound) {
+                  await showGreyhoundInfo(greyhound, false);
+                }
+              }}
+              className={styles.actionButton}
+              title="View Greyhound Profile"
+            >
+              <img src={greyhoundIconUrl} alt="Greyhound" className={styles.actionIcon} />
+            </button>
+          )}
+          {greyhoundInjuries.get(row.cr616_contestantsid) && (
+            <button
+              onClick={async (e) => {
+                e.stopPropagation();
+                const greyhound = greyhoundMatches.get(row.cr616_contestantsid);
+                if (greyhound) {
+                  const latestCheck = await dataService.getLatestHealthCheckForGreyhound(greyhound.cra5e_greyhoundid);
+                  if (latestCheck) {
+                    showHealthCheckInfo(latestCheck);
+                  }
+                }
+              }}
+              className={`${styles.actionButton} ${styles.injuryButton}`}
+              title="View Injury Details"
+            >
+              <span style={{ 
+                fontSize: '14px', 
+                fontWeight: '900', 
+                color: '#dc143c',
+                fontFamily: 'Arial Black, sans-serif',
+                display: 'inline-block',
+                lineHeight: '1'
+              }}>+</span>
+            </button>
+          )}
+        </div>
       )
     }
   ];
+
 
   // Load initial data
   useEffect(() => {
@@ -521,65 +829,115 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
 
     return (
       <div className={styles.filterBar}>
-        <div className={styles.filterGroup}>
-          <label htmlFor="dateFrom">Date From</label>
-          <input
-            id="dateFrom"
-            type="date"
-            value={dateFrom ? dateFrom.toISOString().split('T')[0] : ''}
-            onChange={(e) => setDateFrom(e.target.value ? new Date(e.target.value) : undefined)}
-            className={styles.filterInput}
-            placeholder="dd/mm/yyyy"
-            title="Select start date"
-          />
+        <div className={styles.filterRow}>
+          <div className={styles.filterGroup}>
+            <label htmlFor="dateFrom">Date From</label>
+            <input
+              id="dateFrom"
+              type="date"
+              value={dateFrom ? dateFrom.toISOString().split('T')[0] : ''}
+              onChange={(e) => setDateFrom(e.target.value ? new Date(e.target.value) : undefined)}
+              className={styles.filterInput}
+              placeholder="dd/mm/yyyy"
+              title="Select start date"
+            />
+          </div>
+          <div className={styles.filterGroup}>
+            <label htmlFor="dateTo">Date To</label>
+            <input
+              id="dateTo"
+              type="date"
+              value={dateTo ? dateTo.toISOString().split('T')[0] : ''}
+              onChange={(e) => setDateTo(e.target.value ? new Date(e.target.value) : undefined)}
+              className={styles.filterInput}
+              placeholder="dd/mm/yyyy"
+              title="Select end date"
+            />
+          </div>
+          <div className={styles.filterGroup}>
+            <label htmlFor="track">Track</label>
+            <select
+              id="track"
+              value={selectedTrack}
+              onChange={(e) => setSelectedTrack(e.target.value)}
+              className={styles.filterInput}
+            >
+              <option value="">All Tracks</option>
+              <option value="Wentworth Park">Wentworth Park</option>
+              <option value="Richmond">Richmond</option>
+              <option value="The Gardens">The Gardens</option>
+              <option value="Gosford">Gosford</option>
+              <option value="Dapto">Dapto</option>
+              <option value="Bulli">Bulli</option>
+              <option value="Casino">Casino</option>
+              <option value="Dubbo">Dubbo</option>
+              <option value="Goulburn">Goulburn</option>
+              <option value="Grafton">Grafton</option>
+              <option value="Gunnedah">Gunnedah</option>
+              <option value="Lithgow">Lithgow</option>
+              <option value="Maitland">Maitland</option>
+              <option value="Nowra">Nowra</option>
+              <option value="Taree">Taree</option>
+              <option value="Temora">Temora</option>
+              <option value="Wagga Wagga">Wagga Wagga</option>
+              <option value="Broken Hill">Broken Hill</option>
+            </select>
+          </div>
+          <button onClick={loadMeetings} className={styles.applyButton}>
+            Apply
+          </button>
+          <button onClick={clearFilters} className={styles.clearFiltersButton}>
+            Clear
+          </button>
         </div>
-        <div className={styles.filterGroup}>
-          <label htmlFor="dateTo">Date To</label>
-          <input
-            id="dateTo"
-            type="date"
-            value={dateTo ? dateTo.toISOString().split('T')[0] : ''}
-            onChange={(e) => setDateTo(e.target.value ? new Date(e.target.value) : undefined)}
-            className={styles.filterInput}
-            placeholder="dd/mm/yyyy"
-            title="Select end date"
-          />
-        </div>
-        <div className={styles.filterGroup}>
-          <label htmlFor="track">Track</label>
-          <select
-            id="track"
-            value={selectedTrack}
-            onChange={(e) => setSelectedTrack(e.target.value)}
-            className={styles.filterInput}
+        
+        {/* Injury Filter Section - Second Row */}
+        <div className={styles.injuryFilterRow}>
+          <button 
+            onClick={() => {
+              const newState = !showInjuryFilter;
+              setShowInjuryFilter(newState);
+              // If turning off, reload regular meetings
+              if (!newState) {
+                setTimeout(() => loadMeetings(), 100);
+              }
+            }}
+            className={`${styles.injuryFilterButton} ${showInjuryFilter ? styles.active : ''}`}
+            title={showInjuryFilter ? 'Hide injury filter' : 'Show only meetings with injuries'}
           >
-            <option value="">All Tracks</option>
-            <option value="Wentworth Park">Wentworth Park</option>
-            <option value="Richmond">Richmond</option>
-            <option value="The Gardens">The Gardens</option>
-            <option value="Gosford">Gosford</option>
-            <option value="Dapto">Dapto</option>
-            <option value="Bulli">Bulli</option>
-            <option value="Casino">Casino</option>
-            <option value="Dubbo">Dubbo</option>
-            <option value="Goulburn">Goulburn</option>
-            <option value="Grafton">Grafton</option>
-            <option value="Gunnedah">Gunnedah</option>
-            <option value="Lithgow">Lithgow</option>
-            <option value="Maitland">Maitland</option>
-            <option value="Nowra">Nowra</option>
-            <option value="Taree">Taree</option>
-            <option value="Temora">Temora</option>
-            <option value="Wagga Wagga">Wagga Wagga</option>
-            <option value="Broken Hill">Broken Hill</option>
-          </select>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '16px', fontWeight: 'bold' }}>+</span>
+              Injuries
+            </span>
+          </button>
+          
+          {showInjuryFilter && (
+            <div className={styles.injuryCategoryFilters}>
+              <span className={styles.categoryLabel}>Categories:</span>
+              {['A', 'B', 'C', 'D', 'E'].map(category => {
+                const fullCategory = `Cat ${category}`;
+                return (
+                  <label key={fullCategory} className={styles.categoryCheckbox} title={`Category ${category}`}>
+                    <input
+                      type="checkbox"
+                      checked={selectedInjuryCategories.indexOf(fullCategory) !== -1}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedInjuryCategories([...selectedInjuryCategories, fullCategory]);
+                        } else {
+                          setSelectedInjuryCategories(selectedInjuryCategories.filter(c => c !== fullCategory));
+                        }
+                      }}
+                    />
+                    <span className={category === 'D' || category === 'E' ? styles.seriousCategory : ''}>
+                      {category}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
         </div>
-        <button onClick={loadMeetings} className={styles.applyButton}>
-          Apply
-        </button>
-        <button onClick={clearFilters} className={styles.clearFiltersButton}>
-          Clear
-        </button>
       </div>
     );
   };
@@ -602,7 +960,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         <div className={styles.searchInputWrapper}>
           <input
             type="text"
-            placeholder="Search greyhound name, trainer, owner, track..."
+            placeholder="Search by name, Salesforce ID, microchip, trainer, owner, track..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => {
@@ -683,6 +1041,82 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             </div>
           )}
           
+          {searchResults.greyhounds && searchResults.greyhounds.length > 0 && (
+            <div className={styles.resultSection}>
+              <h4>Greyhounds ({searchResults.greyhounds.length})</h4>
+              <DataGrid
+                data={searchResults.greyhounds}
+                columns={[
+                  {
+                    key: 'cra5e_name',
+                    label: 'Name',
+                    sortable: true,
+                    width: '200px'
+                  },
+                  {
+                    key: 'cra5e_microchip',
+                    label: 'Microchip',
+                    sortable: true,
+                    width: '150px',
+                    render: (value: string) => value || '-'
+                  },
+                  {
+                    key: 'cra5e_sfid',
+                    label: 'Salesforce ID',
+                    sortable: true,
+                    width: '150px',
+                    render: (value: string) => value || '-'
+                  },
+                  {
+                    key: 'cra5e_leftearbrand',
+                    label: 'Left Ear',
+                    sortable: true,
+                    width: '100px',
+                    render: (value: string) => value || '-'
+                  },
+                  {
+                    key: 'cra5e_rightearbrand',
+                    label: 'Right Ear',
+                    sortable: true,
+                    width: '100px',
+                    render: (value: string) => value || '-'
+                  },
+                  {
+                    key: 'cra5e_status',
+                    label: 'Status',
+                    sortable: true,
+                    width: '120px',
+                    render: (value: string) => value || '-'
+                  },
+                  {
+                    key: 'actions',
+                    label: 'Actions',
+                    width: '100px',
+                    align: 'center',
+                    render: (_: any, row: IGreyhound) => (
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          await showGreyhoundInfo(row, false);
+                        }}
+                        className={styles.actionButton}
+                        title="View Greyhound Profile"
+                      >
+                        <img src={greyhoundIconUrl} alt="View" className={styles.actionIcon} />
+                      </button>
+                    )
+                  }
+                ]}
+                theme="contestant"
+                density="compact"
+                pageSize={10}
+                onRowClick={async (greyhound) => {
+                  await showGreyhoundInfo(greyhound, false);
+                }}
+              />
+            </div>
+          )}
+          
           {searchResults.totalResults === 0 && (
             <div className={styles.noResults}>
               No results found for your search.
@@ -707,6 +1141,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             sortable
             hoverable
             striped
+            onRowClick={(meeting) => loadRaces(meeting)}
           />
         </div>
       );
@@ -717,15 +1152,6 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         <div className={styles.contentSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Races</h2>
-            <button 
-              onClick={() => {
-                setViewState({ type: 'meetings' });
-                loadMeetings();
-              }}
-              className={styles.returnButton}
-            >
-              ← Back to Meetings
-            </button>
           </div>
           <DataGrid
             data={races}
@@ -738,6 +1164,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             sortable
             hoverable
             striped
+            onRowClick={(race) => loadContestants(race)}
           />
         </div>
       );
@@ -748,16 +1175,6 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         <div className={styles.contentSection}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Contestants</h2>
-            <button 
-              onClick={() => {
-                if (viewState.meeting) {
-                  loadRaces(viewState.meeting);
-                }
-              }}
-              className={styles.returnButton}
-            >
-              ← Back to Races
-            </button>
           </div>
           <DataGrid
             data={contestants}
@@ -770,6 +1187,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             sortable
             hoverable
             striped
+            onRowClick={(contestant) => showContestantInfo(contestant)}
           />
         </div>
       );
@@ -977,6 +1395,273 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       </div>
     );
   };
+  
+  // Render greyhound info modal
+  const renderGreyhoundModal = () => {
+    if (!showGreyhoundModal || !selectedGreyhound) return null;
+
+    return (
+      <div className={styles.modalOverlay} onClick={closeGreyhoundModal}>
+        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalHeader}>
+            <h2>
+              <img src={logoUrl} alt="GRNSW" className={styles.modalLogo} />
+              Greyhound Details
+            </h2>
+            <button onClick={closeGreyhoundModal} className={styles.closeButton}>×</button>
+          </div>
+          {greyhoundHistory.length > 0 && (
+            <div className={styles.navigationBar}>
+              <button
+                onClick={() => {
+                  const previousGreyhound = greyhoundHistory[greyhoundHistory.length - 1];
+                  setGreyhoundHistory(prev => prev.slice(0, -1));
+                  showGreyhoundInfo(previousGreyhound, false);
+                }}
+                className={styles.backButton}
+              >
+                ← Back to {greyhoundHistory[greyhoundHistory.length - 1].cra5e_name}
+              </button>
+            </div>
+          )}
+          <div className={styles.modalBody}>
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Name:</span>
+              <span className={styles.detailValue}>{selectedGreyhound.cra5e_name}</span>
+            </div>
+            {selectedGreyhound.cra5e_microchip && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Microchip:</span>
+                <span className={styles.detailValue}>{selectedGreyhound.cra5e_microchip}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_leftearbrand && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Left Ear Brand:</span>
+                <span className={styles.detailValue}>{selectedGreyhound.cra5e_leftearbrand}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_rightearbrand && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Right Ear Brand:</span>
+                <span className={styles.detailValue}>{selectedGreyhound.cra5e_rightearbrand}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_colour && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Colour:</span>
+                <span className={styles.detailValue}>{selectedGreyhound.cra5e_colour}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_gender && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Gender:</span>
+                <span className={styles.detailValue}>{selectedGreyhound.cra5e_gender}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_whelpeddate && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Whelped Date:</span>
+                <span className={styles.detailValue}>{new Date(selectedGreyhound.cra5e_whelpeddate).toLocaleDateString('en-AU')}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_sire && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Sire:</span>
+                <span className={styles.detailValue}>
+                  {parentGreyhounds.has(selectedGreyhound.cra5e_sire) ? (
+                    <button
+                      onClick={() => {
+                        const sireGreyhound = parentGreyhounds.get(selectedGreyhound.cra5e_sire!);
+                        if (sireGreyhound) {
+                          showGreyhoundInfo(sireGreyhound);
+                        }
+                      }}
+                      className={styles.parentLink}
+                      title="View Sire Details"
+                    >
+                      {parentGreyhounds.get(selectedGreyhound.cra5e_sire)?.cra5e_name || selectedGreyhound.cra5e_sire} →
+                    </button>
+                  ) : (
+                    selectedGreyhound.cra5e_sire
+                  )}
+                </span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_dam && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Dam:</span>
+                <span className={styles.detailValue}>
+                  {parentGreyhounds.has(selectedGreyhound.cra5e_dam) ? (
+                    <button
+                      onClick={() => {
+                        const damGreyhound = parentGreyhounds.get(selectedGreyhound.cra5e_dam!);
+                        if (damGreyhound) {
+                          showGreyhoundInfo(damGreyhound);
+                        }
+                      }}
+                      className={styles.parentLink}
+                      title="View Dam Details"
+                    >
+                      {parentGreyhounds.get(selectedGreyhound.cra5e_dam)?.cra5e_name || selectedGreyhound.cra5e_dam} →
+                    </button>
+                  ) : (
+                    selectedGreyhound.cra5e_dam
+                  )}
+                </span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_ownername && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Owner:</span>
+                <span className={styles.detailValue}>{selectedGreyhound.cra5e_ownername}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_trainername && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Trainer:</span>
+                <span className={styles.detailValue}>{selectedGreyhound.cra5e_trainername}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_status && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Status:</span>
+                <span className={styles.detailValue}>{selectedGreyhound.cra5e_status}</span>
+              </div>
+            )}
+            {selectedGreyhound.cra5e_prizemoney !== undefined && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Total Prize Money:</span>
+                <span className={styles.detailValue}>${(selectedGreyhound.cra5e_prizemoney || 0).toLocaleString()}</span>
+              </div>
+            )}
+            {greyhoundHealthChecks.length > 0 && (
+              <>
+                <h3 className={styles.subHeading}>Recent Health Checks ({greyhoundHealthChecks.length})</h3>
+                <div className={styles.healthCheckList}>
+                  {greyhoundHealthChecks.slice(0, 5).map((check) => (
+                    <div key={check.cra5e_heathcheckid} className={styles.healthCheckItem}>
+                      <span>{new Date(check.cra5e_datechecked).toLocaleDateString('en-AU')}</span>
+                      {check.cra5e_injured && (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#dc143c', fontWeight: 'bold' }}>
+                          <span style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '900', 
+                    fontFamily: 'Arial Black, sans-serif',
+                    display: 'inline-block',
+                    lineHeight: '1'
+                  }}>+</span>
+                          Injured
+                        </span>
+                      )}
+                      {check.cra5e_injuryclassification && <span>({check.cra5e_injuryclassification})</span>}
+                      <button
+                        onClick={() => showHealthCheckInfo(check)}
+                        className={styles.healthCheckDetailsButton}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  // Render health check modal
+  const renderHealthCheckModal = () => {
+    if (!showHealthCheckModal || !selectedHealthCheck) return null;
+
+    return (
+      <div className={styles.modalOverlay} onClick={closeHealthCheckModal}>
+        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalHeader}>
+            <h2>
+              <img src={logoUrl} alt="GRNSW" className={styles.modalLogo} />
+              Health Check Details
+            </h2>
+            <button onClick={closeHealthCheckModal} className={styles.closeButton}>×</button>
+          </div>
+          <div className={styles.modalBody}>
+            {selectedHealthCheck.cra5e_name && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Check ID:</span>
+                <span className={styles.detailValue}>{selectedHealthCheck.cra5e_name}</span>
+              </div>
+            )}
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Date Checked:</span>
+              <span className={styles.detailValue}>{new Date(selectedHealthCheck.cra5e_datechecked).toLocaleDateString('en-AU')}</span>
+            </div>
+            {selectedHealthCheck.cra5e_type && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Check Type:</span>
+                <span className={styles.detailValue}>{selectedHealthCheck.cra5e_type}</span>
+              </div>
+            )}
+            {selectedHealthCheck.cra5e_trackname && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Track:</span>
+                <span className={styles.detailValue}>{selectedHealthCheck.cra5e_trackname}</span>
+              </div>
+            )}
+            {selectedHealthCheck.cra5e_racenumber && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Race Number:</span>
+                <span className={styles.detailValue}>{selectedHealthCheck.cra5e_racenumber}</span>
+              </div>
+            )}
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Injured:</span>
+              <span className={styles.detailValue} style={{ color: selectedHealthCheck.cra5e_injured ? 'red' : 'green', fontWeight: 'bold' }}>
+                {selectedHealthCheck.cra5e_injured ? 'Yes' : 'No'}
+              </span>
+            </div>
+            {selectedHealthCheck.cra5e_injuryclassification && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Injury Classification:</span>
+                <span className={styles.detailValue}>{selectedHealthCheck.cra5e_injuryclassification}</span>
+              </div>
+            )}
+            {selectedHealthCheck.cra5e_standdowndays && (
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Stand Down Days:</span>
+                <span className={styles.detailValue}>{selectedHealthCheck.cra5e_standdowndays}</span>
+              </div>
+            )}
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Examining Vet:</span>
+              <span className={styles.detailValue}>{selectedHealthCheck.cra5e_examiningvet || 'Not recorded'}</span>
+            </div>
+            
+            <h3 className={styles.subHeading}>Comments</h3>
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Steward Comments:</span>
+              <span className={styles.detailValue} style={{ 
+                fontStyle: ((selectedHealthCheck as any).raceStewardComment || selectedHealthCheck.cra5e_stewardcomments) ? 'normal' : 'italic', 
+                color: ((selectedHealthCheck as any).raceStewardComment || selectedHealthCheck.cra5e_stewardcomments) ? 'inherit' : '#999' 
+              }}>
+                {(selectedHealthCheck as any).raceStewardComment || selectedHealthCheck.cra5e_stewardcomments || 'No steward comments recorded'}
+              </span>
+            </div>
+            <div className={styles.detailRow}>
+              <span className={styles.detailLabel}>Follow-up Information:</span>
+              <span className={styles.detailValue} style={{ 
+                fontStyle: selectedHealthCheck.cra5e_followupinformation ? 'normal' : 'italic', 
+                color: selectedHealthCheck.cra5e_followupinformation ? 'inherit' : '#999' 
+              }}>
+                {selectedHealthCheck.cra5e_followupinformation || 'No follow-up information recorded'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Render meeting info modal
   const renderMeetingModal = () => {
@@ -1072,6 +1757,8 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       {renderMeetingModal()}
       {renderRaceModal()}
       {renderContestantModal()}
+      {renderGreyhoundModal()}
+      {renderHealthCheckModal()}
     </div>
   );
 };
