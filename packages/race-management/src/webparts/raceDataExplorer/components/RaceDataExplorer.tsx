@@ -60,16 +60,48 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   const [parentGreyhounds, setParentGreyhounds] = useState<Map<string, IGreyhound>>(new Map());
   const [greyhoundHistory, setGreyhoundHistory] = useState<IGreyhound[]>([]);
   
+  // Load saved filters from localStorage
+  const loadSavedFilters = () => {
+    try {
+      const saved = localStorage.getItem('raceDataExplorerFilters');
+      if (saved) {
+        const filters = JSON.parse(saved);
+        return {
+          dateFrom: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
+          dateTo: filters.dateTo ? new Date(filters.dateTo) : undefined,
+          selectedTrack: filters.selectedTrack || '',
+          showInjuryFilter: filters.showInjuryFilter || false,
+          selectedInjuryCategories: filters.selectedInjuryCategories || ['Cat D', 'Cat E'],
+          tableDensity: filters.tableDensity || 'normal',
+          showRowNumbers: filters.showRowNumbers || false,
+          useStripedRows: filters.useStripedRows !== undefined ? filters.useStripedRows : true,
+          currentPageSize: filters.currentPageSize || pageSize || 25
+        };
+      }
+    } catch (e) {
+      console.error('Failed to load saved filters:', e);
+    }
+    return null;
+  };
+
+  const savedFilters = loadSavedFilters();
+  
   // Filter states
-  const [dateFrom, setDateFrom] = useState<Date | undefined>();
-  const [dateTo, setDateTo] = useState<Date | undefined>();
-  const [selectedTrack, setSelectedTrack] = useState<string>('');
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(savedFilters?.dateFrom);
+  const [dateTo, setDateTo] = useState<Date | undefined>(savedFilters?.dateTo);
+  const [selectedTrack, setSelectedTrack] = useState<string>(savedFilters?.selectedTrack || '');
   
   // Injury filter states
-  const [showInjuryFilter, setShowInjuryFilter] = useState(false);
-  const [selectedInjuryCategories, setSelectedInjuryCategories] = useState<string[]>(['Cat D', 'Cat E']);
+  const [showInjuryFilter, setShowInjuryFilter] = useState(savedFilters?.showInjuryFilter || false);
+  const [selectedInjuryCategories, setSelectedInjuryCategories] = useState<string[]>(savedFilters?.selectedInjuryCategories || ['Cat D', 'Cat E']);
   const [meetingInjurySummaries, setMeetingInjurySummaries] = useState<Map<string, {total: number; byCategory: Record<string, number>}>>(new Map());
   const [raceInjurySummaries, setRaceInjurySummaries] = useState<Map<string, number>>(new Map());
+  
+  // Table enhancement states
+  const [tableDensity, setTableDensity] = useState<'compact' | 'normal' | 'comfortable'>(savedFilters?.tableDensity || 'normal');
+  const [showRowNumbers, setShowRowNumbers] = useState(savedFilters?.showRowNumbers || false);
+  const [useStripedRows, setUseStripedRows] = useState(savedFilters?.useStripedRows !== undefined ? savedFilters.useStripedRows : true);
+  const [currentPageSize, setCurrentPageSize] = useState(savedFilters?.currentPageSize || pageSize || 25);
   
   // Helper function to render placement with medal style
   const renderPlacement = (placement: number | string | null | undefined) => {
@@ -468,8 +500,27 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
     setShowHealthCheckModal(false);
   }, []);
 
+  // Add row number column if enabled
+  const addRowNumberColumn = <T,>(columns: DataGridColumn<T>[]): DataGridColumn<T>[] => {
+    if (!showRowNumbers) return columns;
+    
+    const rowNumberColumn: DataGridColumn<T> = {
+      key: '_rowNumber',
+      label: '#',
+      width: '50px',
+      align: 'center',
+      render: (_: any, __: T, index?: number) => (
+        <span style={{ color: '#666', fontSize: '12px' }}>
+          {(index || 0) + 1 + (currentPageSize * ((viewState.type === 'meetings' ? 0 : 0)))}
+        </span>
+      )
+    };
+    
+    return [rowNumberColumn, ...columns];
+  };
+
   // Column definitions for meetings
-  const meetingColumns: DataGridColumn<IMeeting>[] = [
+  const meetingColumns: DataGridColumn<IMeeting>[] = addRowNumberColumn([
     {
       key: 'cr4cc_meetingdate',
       label: 'Date',
@@ -584,9 +635,9 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       key: 'actions',
       label: 'Actions',
       width: '120px',
-      align: 'center',
+      align: 'right',
       render: (_: any, row: IMeeting) => (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -610,10 +661,10 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         </div>
       )
     }
-  ];
+  ]);
 
   // Column definitions for races
-  const raceColumns: DataGridColumn<IRace>[] = [
+  const raceColumns: DataGridColumn<IRace>[] = addRowNumberColumn([
     {
       key: 'cr616_racenumber',
       label: 'Race #',
@@ -688,9 +739,9 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       key: 'actions',
       label: 'Actions',
       width: '120px',
-      align: 'center',
+      align: 'right',
       render: (_: any, row: IRace) => (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -714,10 +765,10 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         </div>
       )
     }
-  ];
+  ]);
 
   // Column definitions for contestants
-  const contestantColumns: DataGridColumn<IContestant>[] = [
+  const contestantColumns: DataGridColumn<IContestant>[] = addRowNumberColumn([
     {
       key: 'cr616_rugnumber',
       label: 'Rug',
@@ -791,9 +842,9 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       key: 'actions',
       label: 'Actions',
       width: '150px',
-      align: 'center',
+      align: 'right',
       render: (_: any, row: IContestant) => (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -847,8 +898,29 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         </div>
       )
     }
-  ];
+  ]);
 
+
+  // Save filters to localStorage when they change
+  useEffect(() => {
+    const filters = {
+      dateFrom: dateFrom?.toISOString(),
+      dateTo: dateTo?.toISOString(),
+      selectedTrack,
+      showInjuryFilter,
+      selectedInjuryCategories,
+      tableDensity,
+      showRowNumbers,
+      useStripedRows,
+      currentPageSize
+    };
+    try {
+      localStorage.setItem('raceDataExplorerFilters', JSON.stringify(filters));
+    } catch (e) {
+      console.error('Failed to save filters:', e);
+    }
+  }, [dateFrom, dateTo, selectedTrack, showInjuryFilter, selectedInjuryCategories, 
+      tableDensity, showRowNumbers, useStripedRows, currentPageSize]);
 
   // Load initial data
   useEffect(() => {
@@ -1326,10 +1398,12 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             loading={loading}
             error={error}
             pagination
-            pageSize={pageSize}
+            pageSize={currentPageSize}
             sortable
             hoverable
-            striped
+            striped={useStripedRows}
+            density={tableDensity}
+            stickyHeader
             onRowClick={(meeting) => loadRaces(meeting)}
           />
         </div>
@@ -1349,10 +1423,12 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             loading={loading}
             error={error}
             pagination
-            pageSize={pageSize}
+            pageSize={currentPageSize}
             sortable
             hoverable
-            striped
+            striped={useStripedRows}
+            density={tableDensity}
+            stickyHeader
             onRowClick={(race) => loadContestants(race)}
           />
         </div>
@@ -1372,10 +1448,12 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             loading={loading}
             error={error}
             pagination
-            pageSize={pageSize}
+            pageSize={currentPageSize}
             sortable
             hoverable
-            striped
+            striped={useStripedRows}
+            density={tableDensity}
+            stickyHeader
             onRowClick={(contestant) => showContestantInfo(contestant)}
           />
         </div>
@@ -1949,6 +2027,58 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       <h1 className={styles.mainTitle}>Race Meetings</h1>
       {renderSearchBar()}
       {renderFilters()}
+      
+      {/* Table Options Bar */}
+      <div className={styles.tableOptionsBar}>
+        <div className={styles.tableOptionsGroup}>
+          <label>Density:</label>
+          <select 
+            value={tableDensity} 
+            onChange={(e) => setTableDensity(e.target.value as 'compact' | 'normal' | 'comfortable')}
+            className={styles.tableOptionSelect}
+          >
+            <option value="compact">Compact</option>
+            <option value="normal">Normal</option>
+            <option value="comfortable">Comfortable</option>
+          </select>
+        </div>
+        
+        <div className={styles.tableOptionsGroup}>
+          <label>Page Size:</label>
+          <select 
+            value={currentPageSize} 
+            onChange={(e) => setCurrentPageSize(Number(e.target.value))}
+            className={styles.tableOptionSelect}
+          >
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        
+        <div className={styles.tableOptionsGroup}>
+          <label className={styles.checkboxLabel}>
+            <input 
+              type="checkbox" 
+              checked={useStripedRows} 
+              onChange={(e) => setUseStripedRows(e.target.checked)} 
+            />
+            <span>Striped Rows</span>
+          </label>
+        </div>
+        
+        <div className={styles.tableOptionsGroup}>
+          <label className={styles.checkboxLabel}>
+            <input 
+              type="checkbox" 
+              checked={showRowNumbers} 
+              onChange={(e) => setShowRowNumbers(e.target.checked)} 
+            />
+            <span>Row Numbers</span>
+          </label>
+        </div>
+      </div>
       
       {viewState.type !== 'meetings' && (
         <Breadcrumb 
