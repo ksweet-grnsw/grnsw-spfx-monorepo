@@ -245,6 +245,14 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: $shadow-sm;
+  
+  // Sticky header support
+  :global(.ms-DetailsList-headerWrapper) {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+  }
 }
 
 .searchResults {
@@ -275,9 +283,26 @@
 
 .noResults {
   @include flex-center;
+  flex-direction: column;
   padding: $spacing-xxl;
   color: var(--text-secondary);
   font-size: $font-size-lg;
+  text-align: center;
+  
+  .noResultsIcon {
+    font-size: 48px;
+    margin-bottom: $spacing-md;
+    opacity: 0.5;
+  }
+  
+  .noResultsText {
+    margin-bottom: $spacing-sm;
+  }
+  
+  .noResultsHint {
+    font-size: $font-size-md;
+    color: var(--text-tertiary);
+  }
 }
 
 .contentSection {
@@ -830,5 +855,122 @@
     border-color: var(--primary-accent, $brand-primary);
     color: var(--primary-accent, $brand-primary);
     transform: translateX(-2px);
+  }
+}
+
+// Date preset buttons
+.datePresets {
+  display: flex;
+  gap: $spacing-xs;
+  align-items: flex-end;
+  margin-right: $spacing-md;
+  padding-right: $spacing-md;
+  border-right: 1px solid #e0e0e0;
+}
+
+.presetButton {
+  padding: $spacing-xs $spacing-sm;
+  background: white;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  min-width: 45px;
+  
+  &:hover {
+    background: var(--primary-accent, $brand-primary);
+    color: white;
+    border-color: var(--primary-accent, $brand-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Filter chips
+.filterChips {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background: rgba($brand-primary, 0.05);
+  border-radius: 4px;
+  margin-bottom: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.filterChipsLabel {
+  @include typography('label');
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+  margin-right: $spacing-xs;
+}
+
+.filterChip {
+  display: inline-flex;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--primary-accent, $brand-primary);
+  border-radius: 16px;
+  padding: 2px 8px 2px 12px;
+  font-size: $font-size-sm;
+  gap: 4px;
+}
+
+.chipLabel {
+  color: var(--text-secondary);
+  font-weight: $font-weight-medium;
+}
+
+.chipValue {
+  color: var(--text-primary);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chipRemove {
+  background: transparent;
+  border: none;
+  color: var(--primary-accent, $brand-primary);
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-left: 4px;
+  line-height: 1;
+  transition: all 200ms ease;
+  
+  &:hover {
+    color: white;
+    background: var(--primary-accent, $brand-primary);
+    border-radius: 50%;
+  }
+}
+
+.clearAllChips {
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 200ms ease;
+  white-space: nowrap;
+  
+  &:hover {
+    background: #dc143c;
+    color: white;
+    border-color: #dc143c;
   }
 }

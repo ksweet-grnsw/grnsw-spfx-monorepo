@@ -87,6 +87,28 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
     return place;
   };
 
+  // Calculate active filter count
+  const getActiveFilterCount = (): number => {
+    let count = 0;
+    if (dateFrom) count++;
+    if (dateTo) count++;
+    if (selectedTrack) count++;
+    if (showInjuryFilter && selectedInjuryCategories.length > 0) {
+      count++;
+    }
+    return count;
+  };
+
+  // Copy to clipboard helper
+  const copyToClipboard = (text: string, label?: string): void => {
+    navigator.clipboard.writeText(text).then(() => {
+      // You could add a toast notification here
+      console.log(`Copied ${label || 'value'}: ${text}`);
+    }).catch(err => {
+      console.error('Failed to copy:', err);
+    });
+  };
+
   // Initialize service
   const dataService = useMemo(() => {
     // Always create the service, it will use default URL if none provided
@@ -453,7 +475,11 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       label: 'Date',
       sortable: true,
       width: '120px',
-      render: (value: string) => new Date(value).toLocaleDateString('en-AU')
+      render: (value: string) => (
+        <span title={`Full date/time: ${new Date(value).toLocaleString('en-AU')}`}>
+          {new Date(value).toLocaleDateString('en-AU')}
+        </span>
+      )
     },
     {
       key: 'cr4cc_trackname',
@@ -513,7 +539,11 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       label: 'Authority',
       sortable: true,
       width: '100px',
-      render: (value: string) => <StatusBadge status={value} variant="info" size="small" />
+      render: (value: string) => (
+        <span title={value === 'NSW' ? 'New South Wales' : value === 'VIC' ? 'Victoria' : value === 'QLD' ? 'Queensland' : value || 'New South Wales'}>
+          <StatusBadge status={value} variant="info" size="small" />
+        </span>
+      )
     },
     {
       key: 'cr4cc_timeslot',
@@ -533,7 +563,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         };
         
         return (
-          <span>
+          <span title={`Racing timeslot: ${value || 'Not specified'}`}>
             {getTimeslotIcon(value)} {value}
           </span>
         );
@@ -544,7 +574,11 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       label: 'Type',
       sortable: true,
       width: '100px',
-      render: (value: string) => value || 'Race'
+      render: (value: string) => (
+        <span title={value ? `Meeting type: ${value}` : 'Standard race meeting'}>
+          {value || 'Race'}
+        </span>
+      )
     },
     {
       key: 'actions',
@@ -827,9 +861,151 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   const renderFilters = () => {
     if (!showFilters || viewState.type !== 'meetings') return null;
 
+    // Quick date preset helper
+    const setDatePreset = (preset: 'today' | '7d' | '30d' | '90d') => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      switch (preset) {
+        case 'today':
+          setDateFrom(today);
+          setDateTo(today);
+          break;
+        case '7d': {
+          const weekAgo = new Date(today);
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          setDateFrom(weekAgo);
+          setDateTo(today);
+          break;
+        }
+        case '30d': {
+          const monthAgo = new Date(today);
+          monthAgo.setDate(monthAgo.getDate() - 30);
+          setDateFrom(monthAgo);
+          setDateTo(today);
+          break;
+        }
+        case '90d': {
+          const threeMonthsAgo = new Date(today);
+          threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
+          setDateFrom(threeMonthsAgo);
+          setDateTo(today);
+          break;
+        }
+      }
+    };
+
+    // Filter summary chips
+    const getFilterChips = () => {
+      const chips: Array<{ label: string; value: string; onRemove: () => void }> = [];
+      
+      if (dateFrom) {
+        chips.push({
+          label: 'From',
+          value: dateFrom.toLocaleDateString(),
+          onRemove: () => setDateFrom(undefined)
+        });
+      }
+      
+      if (dateTo) {
+        chips.push({
+          label: 'To',
+          value: dateTo.toLocaleDateString(),
+          onRemove: () => setDateTo(undefined)
+        });
+      }
+      
+      if (selectedTrack) {
+        chips.push({
+          label: 'Track',
+          value: selectedTrack,
+          onRemove: () => setSelectedTrack('')
+        });
+      }
+      
+      if (showInjuryFilter && selectedInjuryCategories.length > 0) {
+        chips.push({
+          label: 'Injuries',
+          value: selectedInjuryCategories.join(', '),
+          onRemove: () => {
+            setShowInjuryFilter(false);
+            setSelectedInjuryCategories([]);
+          }
+        });
+      }
+      
+      return chips;
+    };
+
+    const filterChips = getFilterChips();
+
     return (
       <div className={styles.filterBar}>
+        {/* Filter summary chips */}
+        {filterChips.length > 0 && (
+          <div className={styles.filterChips}>
+            <span className={styles.filterChipsLabel}>Active Filters:</span>
+            {filterChips.map((chip, index) => (
+              <div key={index} className={styles.filterChip}>
+                <span className={styles.chipLabel}>{chip.label}:</span>
+                <span className={styles.chipValue}>{chip.value}</span>
+                <button
+                  onClick={chip.onRemove}
+                  className={styles.chipRemove}
+                  title="Remove filter"
+                  aria-label={`Remove ${chip.label} filter`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={() => {
+                clearFilters();
+                setShowInjuryFilter(false);
+                setSelectedInjuryCategories([]);
+              }}
+              className={styles.clearAllChips}
+              title="Clear all filters"
+            >
+              Clear All
+            </button>
+          </div>
+        )}
+        
         <div className={styles.filterRow}>
+          {/* Date presets */}
+          <div className={styles.datePresets}>
+            <button
+              onClick={() => setDatePreset('today')}
+              className={styles.presetButton}
+              title="Show today's meetings"
+            >
+              Today
+            </button>
+            <button
+              onClick={() => setDatePreset('7d')}
+              className={styles.presetButton}
+              title="Show last 7 days"
+            >
+              7d
+            </button>
+            <button
+              onClick={() => setDatePreset('30d')}
+              className={styles.presetButton}
+              title="Show last 30 days"
+            >
+              30d
+            </button>
+            <button
+              onClick={() => setDatePreset('90d')}
+              className={styles.presetButton}
+              title="Show last 90 days"
+            >
+              90d
+            </button>
+          </div>
+          
           <div className={styles.filterGroup}>
             <label htmlFor="dateFrom">Date From</label>
             <input
@@ -883,11 +1059,20 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
               <option value="Broken Hill">Broken Hill</option>
             </select>
           </div>
-          <button onClick={loadMeetings} className={styles.applyButton}>
-            Apply
+          <button 
+            onClick={loadMeetings} 
+            className={styles.applyButton}
+            disabled={loading}
+            title="Apply filters to search"
+          >
+            {loading ? 'Loading...' : 'Apply'}
           </button>
-          <button onClick={clearFilters} className={styles.clearFiltersButton}>
-            Clear
+          <button 
+            onClick={clearFilters} 
+            className={styles.clearFiltersButton}
+            title={`Clear all filters${getActiveFilterCount() > 0 ? ` (${getActiveFilterCount()} active)` : ''}`}
+          >
+            Clear {getActiveFilterCount() > 0 && `(${getActiveFilterCount()})`}
           </button>
         </div>
         
@@ -1119,7 +1304,11 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
           
           {searchResults.totalResults === 0 && (
             <div className={styles.noResults}>
-              No results found for your search.
+              <div className={styles.noResultsIcon}>🔍</div>
+              <div className={styles.noResultsText}>No results found for "{searchTerm}"</div>
+              <div className={styles.noResultsHint}>
+                Try different keywords or check your spelling
+              </div>
             </div>
           )}
         </div>
@@ -1680,7 +1869,24 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
           <div className={styles.modalBody}>
             <div className={styles.detailRow}>
               <span className={styles.detailLabel}>Track:</span>
-              <span className={styles.detailValue}>{selectedMeeting.cr4cc_trackname}</span>
+              <span className={styles.detailValue}>
+                {selectedMeeting.cr4cc_trackname}
+                <button
+                  onClick={() => copyToClipboard(selectedMeeting.cr4cc_trackname, 'Track name')}
+                  style={{
+                    marginLeft: '8px',
+                    padding: '2px 6px',
+                    fontSize: '12px',
+                    background: '#f0f0f0',
+                    border: '1px solid #ccc',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                  }}
+                  title="Copy track name"
+                >
+                  📋
+                </button>
+              </span>
             </div>
             <div className={styles.detailRow}>
               <span className={styles.detailLabel}>Date:</span>
