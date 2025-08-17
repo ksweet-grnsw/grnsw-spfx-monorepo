@@ -1,0 +1,223 @@
+@import '../../enterprise-ui/styles/tokens';
+
+.modalContainer {
+  .modal {
+    max-width: 600px;
+    border-radius: $radius-md;
+    overflow: hidden;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-light);
+  
+  h2 {
+    margin: 0;
+    font-size: $font-size-xl;
+    color: var(--text-primary);
+  }
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.modalContent {
+  padding: $spacing-lg;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.helpTip {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+  background: lighten($info, 45%);
+  border: 1px solid $info;
+  border-radius: $radius-sm;
+  color: darken($info, 10%);
+  
+  kbd {
+    padding: 2px 6px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: $font-size-sm;
+  }
+}
+
+.shortcutGroup {
+  margin-bottom: $spacing-xl;
+}
+
+.groupTitle {
+  margin: 0 0 $spacing-md 0;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+}
+
+.shortcutList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.shortcutItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background: var(--bg-secondary);
+  border-radius: $radius-sm;
+}
+
+.keyCombination {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.key {
+  display: inline-block;
+  min-width: 30px;
+  padding: 4px 8px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 0 #ccc;
+  font-family: monospace;
+  font-size: $font-size-sm;
+  text-align: center;
+}
+
+.plus {
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+}
+
+.description {
+  flex: 1;
+  text-align: right;
+  color: var(--text-secondary);
+}
+
+.globalBadge {
+  display: inline-block;
+  margin-left: $spacing-sm;
+  padding: 2px 6px;
+  background: $success;
+  color: white;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+}
+
+.vimMode {
+  margin-top: $spacing-xl;
+  padding-top: $spacing-lg;
+  border-top: 1px solid var(--border-light);
+}
+
+.vimGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.vimKey {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  kbd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 2px solid $brand-primary;
+    border-radius: $radius-sm;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+  }
+  
+  span {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+  }
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding: $spacing-lg;
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border-light);
+}
+
+.primaryButton {
+  padding: $spacing-sm $spacing-lg;
+  background: $brand-primary;
+  color: white;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  
+  &:hover {
+    background: darken($brand-primary, 10%);
+  }
+}
+
+.floatingIndicator {
+  position: fixed;
+  bottom: $spacing-xl;
+  right: $spacing-xl;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  background: $brand-primary;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  box-shadow: $shadow-lg;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 200ms ease;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $shadow-xl;
+  }
+  
+  .keyIcon {
+    font-size: 18px;
+  }
+  
+  .questionMark {
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
+  }
+}

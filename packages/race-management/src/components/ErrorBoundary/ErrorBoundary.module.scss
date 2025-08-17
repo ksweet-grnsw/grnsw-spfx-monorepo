@@ -1,0 +1,184 @@
+@import '../../enterprise-ui/styles/tokens';
+
+.errorBoundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  min-height: 200px;
+  
+  &.level-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  &.level-section {
+    min-height: 400px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: $radius-md;
+  }
+  
+  &.level-component {
+    min-height: 100px;
+    background: lighten($error, 45%);
+    border: 1px solid $error;
+    border-radius: $radius-sm;
+  }
+}
+
+.errorContent {
+  max-width: 500px;
+  text-align: center;
+}
+
+.errorIcon {
+  font-size: 64px;
+  margin-bottom: $spacing-lg;
+  animation: shake 0.5s ease-in-out;
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+}
+
+.errorTitle {
+  margin: 0 0 $spacing-md 0;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  
+  .level-page & {
+    color: white;
+  }
+}
+
+.errorMessage {
+  margin: 0 0 $spacing-lg 0;
+  font-size: $font-size-md;
+  color: var(--text-secondary);
+  
+  .level-page & {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.errorWarning {
+  padding: $spacing-sm $spacing-md;
+  margin: 0 0 $spacing-lg 0;
+  background: lighten($warning, 40%);
+  border: 1px solid $warning;
+  border-radius: $radius-sm;
+  color: darken($warning, 20%);
+  font-size: $font-size-sm;
+}
+
+.errorDetails {
+  margin: $spacing-lg 0;
+  padding: $spacing-md;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: $radius-sm;
+  text-align: left;
+  
+  summary {
+    cursor: pointer;
+    font-weight: $font-weight-medium;
+    color: var(--text-primary);
+    
+    &:hover {
+      color: $brand-primary;
+    }
+  }
+  
+  pre {
+    margin: $spacing-md 0 0 0;
+    padding: $spacing-md;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    border-radius: $radius-sm;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: $font-size-sm;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+}
+
+.errorStack {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.componentStack {
+  max-height: 150px;
+  overflow-y: auto;
+  color: #9cdcfe;
+}
+
+.errorActions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+  margin-top: $spacing-lg;
+}
+
+.resetButton,
+.reloadButton {
+  padding: $spacing-sm $spacing-lg;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.resetButton {
+  background: $brand-primary;
+  color: white;
+  
+  &:hover {
+    background: darken($brand-primary, 10%);
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+  
+  .level-page & {
+    background: white;
+    color: $brand-primary;
+  }
+}
+
+.reloadButton {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  
+  &:hover {
+    background: var(--bg-hover);
+    border-color: $brand-primary;
+  }
+  
+  .level-page & {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: white;
+    }
+  }
+}
+
+.isolateMessage {
+  margin: $spacing-lg 0 0 0;
+  padding: $spacing-sm;
+  background: lighten($info, 45%);
+  border-radius: $radius-sm;
+  color: darken($info, 10%);
+  font-size: $font-size-sm;
+  font-style: italic;
+}

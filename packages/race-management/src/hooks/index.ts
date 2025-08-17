@@ -9,3 +9,5 @@ export { useInjuryTracking } from './useInjuryTracking';
 export type { InjurySummary } from './useInjuryTracking';
 export { useOptimisticUpdate } from './useOptimisticUpdate';
 export type { OptimisticUpdateResult, OptimisticUpdateOptions } from './useOptimisticUpdate';
+export { useKeyboardShortcuts, createDataNavigationShortcuts, useVimNavigation } from './useKeyboardShortcuts';
+export type { KeyboardShortcut, UseKeyboardShortcutsOptions } from './useKeyboardShortcuts';
