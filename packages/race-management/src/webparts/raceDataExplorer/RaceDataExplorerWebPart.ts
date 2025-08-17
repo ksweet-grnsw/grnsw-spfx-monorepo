@@ -7,7 +7,8 @@ import {
   PropertyPaneDropdown,
   PropertyPaneToggle,
   PropertyPaneSlider,
-  PropertyPaneLabel
+  PropertyPaneLabel,
+  PropertyPaneChoiceGroup
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -25,6 +26,7 @@ export interface IRaceDataExplorerWebPartProps {
   showFilters: boolean;
   showSearch: boolean;
   theme: 'neutral' | 'meeting' | 'race' | 'contestant';
+  tableDensity: 'compact' | 'normal' | 'comfortable';
 }
 
 export default class RaceDataExplorerWebPart extends BaseClientSideWebPart<IRaceDataExplorerWebPartProps> {
@@ -41,6 +43,7 @@ export default class RaceDataExplorerWebPart extends BaseClientSideWebPart<IRace
         showFilters: this.properties.showFilters,
         showSearch: this.properties.showSearch,
         theme: this.properties.theme,
+        tableDensity: this.properties.tableDensity || 'normal',
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -164,6 +167,14 @@ export default class RaceDataExplorerWebPart extends BaseClientSideWebPart<IRace
                   max: 100,
                   step: 5,
                   showValue: true
+                }),
+                PropertyPaneChoiceGroup('tableDensity', {
+                  label: 'Table Density',
+                  options: [
+                    { key: 'compact', text: 'Compact' },
+                    { key: 'normal', text: 'Normal' },
+                    { key: 'comfortable', text: 'Comfortable' }
+                  ]
                 })
               ]
             },

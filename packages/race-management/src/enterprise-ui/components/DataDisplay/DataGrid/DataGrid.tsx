@@ -313,6 +313,7 @@ export const DataGrid = <T extends Record<string, any>>({
                     type="checkbox"
                     checked={state.selectedItems.size === data.length}
                     onChange={handleSelectAll}
+                    onClick={(e) => e.stopPropagation()}
                     aria-label="Select all rows"
                     ref={(el) => {
                       if (el) {
@@ -372,7 +373,10 @@ export const DataGrid = <T extends Record<string, any>>({
                     onDoubleClick={() => onRowDoubleClick?.(item, index)}
                   >
                     {selectable && (
-                      <td className={styles.checkboxCell}>
+                      <td 
+                        className={styles.checkboxCell}
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <input
                           type={selectable === 'single' ? 'radio' : 'checkbox'}
                           checked={isSelected}

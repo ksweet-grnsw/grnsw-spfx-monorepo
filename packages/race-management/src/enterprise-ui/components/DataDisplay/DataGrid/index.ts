@@ -1,4 +1,5 @@
 export { DataGrid } from './DataGrid';
+export { VirtualDataGrid } from './VirtualDataGrid';
 export type { 
   DataGridProps, 
   DataGridColumn, 

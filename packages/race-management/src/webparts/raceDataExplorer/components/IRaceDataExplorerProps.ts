@@ -8,6 +8,7 @@ export interface IRaceDataExplorerProps {
   showFilters: boolean;
   showSearch: boolean;
   theme: 'neutral' | 'meeting' | 'race' | 'contestant';
+  tableDensity: 'compact' | 'normal' | 'comfortable';
   isDarkTheme: boolean;
   environmentMessage: string;
   hasTeamsContext: boolean;

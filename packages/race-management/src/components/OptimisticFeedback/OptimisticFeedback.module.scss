@@ -1,0 +1,199 @@
+@import '../../enterprise-ui/styles/tokens/index.scss';
+
+.optimisticFeedback {
+  position: fixed;
+  z-index: 1000;
+  min-width: 300px;
+  max-width: 500px;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(-20px);
+  opacity: 0;
+  pointer-events: none;
+  
+  &.visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  &.hidden {
+    transform: translateY(-20px);
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  // Position variants
+  &.top {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    
+    &.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+  
+  &.bottom {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    
+    &.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+  
+  &.inline {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: $spacing-sm 0;
+  }
+  
+  // State variants
+  &.pending {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    
+    .progressBar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 0 0 $radius-md $radius-md;
+      overflow: hidden;
+      
+      .progressFill {
+        height: 100%;
+        background: white;
+        animation: indeterminateProgress 1.5s infinite ease-in-out;
+      }
+    }
+  }
+  
+  &.success {
+    background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+    color: #0a5f38;
+    animation: successPulse 0.5s ease;
+  }
+  
+  &.error {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    animation: errorShake 0.5s ease;
+  }
+  
+  &.rollback {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: #7a2828;
+  }
+  
+  .content {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    
+    .icon {
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+    
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    .message {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+  }
+}
+
+// Inline feedback styles
+.inlineFeedback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: $spacing-xs;
+  
+  &.success {
+    color: #107c10;
+    animation: successPulse 0.5s ease;
+  }
+  
+  &.error {
+    color: #d13438;
+    animation: errorShake 0.5s ease;
+  }
+  
+  .inlineSpinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #0078d4;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+// Animations
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes indeterminateProgress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes errorShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}

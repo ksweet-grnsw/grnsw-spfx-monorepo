@@ -32,6 +32,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
     showFilters,
     showSearch,
     theme,
+    tableDensity,
     httpClient
   } = props;
 
@@ -71,11 +72,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
           dateTo: filters.dateTo ? new Date(filters.dateTo) : undefined,
           selectedTrack: filters.selectedTrack || '',
           showInjuryFilter: filters.showInjuryFilter || false,
-          selectedInjuryCategories: filters.selectedInjuryCategories || ['Cat D', 'Cat E'],
-          tableDensity: filters.tableDensity || 'normal',
-          showRowNumbers: filters.showRowNumbers || false,
-          useStripedRows: filters.useStripedRows !== undefined ? filters.useStripedRows : true,
-          currentPageSize: filters.currentPageSize || pageSize || 25
+          selectedInjuryCategories: filters.selectedInjuryCategories || ['Cat D', 'Cat E']
         };
       }
     } catch (e) {
@@ -98,10 +95,11 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   const [raceInjurySummaries, setRaceInjurySummaries] = useState<Map<string, number>>(new Map());
   
   // Table enhancement states
-  const [tableDensity, setTableDensity] = useState<'compact' | 'normal' | 'comfortable'>(savedFilters?.tableDensity || 'normal');
-  const [showRowNumbers, setShowRowNumbers] = useState(savedFilters?.showRowNumbers || false);
-  const [useStripedRows, setUseStripedRows] = useState(savedFilters?.useStripedRows !== undefined ? savedFilters.useStripedRows : true);
-  const [currentPageSize, setCurrentPageSize] = useState(savedFilters?.currentPageSize || pageSize || 25);
+  // Table options with fixed defaults (no longer user-configurable)
+  // tableDensity now comes from props (set in property pane)
+  const showRowNumbers = false;
+  const useStripedRows = true;
+  const [currentPageSize, setCurrentPageSize] = useState(pageSize || 25);
   
   // Helper function to render placement with medal style
   const renderPlacement = (placement: number | string | null | undefined) => {
@@ -602,21 +600,21 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       sortable: true,
       width: '120px',
       render: (value: string) => {
-        const getTimeslotIcon = (timeslot: string) => {
+        const getTimeslotColor = (timeslot: string): 'info' | 'warning' | 'neutral' => {
           const slot = timeslot?.toLowerCase();
-          if (slot === 'night') return '🌙';
-          if (slot === 'twilight') return '🌆';
-          if (slot === 'day') return '☀️';
-          if (slot === 'morning') return '🌅';
-          if (slot === 'afternoon') return '🌤️';
-          if (slot === 'evening') return '🌇';
-          return '📅'; // default icon
+          if (slot === 'morning' || slot === 'day') return 'info';
+          if (slot === 'afternoon' || slot === 'twilight') return 'warning';
+          return 'neutral';
         };
         
-        return (
-          <span title={`Racing timeslot: ${value || 'Not specified'}`}>
-            {getTimeslotIcon(value)} {value}
-          </span>
+        return value ? (
+          <StatusBadge 
+            status={value} 
+            variant={getTimeslotColor(value)}
+            size="small"
+          />
+        ) : (
+          <span style={{ color: '#666' }}>-</span>
         );
       }
     },
@@ -637,26 +635,28 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       width: '120px',
       align: 'right',
       render: (_: any, row: IMeeting) => (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               loadRaces(row);
             }}
-            className={styles.actionButton}
-            title="View Races"
+            className={styles.modernActionButton}
+            title="View all races for this meeting"
           >
-            <img src={racingFlagIconUrl} alt="View Races" className={styles.actionIcon} />
+            <span className={styles.actionIcon}>🏁</span>
+            <span className={styles.actionLabel}>Races</span>
           </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
               showMeetingInfo(row);
             }}
-            className={styles.actionButton}
-            title="Meeting Details"
+            className={styles.modernActionButton}
+            title="View meeting details"
           >
-            <img src={detailsIconUrl} alt="Details" className={`${styles.actionIcon} ${styles.detailsIcon}`} />
+            <span className={styles.actionIcon}>📋</span>
+            <span className={styles.actionLabel}>Details</span>
           </button>
         </div>
       )
@@ -741,26 +741,28 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       width: '120px',
       align: 'right',
       render: (_: any, row: IRace) => (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               loadContestants(row);
             }}
-            className={styles.actionButton}
-            title="View Contestants"
+            className={styles.modernActionButton}
+            title="View contestants in this race"
           >
-            <img src={greyhoundIconUrl} alt="View Contestants" className={styles.actionIcon} />
+            <span className={styles.actionIcon}>🐕</span>
+            <span className={styles.actionLabel}>Field</span>
           </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
               showRaceInfo(row);
             }}
-            className={styles.actionButton}
-            title="Race Details"
+            className={styles.modernActionButton}
+            title="View race details"
           >
-            <img src={detailsIconUrl} alt="Details" className={`${styles.actionIcon} ${styles.detailsIcon}`} />
+            <span className={styles.actionIcon}>📋</span>
+            <span className={styles.actionLabel}>Details</span>
           </button>
         </div>
       )
@@ -844,16 +846,17 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       width: '150px',
       align: 'right',
       render: (_: any, row: IContestant) => (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               showContestantInfo(row);
             }}
-            className={styles.actionButton}
-            title="Contestant Details"
+            className={styles.modernActionButton}
+            title="View contestant details"
           >
-            <img src={detailsIconUrl} alt="Details" className={`${styles.actionIcon} ${styles.detailsIcon}`} />
+            <span className={styles.actionIcon}>📋</span>
+            <span className={styles.actionLabel}>Details</span>
           </button>
           {greyhoundMatches.get(row.cr616_contestantsid) && (
             <button
@@ -864,10 +867,11 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
                   await showGreyhoundInfo(greyhound, false);
                 }
               }}
-              className={styles.actionButton}
-              title="View Greyhound Profile"
+              className={styles.modernActionButton}
+              title="View greyhound profile"
             >
-              <img src={greyhoundIconUrl} alt="Greyhound" className={styles.actionIcon} />
+              <span className={styles.actionIcon}>🐕</span>
+              <span className={styles.actionLabel}>Profile</span>
             </button>
           )}
           {greyhoundInjuries.get(row.cr616_contestantsid) && (
@@ -882,17 +886,11 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
                   }
                 }
               }}
-              className={`${styles.actionButton} ${styles.injuryButton}`}
-              title="View Injury Details"
+              className={`${styles.modernActionButton} ${styles.injuryButton}`}
+              title="View injury details"
             >
-              <span style={{ 
-                fontSize: '14px', 
-                fontWeight: '900', 
-                color: '#dc143c',
-                fontFamily: 'Arial Black, sans-serif',
-                display: 'inline-block',
-                lineHeight: '1'
-              }}>+</span>
+              <span className={styles.actionIcon} style={{ color: '#dc143c' }}>🏥</span>
+              <span className={styles.actionLabel} style={{ color: '#dc143c' }}>Injury</span>
             </button>
           )}
         </div>
@@ -908,19 +906,14 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       dateTo: dateTo?.toISOString(),
       selectedTrack,
       showInjuryFilter,
-      selectedInjuryCategories,
-      tableDensity,
-      showRowNumbers,
-      useStripedRows,
-      currentPageSize
+      selectedInjuryCategories
     };
     try {
       localStorage.setItem('raceDataExplorerFilters', JSON.stringify(filters));
     } catch (e) {
       console.error('Failed to save filters:', e);
     }
-  }, [dateFrom, dateTo, selectedTrack, showInjuryFilter, selectedInjuryCategories, 
-      tableDensity, showRowNumbers, useStripedRows, currentPageSize]);
+  }, [dateFrom, dateTo, selectedTrack, showInjuryFilter, selectedInjuryCategories]);
 
   // Load initial data
   useEffect(() => {
@@ -2027,58 +2020,6 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       <h1 className={styles.mainTitle}>Race Meetings</h1>
       {renderSearchBar()}
       {renderFilters()}
-      
-      {/* Table Options Bar */}
-      <div className={styles.tableOptionsBar}>
-        <div className={styles.tableOptionsGroup}>
-          <label>Density:</label>
-          <select 
-            value={tableDensity} 
-            onChange={(e) => setTableDensity(e.target.value as 'compact' | 'normal' | 'comfortable')}
-            className={styles.tableOptionSelect}
-          >
-            <option value="compact">Compact</option>
-            <option value="normal">Normal</option>
-            <option value="comfortable">Comfortable</option>
-          </select>
-        </div>
-        
-        <div className={styles.tableOptionsGroup}>
-          <label>Page Size:</label>
-          <select 
-            value={currentPageSize} 
-            onChange={(e) => setCurrentPageSize(Number(e.target.value))}
-            className={styles.tableOptionSelect}
-          >
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
-        
-        <div className={styles.tableOptionsGroup}>
-          <label className={styles.checkboxLabel}>
-            <input 
-              type="checkbox" 
-              checked={useStripedRows} 
-              onChange={(e) => setUseStripedRows(e.target.checked)} 
-            />
-            <span>Striped Rows</span>
-          </label>
-        </div>
-        
-        <div className={styles.tableOptionsGroup}>
-          <label className={styles.checkboxLabel}>
-            <input 
-              type="checkbox" 
-              checked={showRowNumbers} 
-              onChange={(e) => setShowRowNumbers(e.target.checked)} 
-            />
-            <span>Row Numbers</span>
-          </label>
-        </div>
-      </div>
       
       {viewState.type !== 'meetings' && (
         <Breadcrumb 

@@ -1,0 +1,249 @@
+@import '../../../../enterprise-ui/styles/tokens';
+
+$brand-primary: #0078d4;
+
+// Loading overlay
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease-in;
+
+  &.fullScreen {
+    position: fixed;
+    z-index: 9999;
+  }
+}
+
+.loadingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 320px;
+  width: 100%;
+}
+
+.loadingText {
+  text-align: center;
+
+  .message {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  .subMessage {
+    font-size: 14px;
+    color: #666;
+  }
+}
+
+// Spinner loader
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f0f0f0;
+  border-top-color: $brand-primary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Dots loader
+.dots {
+  display: flex;
+  gap: 8px;
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    background: $brand-primary;
+    border-radius: 50%;
+    animation: dotPulse 1.4s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Pulse loader
+.pulse {
+  position: relative;
+  width: 40px;
+  height: 40px;
+
+  .pulseRing {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid $brand-primary;
+    border-radius: 50%;
+    animation: pulseRing 1.5s ease-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+// Progress bar
+.progressContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+
+  .progressBar {
+    width: 100%;
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    overflow: hidden;
+
+    .progressFill {
+      height: 100%;
+      background: linear-gradient(90deg, $brand-primary, lighten($brand-primary, 10%));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        animation: shimmer 2s infinite;
+      }
+    }
+  }
+
+  .progressText {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+  }
+}
+
+// Inline loader
+.inlineLoader {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  background: #f5f5f5;
+  border-radius: 16px;
+  font-size: 14px;
+  color: #666;
+
+  .miniSpinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #ddd;
+    border-top-color: $brand-primary;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+// Refresh indicator
+.refreshIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+
+  &.refreshing {
+    background: lighten($brand-primary, 45%);
+
+    .refreshIcon {
+      animation: spin 1s linear;
+    }
+  }
+
+  .refreshIcon {
+    fill: $brand-primary;
+  }
+
+  .refreshText {
+    font-size: 12px;
+    color: #666;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Removed dark mode - always use light colors

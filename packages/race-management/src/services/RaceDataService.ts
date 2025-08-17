@@ -14,6 +14,7 @@ import {
   IDataverseError
 } from '../models/IRaceData';
 import { dataverseConfig } from './SharedAuthService';
+import { cacheService } from './CacheService';
 
 export class RaceDataService {
   private httpClient: HttpClient;
@@ -119,37 +120,50 @@ export class RaceDataService {
 
   // Meeting operations
   public async getMeetings(filters?: IMeetingFilters): Promise<IMeeting[]> {
-    const filterParts: string[] = [];
+    // Create a cache key based on filters
+    const cacheKey = `meetings_${JSON.stringify(filters || {})}`;
     
-    if (filters?.dateFrom) {
-      filterParts.push(`cr4cc_meetingdate ge '${filters.dateFrom.toISOString()}'`);
-    }
-    if (filters?.dateTo) {
-      filterParts.push(`cr4cc_meetingdate le '${filters.dateTo.toISOString()}'`);
-    }
-    if (filters?.track) {
-      filterParts.push(`cr4cc_trackname eq '${encodeURIComponent(filters.track)}'`);
-    }
-    if (filters?.authority) {
-      filterParts.push(`cr4cc_authority eq '${encodeURIComponent(filters.authority)}'`);
-    }
-    if (filters?.status) {
-      filterParts.push(`cr4cc_status eq '${encodeURIComponent(filters.status)}'`);
-    }
-    
-    const queryParts: string[] = [];
-    if (filterParts.length > 0) {
-      queryParts.push(`$filter=${filterParts.join(' and ')}`);
-    }
-    queryParts.push('$orderby=cr4cc_meetingdate desc');
-    
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?${queryParts.join('&')}`;
-    
-    const response = await this.makeRequest<IDataverseResponse<IMeeting>>(url);
-    // Map cr4cc_trackheld to cr4cc_trackname for UI compatibility
-    // No mapping needed - cr4cc_trackname is the actual field
-    const meetings = response.value;
-    return meetings;
+    // Try to get from cache with stale-while-revalidate
+    return cacheService.getOrFetch(
+      cacheKey,
+      async () => {
+        const filterParts: string[] = [];
+        
+        if (filters?.dateFrom) {
+          filterParts.push(`cr4cc_meetingdate ge '${filters.dateFrom.toISOString()}'`);
+        }
+        if (filters?.dateTo) {
+          filterParts.push(`cr4cc_meetingdate le '${filters.dateTo.toISOString()}'`);
+        }
+        if (filters?.track) {
+          filterParts.push(`cr4cc_trackname eq '${encodeURIComponent(filters.track)}'`);
+        }
+        if (filters?.authority) {
+          filterParts.push(`cr4cc_authority eq '${encodeURIComponent(filters.authority)}'`);
+        }
+        if (filters?.status) {
+          filterParts.push(`cr4cc_status eq '${encodeURIComponent(filters.status)}'`);
+        }
+        
+        const queryParts: string[] = [];
+        if (filterParts.length > 0) {
+          queryParts.push(`$filter=${filterParts.join(' and ')}`);
+        }
+        queryParts.push('$orderby=cr4cc_meetingdate desc');
+        
+        const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?${queryParts.join('&')}`;
+        
+        const response = await this.makeRequest<IDataverseResponse<IMeeting>>(url);
+        // Map cr4cc_trackheld to cr4cc_trackname for UI compatibility
+        // No mapping needed - cr4cc_trackname is the actual field
+        const meetings = response.value;
+        return meetings;
+      },
+      {
+        storage: 'session',
+        staleWhileRevalidate: true
+      }
+    );
   }
 
   public async getMeetingById(meetingId: string): Promise<IMeeting> {
@@ -165,9 +179,21 @@ export class RaceDataService {
       console.warn('getRacesForMeeting called with undefined meetingId');
       return [];
     }
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=_cr616_meeting_value eq ${meetingId}&$orderby=cr616_racenumber`;
-    const response = await this.makeRequest<IDataverseResponse<IRace>>(url);
-    return response.value;
+    
+    const cacheKey = `races_meeting_${meetingId}`;
+    
+    return cacheService.getOrFetch(
+      cacheKey,
+      async () => {
+        const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=_cr616_meeting_value eq ${meetingId}&$orderby=cr616_racenumber`;
+        const response = await this.makeRequest<IDataverseResponse<IRace>>(url);
+        return response.value;
+      },
+      {
+        storage: 'session',
+        staleWhileRevalidate: true
+      }
+    );
   }
 
   public async getRaces(filters?: IRaceFilters): Promise<IRace[]> {
@@ -210,9 +236,21 @@ export class RaceDataService {
       console.warn('getContestantsForRace called with undefined raceId');
       return [];
     }
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
-    const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
-    return response.value;
+    
+    const cacheKey = `contestants_race_${raceId}`;
+    
+    return cacheService.getOrFetch(
+      cacheKey,
+      async () => {
+        const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
+        const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
+        return response.value;
+      },
+      {
+        storage: 'session',
+        staleWhileRevalidate: true
+      }
+    );
   }
 
   public async getContestants(filters?: IContestantFilters): Promise<IContestant[]> {
@@ -263,6 +301,13 @@ export class RaceDataService {
         totalResults: 0
       };
     }
+    
+    // Create cache key for search
+    const cacheKey = `search_${searchTerm.toLowerCase().trim()}`;
+    
+    return cacheService.getOrFetch(
+      cacheKey,
+      async () => {
 
     // Don't encode the search term for contains - just escape single quotes
     const escapedTerm = searchTerm.trim().replace(/'/g, "''");
@@ -345,7 +390,7 @@ export class RaceDataService {
       };
       
       return results;
-    } catch (error) {
+        } catch (error) {
       console.error('Search error details:', {
         error,
         searchTerm,
@@ -357,7 +402,13 @@ export class RaceDataService {
       });
       // Re-throw to let the component handle the error
       throw new Error(`Search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+        }
+      },
+      {
+        storage: 'session',
+        ttl: 10 * 60 * 1000 // 10 minutes for search results
+      }
+    );
   }
 
   // Test API connectivity and authentication
@@ -565,6 +616,203 @@ export class RaceDataService {
         return null;
       }
     }
+  }
+
+  /**
+   * Get injury data for analytics dashboard
+   */
+  public async getInjuryData(options?: {
+    dateFrom?: Date;
+    dateTo?: Date;
+    track?: string;
+    categories?: string[];
+  }): Promise<IHealthCheck[]> {
+    const cacheKey = `injury_data_${JSON.stringify(options)}`;
+    
+    // Clear cache for testing
+    if (options && Object.keys(options).length === 0) {
+      cacheService.clear();
+    }
+    
+    return cacheService.getOrFetch(
+      cacheKey,
+      async () => {
+        try {
+          console.log('RaceDataService.getInjuryData: Starting fetch with options:', options);
+          
+          // First, let's test if the table exists and what it's called
+          console.log('Testing table names...');
+          
+          // Try both possible table names
+          const tableNames = ['cra5e_heathchecks', 'cra5e_healthchecks'];
+          let workingTableName = '';
+          
+          for (const tableName of tableNames) {
+            try {
+              const testUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/${tableName}?$top=1`;
+              console.log(`Testing table: ${tableName} at ${testUrl}`);
+              const testResponse = await this.makeRequest<IDataverseResponse<IHealthCheck>>(testUrl, true);
+              console.log(`✅ Table ${tableName} exists! Found ${testResponse.value?.length || 0} records in test`);
+              workingTableName = tableName;
+              break;
+            } catch (testError) {
+              console.log(`❌ Table ${tableName} failed:`, testError);
+            }
+          }
+          
+          if (!workingTableName) {
+            console.error('Could not find health check table with either name!');
+            // Try to get any data to see what's available
+            try {
+              const anyDataUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/`;
+              console.log('Trying to get API root:', anyDataUrl);
+              const rootResponse = await this.makeRequest<any>(anyDataUrl, true);
+              console.log('API root response:', rootResponse);
+            } catch (rootError) {
+              console.error('Could not access API root:', rootError);
+            }
+            return [];
+          }
+          
+          // Now build the actual query with the working table name
+          let filter = '';
+          const filters: string[] = [];
+          
+          // TEMPORARILY REMOVE ALL FILTERS to see if we can get ANY data
+          // We'll filter in memory instead
+          console.log('REMOVING ALL API FILTERS - will filter in memory');
+          
+          // Store filter criteria for in-memory filtering
+          const filterCriteria = {
+            dateFrom: options?.dateFrom,
+            dateTo: options?.dateTo,
+            track: options?.track,
+            categories: options?.categories
+          };
+          
+          // Build URL - if no filters, don't add filter parameter
+          let url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/${workingTableName}`;
+          if (filters.length > 0) {
+            filter = filters.join(' and ');
+            url += `?$filter=${filter}&$orderby=cra5e_datechecked desc&$top=5000`;
+          } else {
+            // No filters - just get top 1000 records
+            url += `?$orderby=cra5e_datechecked desc&$top=1000`;
+          }
+          
+          console.log('RaceDataService.getInjuryData: Final request URL:', url);
+          
+          const response = await this.makeRequest<IDataverseResponse<IHealthCheck>>(url, true);
+          
+          console.log('RaceDataService.getInjuryData: Response received, record count:', response.value?.length || 0);
+          if (response.value && response.value.length > 0) {
+            console.log('First 3 records:', response.value.slice(0, 3));
+            
+            // Filter in memory based on criteria
+            let filteredRecords = response.value;
+            
+            // Filter by injury status
+            filteredRecords = filteredRecords.filter(r => 
+              r.cra5e_injuryclassification || r.cra5e_injured === true
+            );
+            console.log(`After injury filter: ${filteredRecords.length} records`);
+            
+            // Filter by date if specified
+            if (filterCriteria.dateFrom) {
+              filteredRecords = filteredRecords.filter(r => {
+                if (!r.cra5e_datechecked) return false;
+                const recordDate = new Date(r.cra5e_datechecked);
+                return recordDate >= filterCriteria.dateFrom;
+              });
+              console.log(`After dateFrom filter: ${filteredRecords.length} records`);
+            }
+            
+            if (filterCriteria.dateTo) {
+              filteredRecords = filteredRecords.filter(r => {
+                if (!r.cra5e_datechecked) return false;
+                const recordDate = new Date(r.cra5e_datechecked);
+                return recordDate <= filterCriteria.dateTo;
+              });
+              console.log(`After dateTo filter: ${filteredRecords.length} records`);
+            }
+            
+            // Filter by track if specified
+            if (filterCriteria.track && filterCriteria.track !== '') {
+              filteredRecords = filteredRecords.filter(r => 
+                r.cra5e_trackname === filterCriteria.track
+              );
+              console.log(`After track filter: ${filteredRecords.length} records`);
+            }
+            
+            // Filter by categories if specified
+            if (filterCriteria.categories && filterCriteria.categories.length > 0) {
+              filteredRecords = filteredRecords.filter(r => 
+                filterCriteria.categories.indexOf(r.cra5e_injuryclassification) !== -1
+              );
+              console.log(`After categories filter: ${filteredRecords.length} records`);
+            }
+            
+            console.log(`Final filtered count: ${filteredRecords.length} records`);
+            return filteredRecords;
+          }
+          
+          return [];
+        } catch (error) {
+          console.error('RaceDataService.getInjuryData: Error fetching injury data:', error);
+          // Try without any filters to see if we can get ANY data
+          try {
+            console.log('Attempting to get ANY health check data without filters...');
+            const anyUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$top=100`;
+            const anyResponse = await this.makeRequest<IDataverseResponse<IHealthCheck>>(anyUrl, true);
+            console.log('Got data without filters:', anyResponse.value?.length || 0, 'records');
+            if (anyResponse.value && anyResponse.value.length > 0) {
+              console.log('Sample unfiltered record:', anyResponse.value[0]);
+              // Filter the results in memory to get injured records
+              const injuredRecords = anyResponse.value.filter(r => 
+                r.cra5e_injuryclassification || r.cra5e_injured
+              );
+              console.log('Records with injuries after filtering in memory:', injuredRecords.length);
+              if (injuredRecords.length > 0) {
+                console.log('Returning filtered injury records from unfiltered query');
+                return injuredRecords;
+              }
+            }
+          } catch (anyError) {
+            console.error('Could not get any health check data:', anyError);
+          }
+          return [];
+        }
+      },
+      { storage: 'session', ttl: 10 * 60 * 1000 } // Cache for 10 minutes
+    );
+  }
+  
+  // Sample data for testing when API fails
+  private getSampleInjuryData(): IHealthCheck[] {
+    const tracks = ['Wentworth Park', 'The Gardens', 'Richmond', 'Gosford', 'Maitland'];
+    const categories = ['Cat A', 'Cat B', 'Cat C', 'Cat D', 'Cat E'];
+    const sampleData: IHealthCheck[] = [];
+    
+    // Generate sample data for last 6 months
+    const now = new Date();
+    for (let i = 0; i < 100; i++) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - Math.floor(Math.random() * 180));
+      
+      sampleData.push({
+        cra5e_heathcheckid: `sample-${i}`,
+        cra5e_datechecked: date.toISOString(),
+        cra5e_injured: true,
+        cra5e_injuryclassification: categories[Math.floor(Math.random() * categories.length)],
+        cra5e_trackname: tracks[Math.floor(Math.random() * tracks.length)],
+        cra5e_standdowndays: Math.floor(Math.random() * 30),
+        cra5e_injurytype: 'Sample Injury',
+        cra5e_injurynote: 'Sample injury note for testing',
+        _cra5e_greyhound_value: `greyhound-${Math.floor(Math.random() * 100)}`
+      } as unknown as IHealthCheck);
+    }
+    
+    return sampleData;
   }
 
   public async getHealthCheckById(healthCheckId: string): Promise<IHealthCheck | null> {

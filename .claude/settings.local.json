@@ -31,7 +31,9 @@
       "Bash(unzip:*)",
       "Bash(npm version:*)",
       "Bash(node:*)",
-      "Bash(az:*)"
+      "Bash(az:*)",
+      "Bash(npm install:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
