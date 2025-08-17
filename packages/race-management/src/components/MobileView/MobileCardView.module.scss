@@ -1,0 +1,326 @@
+@import '../../enterprise-ui/styles/tokens';
+
+// Mobile Card Styles
+.mobileCard {
+  position: relative;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-sm;
+  transition: all 200ms ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  
+  &:active {
+    transform: scale(0.98);
+    box-shadow: $shadow-xs;
+  }
+  
+  &.theme-meeting {
+    border-left: 4px solid $racing-meetings;
+  }
+  
+  &.theme-race {
+    border-left: 4px solid $racing-races;
+  }
+  
+  &.theme-contestant {
+    border-left: 4px solid $racing-contestants;
+  }
+  
+  @include media-up('md') {
+    &:hover {
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+  gap: $spacing-md;
+}
+
+.headerContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.subtitle {
+  margin: $spacing-xs 0 0;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  align-items: flex-start;
+}
+
+.cardDetails {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  font-size: $font-size-md;
+}
+
+.detailLabel {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  font-weight: $font-weight-medium;
+}
+
+.detailValue {
+  flex: 1;
+  text-align: right;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.cardActions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid var(--border-light);
+}
+
+.actionButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+  
+  &:active {
+    background: var(--bg-hover);
+    transform: scale(0.95);
+  }
+  
+  @include media-up('md') {
+    &:hover {
+      background: var(--bg-hover);
+      border-color: $brand-primary;
+      color: $brand-primary;
+    }
+  }
+}
+
+.actionIcon {
+  font-size: 16px;
+}
+
+.clickIndicator {
+  position: absolute;
+  right: $spacing-md;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 24px;
+  font-weight: $font-weight-light;
+  pointer-events: none;
+}
+
+// Mobile List View Styles
+.mobileListView {
+  padding: $spacing-sm;
+  min-height: 300px;
+  
+  &.theme-meeting {
+    background: linear-gradient(to bottom, rgba($racing-meetings, 0.02), transparent);
+  }
+  
+  &.theme-race {
+    background: linear-gradient(to bottom, rgba($racing-races, 0.02), transparent);
+  }
+  
+  &.theme-contestant {
+    background: linear-gradient(to bottom, rgba($racing-contestants, 0.02), transparent);
+  }
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardWrapper {
+  animation: slideInUp 300ms ease-out;
+  
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// Loading States
+.loadingState,
+.errorState,
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xxxl $spacing-lg;
+  text-align: center;
+  color: var(--text-secondary);
+  
+  p {
+    margin: $spacing-md 0 0;
+    font-size: $font-size-md;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-light);
+  border-top-color: $brand-primary;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+.errorIcon,
+.emptyIcon {
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+.errorState {
+  color: $error;
+  
+  .errorIcon {
+    opacity: 1;
+  }
+}
+
+// Load More
+.loadMoreTrigger {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadingMore {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  color: var(--text-secondary);
+  
+  .spinner {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// Touch-specific optimizations
+@media (hover: none) and (pointer: coarse) {
+  .mobileCard {
+    // Larger touch targets
+    min-height: 100px;
+  }
+  
+  .actionButton {
+    min-height: 44px; // iOS minimum touch target
+  }
+  
+  .detailRow {
+    min-height: 24px;
+  }
+}
+
+// Landscape mobile optimization
+@media (max-height: 500px) and (orientation: landscape) {
+  .mobileListView {
+    padding: $spacing-xs;
+  }
+  
+  .mobileCard {
+    padding: $spacing-sm;
+    margin-bottom: $spacing-sm;
+  }
+  
+  .cardHeader {
+    margin-bottom: $spacing-sm;
+  }
+  
+  .cardDetails {
+    margin-bottom: $spacing-sm;
+  }
+  
+  .loadingState,
+  .errorState,
+  .emptyState {
+    padding: $spacing-xl $spacing-lg;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .mobileCard {
+    background: #1e1e1e;
+    border-color: #333;
+    
+    &:active {
+      background: #252525;
+    }
+  }
+  
+  .actionButton {
+    background: #2a2a2a;
+    border-color: #444;
+    
+    &:active {
+      background: #333;
+    }
+  }
+}

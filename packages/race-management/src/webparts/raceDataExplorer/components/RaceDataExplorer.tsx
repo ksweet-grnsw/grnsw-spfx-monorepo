@@ -19,7 +19,8 @@ import {
   useTableColumns,
   useActionColumns,
   useFilters,
-  useInjuryTracking
+  useInjuryTracking,
+  useOptimisticUpdate
 } from '../../../hooks';
 
 // Import helper utilities
@@ -136,6 +137,68 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
     { autoFetch: viewState.type === 'search' }
   );
 
+  // Optimistic Update hooks for data modifications
+  const meetingOptimistic = useOptimisticUpdate<IMeeting[]>(
+    meetingsData.data || [],
+    {
+      onSuccess: () => {
+        console.log('Meeting update successful');
+      },
+      onError: (error) => {
+        console.error('Meeting update failed:', error);
+      },
+      onRollback: () => {
+        console.log('Rolling back meeting update');
+      },
+      rollbackDelay: 2000,
+      showNotification: true
+    }
+  );
+
+  const raceOptimistic = useOptimisticUpdate<IRace[]>(
+    racesData.data || [],
+    {
+      onSuccess: () => {
+        console.log('Race update successful');
+      },
+      onError: (error) => {
+        console.error('Race update failed:', error);
+      },
+      rollbackDelay: 2000
+    }
+  );
+
+  const contestantOptimistic = useOptimisticUpdate<IContestant[]>(
+    contestantsData.data || [],
+    {
+      onSuccess: () => {
+        console.log('Contestant update successful');
+      },
+      onError: (error) => {
+        console.error('Contestant update failed:', error);
+      },
+      rollbackDelay: 2000
+    }
+  );
+
+  // Example function to update a meeting optimistically
+  const handleUpdateMeeting = useCallback(async (meeting: IMeeting, updates: Partial<IMeeting>) => {
+    const updatedMeeting = { ...meeting, ...updates };
+    
+    await meetingOptimistic.updateOptimistically(
+      (prevMeetings) => prevMeetings.map(m => 
+        m.cr4cc_racemeetingid === meeting.cr4cc_racemeetingid ? updatedMeeting : m
+      ),
+      async () => {
+        // This would be the actual API call
+        // return await dataService.updateMeeting(meeting.cr4cc_racemeetingid, updates);
+        // For now, simulate with a delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return meetingsData.data || [];
+      }
+    );
+  }, [meetingOptimistic, meetingsData.data]);
+
   // Navigation handlers
   const navigateToRaces = useCallback((meeting: IMeeting) => {
     setViewState({ type: 'races', meeting });
@@ -245,20 +308,42 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   }, [filters]);
 
   // Get current data and loading state based on view
+  // Use optimistic data when available, otherwise fall back to fetched data
   const { data, loading, error } = useMemo(() => {
     switch (viewState.type) {
       case 'meetings':
-        return meetingsData;
+        return {
+          data: meetingOptimistic.state.data.length > 0 ? meetingOptimistic.state.data : meetingsData.data,
+          loading: meetingsData.loading || meetingOptimistic.state.isPending,
+          error: meetingsData.error || meetingOptimistic.state.error
+        };
       case 'races':
-        return racesData;
+        return {
+          data: raceOptimistic.state.data.length > 0 ? raceOptimistic.state.data : racesData.data,
+          loading: racesData.loading || raceOptimistic.state.isPending,
+          error: racesData.error || raceOptimistic.state.error
+        };
       case 'contestants':
-        return contestantsData;
+        return {
+          data: contestantOptimistic.state.data.length > 0 ? contestantOptimistic.state.data : contestantsData.data,
+          loading: contestantsData.loading || contestantOptimistic.state.isPending,
+          error: contestantsData.error || contestantOptimistic.state.error
+        };
       case 'search':
         return searchData;
       default:
         return { data: null, loading: false, error: null };
     }
-  }, [viewState.type, meetingsData, racesData, contestantsData, searchData]);
+  }, [
+    viewState.type, 
+    meetingsData, 
+    racesData, 
+    contestantsData, 
+    searchData,
+    meetingOptimistic.state,
+    raceOptimistic.state,
+    contestantOptimistic.state
+  ]);
 
   // Render table based on view type
   const renderTable = () => {
@@ -447,6 +532,16 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       {/* Breadcrumb */}
       {viewState.type !== 'meetings' && (
         <Breadcrumb items={breadcrumbItems} theme={theme as any} />
+      )}
+
+      {/* Optimistic Update Indicators */}
+      {(meetingOptimistic.state.isRollingBack || 
+        raceOptimistic.state.isRollingBack || 
+        contestantOptimistic.state.isRollingBack) && (
+        <div className={styles.rollbackNotification}>
+          <span className={styles.rollbackIcon}>⚠️</span>
+          <span>Update failed. Rolling back changes...</span>
+        </div>
       )}
 
       {/* Main Content */}

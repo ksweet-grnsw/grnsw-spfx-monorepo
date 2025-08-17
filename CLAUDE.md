@@ -228,7 +228,109 @@ grnsw-spfx-monorepo/
         race-management.sppkg
 ```
 
-## Code Standards
+## Code Standards & Architecture Principles
+
+### 🏗️ MANDATORY Architecture Principles (MUST FOLLOW)
+
+#### SOLID Principles
+1. **Single Responsibility Principle (SRP)**
+   - Each class/function/module should have ONE reason to change
+   - Components should do ONE thing well
+   - Separate business logic from UI logic
+   - Example: Don't mix API calls, state management, and rendering in one component
+
+2. **Open/Closed Principle (OCP)**
+   - Code should be open for extension but closed for modification
+   - Use composition over inheritance
+   - Leverage React hooks for extending functionality
+   - Create abstract base classes/interfaces for common behaviors
+
+3. **Liskov Substitution Principle (LSP)**
+   - Derived classes must be substitutable for their base classes
+   - Component props interfaces should be consistent
+   - Don't break expected behaviors when extending components
+
+4. **Interface Segregation Principle (ISP)**
+   - Many specific interfaces are better than one general interface
+   - Don't force components to implement methods they don't use
+   - Split large interfaces into smaller, focused ones
+
+5. **Dependency Inversion Principle (DIP)**
+   - Depend on abstractions, not concretions
+   - Use dependency injection via props/context
+   - Services should depend on interfaces, not implementations
+
+#### DRY Principle (Don't Repeat Yourself)
+- **Extract common logic into custom hooks**
+- **Create utility functions for repeated calculations**
+- **Use shared components for common UI patterns**
+- **Centralize constants and configuration**
+- **Never copy-paste code blocks** - refactor into reusable functions
+
+#### React Best Practices
+1. **Component Design**
+   - Prefer functional components with hooks over class components
+   - Keep components small and focused (< 200 lines ideally)
+   - Use composition over inheritance
+   - Implement proper prop validation with TypeScript
+
+2. **State Management**
+   - Lift state up to the nearest common ancestor
+   - Use local state for UI-only concerns
+   - Consider context for cross-cutting concerns
+   - Implement optimistic updates for better UX
+
+3. **Performance**
+   - Use `React.memo` for expensive pure components
+   - Implement `useMemo` for expensive calculations
+   - Use `useCallback` for stable function references
+   - Lazy load components with `React.lazy` and Suspense
+   - Implement virtual scrolling for large lists (500+ items)
+
+4. **Hooks Guidelines**
+   - Custom hooks must start with `use`
+   - Keep hooks at the top level (no conditionals/loops)
+   - Extract complex logic into custom hooks
+   - Return consistent data structures from hooks
+
+5. **Error Handling**
+   - Implement error boundaries for component trees
+   - Use try-catch in async operations
+   - Provide user-friendly error messages
+   - Log errors for debugging
+
+### 📁 Project Structure (MANDATORY)
+```
+src/
+├── components/           # Shared UI components
+│   ├── common/          # Generic reusable components
+│   └── domain/          # Domain-specific components
+├── hooks/               # Custom React hooks
+│   ├── index.ts        # Barrel export
+│   └── use*.ts         # Individual hooks
+├── services/            # API and business logic
+│   ├── interfaces/     # Service interfaces
+│   └── implementations/# Concrete implementations
+├── utils/              # Pure utility functions
+│   ├── calculations/   # Math/calculation utilities
+│   ├── formatters/     # Data formatting utilities
+│   └── validators/     # Validation utilities
+├── models/             # TypeScript interfaces/types
+└── webparts/           # SPFx web part components
+```
+
+### 🔍 Code Review Checklist (BEFORE EVERY COMMIT)
+- [ ] No code duplication (DRY principle applied)
+- [ ] Single responsibility for each function/component
+- [ ] Proper TypeScript types (no `any` unless absolutely necessary)
+- [ ] Error handling implemented
+- [ ] Performance optimizations applied where needed
+- [ ] Custom hooks extracted for reusable logic
+- [ ] Comments only where necessary (code should be self-documenting)
+- [ ] Consistent naming conventions
+- [ ] Unit tests for utilities and hooks
+
+### TypeScript Standards
 - Use TypeScript strict mode where possible
 - Replace `null` with `undefined` in component state
 - Use `.catch()` for promise error handling instead of `void` operator

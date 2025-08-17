@@ -126,6 +126,35 @@
   width: 100%;
 }
 
+.rollbackNotification {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  background: lighten($warning, 40%);
+  border: 1px solid $warning;
+  border-radius: 4px;
+  color: darken($warning, 20%);
+  font-weight: 500;
+  animation: slideIn 300ms ease-out;
+  
+  @keyframes slideIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+.rollbackIcon {
+  font-size: 20px;
+}
+
 .filterBar {
   margin-bottom: $spacing-lg;
   padding: $spacing-md;
