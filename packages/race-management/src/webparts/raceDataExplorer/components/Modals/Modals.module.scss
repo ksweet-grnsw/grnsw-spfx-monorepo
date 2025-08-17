@@ -10,6 +10,48 @@
   }
 }
 
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modalContent {
+  background: white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-xl;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
 .modalHeader {
   display: flex;
   justify-content: space-between;
@@ -152,6 +194,170 @@
   display: flex;
   justify-content: flex-end;
   gap: $spacing-md;
+}
+
+// Analytics Modal Styles
+.summaryCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: $spacing-lg;
+  border-radius: $radius-md;
+  text-align: center;
+  color: white;
+  box-shadow: $shadow-sm;
+  
+  .cardValue {
+    font-size: $font-size-xxl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-xs;
+  }
+  
+  .cardLabel {
+    font-size: $font-size-sm;
+    opacity: 0.9;
+  }
+}
+
+.metricSelector {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  border-bottom: 1px solid var(--border-default);
+  padding-bottom: $spacing-md;
+}
+
+.metricButton {
+  padding: $spacing-sm $spacing-md;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 200ms ease;
+  border-bottom: 2px solid transparent;
+  
+  &:hover {
+    color: var(--text-primary);
+  }
+  
+  &.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+  }
+}
+
+.chartContainer {
+  margin-bottom: $spacing-xl;
+}
+
+.chartTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-md;
+  color: var(--text-primary);
+}
+
+.barChart {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.barRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.trackLabel {
+  flex: 0 0 120px;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.barContainer {
+  flex: 1;
+  height: 24px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 600ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: $spacing-sm;
+}
+
+.barValue {
+  position: absolute;
+  right: $spacing-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+}
+
+.insightsSection {
+  background: #f8f9fa;
+  padding: $spacing-lg;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-lg;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: $spacing-md;
+    color: var(--text-primary);
+  }
+}
+
+.insightsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    padding: $spacing-sm 0;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+}
+
+.demoIndicator {
+  font-size: $font-size-sm;
+  color: #ff9800;
+  font-weight: 400;
+  margin-left: $spacing-sm;
+}
+
+.demoNotice {
+  background: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  color: #e65100;
+  font-size: $font-size-sm;
+}
+
+.infoIcon {
+  font-size: $font-size-lg;
 }
 
 .primaryButton {

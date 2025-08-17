@@ -30,6 +30,13 @@ export class RaceDataService {
     this.context = context || null;
     // Use provided URL or fall back to configured URL
     this.dataverseUrl = dataverseUrl || dataverseConfig.apiUrl;
+    
+    // Log the configuration for debugging
+    console.log('RaceDataService initialized with:', {
+      dataverseUrl: this.dataverseUrl,
+      hasContext: !!this.context,
+      hasHttpClient: !!this.httpClient
+    });
   }
 
   // Get AAD client for authenticated requests
@@ -63,11 +70,34 @@ export class RaceDataService {
         const response = await aadClient.get(url, AadHttpClient.configurations.v1);
         
         if (!response.ok) {
-          const error: IDataverseError = await response.json();
-          throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+          let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+          try {
+            const errorText = await response.text();
+            if (errorText) {
+              const error: IDataverseError = JSON.parse(errorText);
+              errorMessage = error.error?.message || errorMessage;
+            }
+          } catch {
+            // If we can't parse the error, use the default message
+          }
+          throw new Error(errorMessage);
         }
         
-        return await response.json();
+        const responseText = await response.text();
+        if (!responseText) {
+          // Return empty array for collection endpoints
+          if (url.includes('$') || url.includes('?')) {
+            return { value: [] } as unknown as T;
+          }
+          return {} as T;
+        }
+        
+        try {
+          return JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('Failed to parse response:', responseText);
+          throw new Error('Invalid JSON response from server');
+        }
       } else {
         // Fallback to HttpClient (less secure, for testing only)
         const options: IHttpClientOptions = {
@@ -83,11 +113,34 @@ export class RaceDataService {
         const response: HttpClientResponse = await this.httpClient.get(url, HttpClient.configurations.v1, options);
         
         if (!response.ok) {
-          const error: IDataverseError = await response.json();
-          throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+          let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+          try {
+            const errorText = await response.text();
+            if (errorText) {
+              const error: IDataverseError = JSON.parse(errorText);
+              errorMessage = error.error?.message || errorMessage;
+            }
+          } catch {
+            // If we can't parse the error, use the default message
+          }
+          throw new Error(errorMessage);
         }
         
-        return await response.json();
+        const responseText = await response.text();
+        if (!responseText) {
+          // Return empty array for collection endpoints
+          if (url.includes('$') || url.includes('?')) {
+            return { value: [] } as unknown as T;
+          }
+          return {} as T;
+        }
+        
+        try {
+          return JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('Failed to parse response:', responseText);
+          throw new Error('Invalid JSON response from server');
+        }
       }
     } catch (error) {
       console.error('Dataverse API Error:', {
@@ -136,7 +189,12 @@ export class RaceDataService {
           filterParts.push(`cr4cc_meetingdate le '${filters.dateTo.toISOString()}'`);
         }
         if (filters?.track) {
-          filterParts.push(`cr4cc_trackname eq '${encodeURIComponent(filters.track)}'`);
+          // Handle both "Wentworth" and "Wentworth Park" when filtering
+          if (filters.track === 'Wentworth Park') {
+            filterParts.push(`(cr4cc_trackname eq 'Wentworth Park' or cr4cc_trackname eq 'Wentworth')`);
+          } else {
+            filterParts.push(`cr4cc_trackname eq '${encodeURIComponent(filters.track)}'`);
+          }
         }
         if (filters?.authority) {
           filterParts.push(`cr4cc_authority eq '${encodeURIComponent(filters.authority)}'`);
@@ -153,10 +211,16 @@ export class RaceDataService {
         
         const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?${queryParts.join('&')}`;
         
+        console.log('Fetching meetings from URL:', url);
         const response = await this.makeRequest<IDataverseResponse<IMeeting>>(url);
-        // Map cr4cc_trackheld to cr4cc_trackname for UI compatibility
-        // No mapping needed - cr4cc_trackname is the actual field
-        const meetings = response.value;
+        console.log('Meetings response:', response);
+        
+        // Normalize track names - combine "Wentworth" and "Wentworth Park"
+        const meetings = (response.value || []).map(meeting => ({
+          ...meeting,
+          cr4cc_trackname: meeting.cr4cc_trackname === 'Wentworth' ? 'Wentworth Park' : meeting.cr4cc_trackname
+        }));
+        console.log(`Returning ${meetings.length} meetings`);
         return meetings;
       },
       {

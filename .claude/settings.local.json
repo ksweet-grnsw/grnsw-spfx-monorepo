@@ -34,7 +34,10 @@
       "Bash(az:*)",
       "Bash(npm install:*)",
       "Bash(git checkout:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(npm test:*)",
+      "Bash(cd:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

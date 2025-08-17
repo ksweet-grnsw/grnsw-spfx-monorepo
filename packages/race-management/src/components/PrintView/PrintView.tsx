@@ -171,7 +171,7 @@ export const PrintView: React.FC<PrintViewProps> = ({
         )}
 
         {/* Data Tables */}
-        {Object.entries(groupedData).map(([groupName, groupData]) => (
+        {Object.entries(groupedData).map(([groupName, groupData]: [string, any[]]) => (
           <div key={groupName} className={styles.printGroup}>
             {groupBy && groupName && (
               <h2 className={styles.groupTitle}>{groupName}</h2>

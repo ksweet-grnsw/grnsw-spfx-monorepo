@@ -3,6 +3,7 @@ import { DataGridColumn } from '../enterprise-ui/components/DataDisplay/DataGrid
 import { IMeeting, IRace, IContestant } from '../models/IRaceData';
 import { StatusBadge } from '../enterprise-ui/components/DataDisplay/StatusIndicator/StatusBadge';
 import * as React from 'react';
+import { renderRugNumber, renderPlacement } from '../utils/tableConfig/columnHelpers';
 
 /**
  * Hook to manage table column definitions
@@ -50,20 +51,46 @@ export function useTableColumns() {
       sortable: true,
       width: '120px',
       render: (value: string) => {
-        const getTimeslotColor = (timeslot: string): 'info' | 'warning' | 'neutral' => {
-          const slot = timeslot?.toLowerCase();
-          if (slot === 'morning' || slot === 'day') return 'info';
-          if (slot === 'afternoon' || slot === 'twilight') return 'warning';
-          return 'neutral';
-        };
+        if (!value) {
+          return React.createElement('span', { style: { color: '#666' }}, '-');
+        }
         
-        return value ? (
-          React.createElement(StatusBadge, {
-            status: value,
-            variant: getTimeslotColor(value),
-            size: 'small'
-          })
-        ) : React.createElement('span', { style: { color: '#666' }}, '-');
+        const slot = value?.toLowerCase();
+        let className = '';
+        
+        // Determine the class based on timeslot
+        if (slot === 'night' || slot === 'evening') {
+          className = 'timeslotNight';
+        } else if (slot === 'twilight') {
+          className = 'timeslotTwilight';
+        } else if (slot === 'day' || slot === 'morning') {
+          className = 'timeslotDay';
+        } else if (slot === 'afternoon') {
+          className = 'timeslotAfternoon';
+        } else {
+          className = 'timeslotDefault';
+        }
+        
+        return React.createElement('span', {
+          className: `timeslotPill ${className}`,
+          style: {
+            display: 'inline-block',
+            padding: '2px 10px',
+            borderRadius: '12px',
+            fontSize: '12px',
+            fontWeight: '600',
+            textTransform: 'capitalize',
+            whiteSpace: 'nowrap',
+            backgroundColor: 
+              slot === 'night' || slot === 'evening' ? '#1a237e' : // Dark blue
+              slot === 'twilight' ? '#9c88ff' : // Lighter purple
+              slot === 'day' || slot === 'morning' ? '#fbc02d' : // Yellow
+              slot === 'afternoon' ? '#2196f3' : // Sky blue
+              '#9e9e9e', // Gray default
+            color: 
+              slot === 'day' || slot === 'morning' ? '#333' : '#fff'
+          }
+        }, value);
       }
     },
     {
@@ -72,6 +99,35 @@ export function useTableColumns() {
       sortable: true,
       width: '100px',
       render: (value: string) => value || 'Race'
+    },
+    {
+      key: 'injuryStatus',
+      label: 'Injuries',
+      sortable: false,
+      width: '80px',
+      align: 'center',
+      render: (value: any, row: IMeeting) => {
+        // Check if this meeting has injury data
+        const hasInjuries = (row as any).hasInjuries;
+        if (hasInjuries) {
+          return React.createElement('span', {
+            style: {
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              title: 'Injuries reported at this meeting'
+            }
+          }, '⚠');
+        }
+        return null;
+      }
     }
   ], []);
 
@@ -128,6 +184,35 @@ export function useTableColumns() {
       sortable: true,
       width: '100px',
       render: (value: number) => value ? `$${value.toLocaleString()}` : '-'
+    },
+    {
+      key: 'injuryStatus',
+      label: 'Injuries',
+      sortable: false,
+      width: '80px',
+      align: 'center',
+      render: (value: any, row: IRace) => {
+        // Check if this race has injury data
+        const hasInjuries = (row as any).hasInjuries;
+        if (hasInjuries) {
+          return React.createElement('span', {
+            style: {
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              title: 'Injuries reported in this race'
+            }
+          }, '⚠');
+        }
+        return null;
+      }
     }
   ], []);
 
@@ -138,34 +223,7 @@ export function useTableColumns() {
       sortable: true,
       width: '60px',
       align: 'center',
-      render: (value: number) => {
-        const rugColors = {
-          1: '#FF0000', // Red
-          2: '#0000FF', // Blue
-          3: '#FFFFFF', // White
-          4: '#000000', // Black
-          5: '#FFA500', // Orange
-          6: '#FFD700', // Gold/Yellow
-          7: '#FFC0CB', // Pink
-          8: '#00FF00'  // Green
-        };
-        
-        return React.createElement('span', {
-          style: {
-            display: 'inline-block',
-            width: '24px',
-            height: '24px',
-            borderRadius: '50%',
-            backgroundColor: rugColors[value] || '#ccc',
-            color: [3, 6, 7].includes(value) ? '#000' : '#fff',
-            textAlign: 'center',
-            lineHeight: '24px',
-            fontWeight: 'bold',
-            fontSize: '12px',
-            border: value === 3 ? '1px solid #ccc' : 'none'
-          }
-        }, value);
-      }
+      render: renderRugNumber
     },
     {
       key: 'cr616_greyhoundname',
@@ -197,36 +255,7 @@ export function useTableColumns() {
       sortable: true,
       width: '80px',
       align: 'center',
-      render: (value: number) => {
-        if (!value) return '-';
-        
-        const medalColors = {
-          1: { bg: '#FFD700', color: '#000' }, // Gold
-          2: { bg: '#C0C0C0', color: '#000' }, // Silver
-          3: { bg: '#CD7F32', color: '#fff' }  // Bronze
-        };
-        
-        if (value <= 3) {
-          const style = medalColors[value];
-          return React.createElement('span', {
-            style: {
-              display: 'inline-block',
-              width: '28px',
-              height: '28px',
-              borderRadius: '50%',
-              backgroundColor: style.bg,
-              color: style.color,
-              textAlign: 'center',
-              lineHeight: '28px',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-            }
-          }, value);
-        }
-        
-        return value;
-      }
+      render: renderPlacement
     },
     {
       key: 'cr616_margin',
@@ -256,6 +285,35 @@ export function useTableColumns() {
           size: 'small'
         });
       }
+    },
+    {
+      key: 'injuryStatus',
+      label: 'Injured',
+      sortable: false,
+      width: '80px',
+      align: 'center',
+      render: (value: any, row: IContestant) => {
+        // Check if this contestant has injury data
+        const hasInjuries = (row as any).hasInjuries;
+        if (hasInjuries) {
+          return React.createElement('span', {
+            style: {
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              title: 'This contestant was injured'
+            }
+          }, '🏥');
+        }
+        return null;
+      }
     }
   ], []);
 
@@ -282,7 +340,7 @@ export function useActionColumns<T>(
     const actionColumn: DataGridColumn<T> = {
       key: 'actions',
       label: 'Actions',
-      width: `${Math.min(150, actions.length * 60)}px`,
+      width: `${Math.min(180, actions.length * 80)}px`,
       align: 'right',
       render: (_: any, row: T) => {
         const visibleActions = actions.filter(action => 
@@ -290,7 +348,7 @@ export function useActionColumns<T>(
         );
         
         return React.createElement('div', {
-          style: { display: 'flex', gap: '4px', justifyContent: 'flex-end' }
+          style: { display: 'flex', gap: '8px', justifyContent: 'flex-end' }
         }, visibleActions.map((action, index) => 
           React.createElement('button', {
             key: index,
@@ -299,17 +357,32 @@ export function useActionColumns<T>(
               action.onClick(row);
             },
             className: 'modernActionButton',
-            title: action.label
-          }, [
+            title: action.label,
+            style: {
+              background: '#f8f9fa',
+              border: '1px solid #e9ecef',
+              cursor: 'pointer',
+              padding: '6px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '16px',
+              color: '#333',
+              transition: 'all 0.2s ease',
+              minWidth: '32px',
+              height: '32px',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+            }
+          }, 
             React.createElement('span', { 
-              key: 'icon',
-              className: 'actionIcon' 
-            }, action.icon),
-            React.createElement('span', { 
-              key: 'label',
-              className: 'actionLabel' 
-            }, action.label.split(' ')[0])
-          ])
+              className: 'actionIcon',
+              style: { 
+                fontSize: '16px',
+                lineHeight: '1'
+              }
+            }, action.icon)
+          )
         ));
       }
     };

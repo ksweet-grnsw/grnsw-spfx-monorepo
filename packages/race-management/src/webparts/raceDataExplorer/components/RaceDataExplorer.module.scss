@@ -39,32 +39,37 @@
   margin: 0;
 }
 
-.searchBar {
-  display: flex;
-  gap: $spacing-sm;
+.searchSection {
   margin-bottom: $spacing-lg;
-  background: #f5f5f5;
   padding: $spacing-md;
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
-  box-shadow: $shadow-sm;
-  border: 1px solid #e0e0e0;
 }
 
-.searchInputWrapper {
-  flex: 1;
-  position: relative;
+.searchContainer {
+  background: white;
+  padding: $spacing-sm;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.searchWrapper {
   display: flex;
+  gap: $spacing-xs;
   align-items: center;
 }
 
 .searchInput {
-  width: 100%;
-  padding: $spacing-sm $spacing-md;
-  padding-right: $spacing-xxl; // Space for clear button
+  flex: 1;
+  padding: 6px 12px;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
-  font-size: $font-size-md;
+  font-size: $font-size-sm;
   background: #ffffff;
+  height: 32px;
+  box-sizing: border-box;
   
   &:focus {
     outline: none;
@@ -74,15 +79,16 @@
 }
 
 .clearButton {
-  position: absolute;
-  right: $spacing-sm;
-  background: transparent;
-  border: none;
+  padding: 6px 12px;
+  background: #f5f5f5;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
   color: var(--text-secondary);
-  font-size: $font-size-lg;
+  font-size: $font-size-sm;
   cursor: pointer;
-  padding: $spacing-xs;
-  transition: color 200ms ease;
+  height: 32px;
+  white-space: nowrap;
+  transition: all 200ms ease;
   
   &:hover {
     color: var(--text-primary);
@@ -90,15 +96,22 @@
 }
 
 .searchButton {
-  padding: $spacing-sm $spacing-lg;
+  padding: 6px 12px;
+  min-width: 32px;
+  height: 32px;
   background: var(--primary-accent, $brand-primary);
   color: #ffffff !important;
   border: none;
   border-radius: 4px;
   font-size: $font-size-md;
-  font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: all 200ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   &:hover {
     background: darken($brand-primary, 10%);
@@ -157,15 +170,70 @@
 
 .filterBar {
   margin-bottom: $spacing-lg;
-  padding: $spacing-md;
+}
+
+.filterContainer {
   background: #f5f5f5;
   border-radius: 8px;
   box-shadow: $shadow-sm;
   border: 1px solid #e0e0e0;
+  padding: $spacing-md;
+}
+
+.filterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.filterTitle {
+  margin: 0;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+}
+
+.clearAllButton {
+  padding: $spacing-xs $spacing-md;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: darken(#dc3545, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.filterContent {
+  display: flex;
+  gap: $spacing-md;
+  align-items: flex-end;
   
   @include media-down('md') {
     flex-wrap: wrap;
   }
+}
+
+.filterActions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid #e0e0e0;
 }
 
 .filterRow {
@@ -211,6 +279,36 @@
     flex: 1;
     min-width: 180px;
   }
+}
+
+.filterSelect {
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  background: #ffffff;
+  color: var(--text-primary);
+  cursor: pointer;
+  min-width: 180px;
+  
+  &:hover {
+    border-color: var(--text-secondary);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-accent, $brand-primary);
+    box-shadow: 0 0 0 2px rgba($brand-primary, 0.1);
+  }
+}
+
+.filterStatus {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  padding: $spacing-xs $spacing-sm;
+  background: rgba($brand-primary, 0.05);
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
 .filterInput {
@@ -424,16 +522,16 @@
   white-space: nowrap;
   
   &:hover {
-    background: #f8f8f8;
-    border-color: #0078d4;
-    color: #0078d4;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #f5f5f5 !important;
+    transform: scale(1.1);
+    
+    .actionIcon {
+      color: #000 !important;
+    }
   }
   
   &:active {
-    transform: translateY(0);
-    box-shadow: none;
+    transform: scale(0.95);
   }
   
   .actionIcon {
@@ -513,30 +611,31 @@
 // Injury filter styles - removed since we're using injuryFilterRow now
 
 .injuryFilterButton {
-  padding: 8px 16px;  // Increased padding for better size
-  background: #ff9800;  // Orange background
-  color: white;
-  border: 1px solid #ff9800;
+  padding: $spacing-xs $spacing-md;
+  background: white;
+  color: #ff9800;
+  border: 2px solid #ff9800;
   border-radius: 4px;
-  font-size: 14px;  // Increased from 13px to match categories
-  font-weight: $font-weight-semibold;  // Made slightly bolder
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
   cursor: pointer;
   transition: all 200ms ease;
   white-space: nowrap;
   
   &:hover {
-    background: #e68900;
-    border-color: #e68900;
+    background: #fff3e0;
+    border-color: #ff6600;
+    transform: translateY(-1px);
   }
   
   &.active {
-    background: #ff6600;  // Darker orange when active
+    background: #ff9800;
     color: white;
-    border-color: #ff6600;
+    border-color: #ff9800;
     
     &:hover {
-      background: #e55a00;
-      border-color: #e55a00;
+      background: #e68900;
+      border-color: #e68900;
     }
   }
 }
@@ -1396,19 +1495,20 @@
 
 // Analytics button style
 .analyticsButton {
-  padding: 6px 12px;
+  padding: $spacing-xs $spacing-md;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: 1px solid #667eea;
+  border: 2px solid #667eea;
   border-radius: 4px;
   color: white;
   font-size: $font-size-sm;
   cursor: pointer;
   transition: all 200ms ease;
-  font-weight: 500;
+  font-weight: $font-weight-semibold;
   box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  white-space: nowrap;
   
   &:hover {
     transform: translateY(-1px);
@@ -1544,6 +1644,28 @@
   padding: $spacing-lg;
   background: var(--bg-primary);
   min-height: 400px;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 2px solid var(--border-light);
+}
+
+.tableTitle {
+  margin: 0;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+}
+
+.tableCount {
+  font-size: $font-size-md;
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .title {

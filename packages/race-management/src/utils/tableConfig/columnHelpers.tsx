@@ -42,31 +42,52 @@ export const renderPlacement = (placement: number | string | null | undefined): 
  */
 export const renderRugNumber = (value: number): React.ReactElement => {
   const rugColors = {
-    1: { bg: '#FF0000', color: '#fff', name: 'Red' },       // Red
-    2: { bg: '#0000FF', color: '#fff', name: 'Blue' },      // Blue
+    1: { bg: '#DC143C', color: '#fff', name: 'Red' },       // Crimson Red
+    2: { bg: '#000000', color: '#FF0000', name: 'Black/White Stripes', stripes: true }, // Black and white stripes
     3: { bg: '#FFFFFF', color: '#000', name: 'White' },     // White
-    4: { bg: '#000000', color: '#fff', name: 'Black' },     // Black
-    5: { bg: '#FFA500', color: '#000', name: 'Orange' },    // Orange
-    6: { bg: '#FFD700', color: '#000', name: 'Yellow' },    // Gold/Yellow
-    7: { bg: '#FFC0CB', color: '#000', name: 'Pink' },      // Pink
-    8: { bg: '#00FF00', color: '#000', name: 'Green' }      // Green
+    4: { bg: '#0073CF', color: '#fff', name: 'Blue' },      // Blue
+    5: { bg: '#FFD700', color: '#000', name: 'Yellow' },    // Yellow/Gold
+    6: { bg: '#228B22', color: '#FF0000', name: 'Green' },  // Green with red text
+    7: { bg: '#000000', color: '#FFD700', name: 'Black' },  // Black with yellow text
+    8: { bg: '#FF69B4', color: '#000', name: 'Pink' }       // Pink
   };
   
   const rugStyle = rugColors[value] || { bg: '#ccc', color: '#000', name: 'Unknown' };
   
+  // Special rendering for rug 2 (black and white stripes)
+  if (value === 2) {
+    return React.createElement('span', {
+      style: {
+        display: 'inline-block',
+        width: '28px',
+        height: '28px',
+        borderRadius: '4px',
+        background: 'repeating-linear-gradient(0deg, #000 0, #000 7px, #FFF 7px, #FFF 14px)',
+        color: '#FF0000',
+        textAlign: 'center',
+        lineHeight: '28px',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        border: '2px solid #333',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+      },
+      title: `Rug ${value} - ${rugStyle.name}`
+    }, value);
+  }
+  
   return React.createElement('span', {
     style: {
       display: 'inline-block',
-      width: '24px',
-      height: '24px',
-      borderRadius: '50%',
+      width: '28px',
+      height: '28px',
+      borderRadius: '4px',
       backgroundColor: rugStyle.bg,
       color: rugStyle.color,
       textAlign: 'center',
-      lineHeight: '24px',
+      lineHeight: '28px',
       fontWeight: 'bold',
-      fontSize: '12px',
-      border: value === 3 ? '1px solid #ccc' : 'none',
+      fontSize: '14px',
+      border: '2px solid #333',
       boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
     },
     title: `Rug ${value} - ${rugStyle.name}`

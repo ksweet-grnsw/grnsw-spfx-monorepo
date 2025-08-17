@@ -57,8 +57,8 @@ export function useDataFetching<T = any>(
 
   // Fetch data with retry logic
   const fetchData = useCallback(async (force: boolean = false) => {
-    // Skip if already loading or data is fresh (unless forced)
-    if (state.loading || (!force && !checkCacheStaleness() && state.data)) {
+    // Skip if already loading (but always allow forced fetches and dependency changes)
+    if (state.loading && !force) {
       return;
     }
 
@@ -139,10 +139,10 @@ export function useDataFetching<T = any>(
     cacheTimestampRef.current = Date.now();
   }, []);
 
-  // Auto-fetch on mount if enabled
+  // Auto-fetch on mount if enabled, and re-fetch when dependencies change
   useEffect(() => {
     if (autoFetch) {
-      fetchData();
+      fetchData(true); // Force fetch on dependency changes
     }
   }, [...dependencies, autoFetch]); // eslint-disable-line react-hooks/exhaustive-deps
 

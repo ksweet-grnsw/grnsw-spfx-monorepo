@@ -278,6 +278,14 @@
   }
 }
 
+.currentPage {
+  @media print {
+    &::after {
+      content: counter(page);
+    }
+  }
+}
+
 // Print-specific styles
 @media print {
   * {
