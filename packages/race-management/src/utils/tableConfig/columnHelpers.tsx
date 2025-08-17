@@ -1,0 +1,186 @@
+import * as React from 'react';
+import { DataGridColumn } from '../../enterprise-ui/components/DataDisplay/DataGrid/DataGrid.types';
+
+/**
+ * Helper function to render placement with medal badges
+ */
+export const renderPlacement = (placement: number | string | null | undefined): React.ReactElement | string => {
+  if (!placement) return '-';
+  const place = typeof placement === 'string' ? parseInt(placement, 10) : placement;
+  
+  const medalColors = {
+    1: { bg: '#FFD700', color: '#000', shadow: '0 2px 4px rgba(255, 215, 0, 0.4)' }, // Gold
+    2: { bg: '#C0C0C0', color: '#000', shadow: '0 2px 4px rgba(192, 192, 192, 0.4)' }, // Silver
+    3: { bg: '#CD7F32', color: '#fff', shadow: '0 2px 4px rgba(205, 127, 50, 0.4)' }  // Bronze
+  };
+  
+  if (place <= 3 && medalColors[place]) {
+    const style = medalColors[place];
+    return React.createElement('span', {
+      style: {
+        display: 'inline-block',
+        width: '28px',
+        height: '28px',
+        borderRadius: '50%',
+        backgroundColor: style.bg,
+        color: style.color,
+        textAlign: 'center',
+        lineHeight: '28px',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        boxShadow: style.shadow
+      },
+      title: `${place === 1 ? 'First' : place === 2 ? 'Second' : 'Third'} Place`
+    }, place);
+  }
+  
+  return String(place);
+};
+
+/**
+ * Helper function to render rug numbers with appropriate colors
+ */
+export const renderRugNumber = (value: number): React.ReactElement => {
+  const rugColors = {
+    1: { bg: '#FF0000', color: '#fff', name: 'Red' },       // Red
+    2: { bg: '#0000FF', color: '#fff', name: 'Blue' },      // Blue
+    3: { bg: '#FFFFFF', color: '#000', name: 'White' },     // White
+    4: { bg: '#000000', color: '#fff', name: 'Black' },     // Black
+    5: { bg: '#FFA500', color: '#000', name: 'Orange' },    // Orange
+    6: { bg: '#FFD700', color: '#000', name: 'Yellow' },    // Gold/Yellow
+    7: { bg: '#FFC0CB', color: '#000', name: 'Pink' },      // Pink
+    8: { bg: '#00FF00', color: '#000', name: 'Green' }      // Green
+  };
+  
+  const rugStyle = rugColors[value] || { bg: '#ccc', color: '#000', name: 'Unknown' };
+  
+  return React.createElement('span', {
+    style: {
+      display: 'inline-block',
+      width: '24px',
+      height: '24px',
+      borderRadius: '50%',
+      backgroundColor: rugStyle.bg,
+      color: rugStyle.color,
+      textAlign: 'center',
+      lineHeight: '24px',
+      fontWeight: 'bold',
+      fontSize: '12px',
+      border: value === 3 ? '1px solid #ccc' : 'none',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+    },
+    title: `Rug ${value} - ${rugStyle.name}`
+  }, value);
+};
+
+/**
+ * Helper function to format currency values
+ */
+export const formatCurrency = (value: number | null | undefined): string => {
+  if (!value) return '-';
+  return `$${value.toLocaleString('en-AU')}`;
+};
+
+/**
+ * Helper function to format dates
+ */
+export const formatDate = (value: string | Date, format: 'short' | 'long' | 'time' = 'short'): string => {
+  if (!value) return '-';
+  const date = typeof value === 'string' ? new Date(value) : value;
+  
+  switch (format) {
+    case 'short':
+      return date.toLocaleDateString('en-AU', { 
+        weekday: 'short', 
+        day: '2-digit', 
+        month: 'short' 
+      });
+    case 'long':
+      return date.toLocaleDateString('en-AU', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long',
+        year: 'numeric'
+      });
+    case 'time':
+      return date.toLocaleTimeString('en-AU', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    default:
+      return date.toLocaleDateString('en-AU');
+  }
+};
+
+/**
+ * Helper function to format distance
+ */
+export const formatDistance = (value: number | null | undefined): string => {
+  if (!value) return '-';
+  return `${value}m`;
+};
+
+/**
+ * Helper function to format weight
+ */
+export const formatWeight = (value: number | null | undefined): string => {
+  if (!value) return '-';
+  return `${value}kg`;
+};
+
+/**
+ * Helper function to format margin
+ */
+export const formatMargin = (value: number | null | undefined): string => {
+  if (!value) return '-';
+  return `${value}L`;
+};
+
+/**
+ * Helper to add row numbers to columns if enabled
+ */
+export function addRowNumberColumn<T>(
+  columns: DataGridColumn<T>[],
+  showRowNumbers: boolean = false
+): DataGridColumn<T>[] {
+  if (!showRowNumbers) return columns;
+  
+  const rowNumberColumn: DataGridColumn<T> = {
+    key: '_rowNumber',
+    label: '#',
+    width: '50px',
+    align: 'center',
+    render: (_, __, index) => (index || 0) + 1
+  };
+  
+  return [rowNumberColumn, ...columns];
+}
+
+/**
+ * Helper to get timeslot variant color
+ */
+export const getTimeslotVariant = (timeslot: string): 'info' | 'warning' | 'neutral' => {
+  const slot = timeslot?.toLowerCase();
+  if (slot === 'morning' || slot === 'day') return 'info';
+  if (slot === 'afternoon' || slot === 'twilight') return 'warning';
+  return 'neutral';
+};
+
+/**
+ * Helper to get status variant color
+ */
+export const getStatusVariant = (status: string): 'success' | 'error' | 'warning' | 'neutral' => {
+  const statusLower = status?.toLowerCase();
+  
+  if (statusLower === 'runner' || statusLower === 'active' || statusLower === 'completed') {
+    return 'success';
+  }
+  if (statusLower === 'scratched' || statusLower === 'cancelled' || statusLower === 'failed') {
+    return 'error';
+  }
+  if (statusLower === 'pending' || statusLower === 'delayed') {
+    return 'warning';
+  }
+  
+  return 'neutral';
+};

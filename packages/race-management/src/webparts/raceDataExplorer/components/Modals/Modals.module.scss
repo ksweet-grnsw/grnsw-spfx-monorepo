@@ -1,0 +1,215 @@
+@import '../../../../enterprise-ui/styles/tokens/index.scss';
+
+.modalContainer {
+  .ms-Modal-main {
+    max-width: 800px;
+    width: 90%;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-xl;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg $spacing-xl;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  
+  h2 {
+    margin: 0;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+  }
+  
+  .closeButton {
+    color: white;
+    background: transparent;
+    border: none;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    i {
+      color: white;
+    }
+  }
+}
+
+.modalBody {
+  padding: $spacing-xl;
+  max-height: 70vh;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: $radius-sm;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: $radius-sm;
+    
+    &:hover {
+      background: #555;
+    }
+  }
+}
+
+.detailSection {
+  margin-bottom: $spacing-xl;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  h3 {
+    margin: 0 0 $spacing-md 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid var(--border-default);
+  }
+}
+
+.detailGrid {
+  display: grid;
+  gap: $spacing-md;
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: $spacing-md;
+  align-items: center;
+  
+  .label {
+    font-weight: $font-weight-medium;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+  }
+  
+  .value {
+    color: var(--text-primary);
+    font-size: $font-size-md;
+    word-break: break-word;
+  }
+}
+
+.prizeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: var(--bg-secondary);
+  border-radius: $radius-md;
+}
+
+.prizeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-sm;
+  
+  .placement {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--text-secondary);
+    margin-bottom: $spacing-xs;
+  }
+  
+  .amount {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+  }
+}
+
+.weatherInfo,
+.trackCondition,
+.comments {
+  margin: 0;
+  padding: $spacing-md;
+  background: var(--bg-secondary);
+  border-radius: $radius-md;
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-size: $font-size-md;
+}
+
+.modalFooter {
+  padding: $spacing-lg $spacing-xl;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-default);
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+}
+
+.primaryButton {
+  padding: $spacing-sm $spacing-lg;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.secondaryButton {
+  padding: $spacing-sm $spacing-lg;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--bg-secondary);
+  }
+}
+
+// Responsive styles
+@include media-down('md') {
+  .modalContainer {
+    .ms-Modal-main {
+      width: 95%;
+      max-width: none;
+    }
+  }
+  
+  .detailRow {
+    grid-template-columns: 1fr;
+    
+    .label {
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-xs;
+    }
+  }
+  
+  .prizeGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

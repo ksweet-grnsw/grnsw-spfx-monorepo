@@ -204,4 +204,5 @@ export interface IHealthCheck {
   cra5e_medications?: string;
   cra5e_sedatives?: boolean;
   cra5e_sutures?: boolean;
+  cra5e_injurycategory?: string;
 }

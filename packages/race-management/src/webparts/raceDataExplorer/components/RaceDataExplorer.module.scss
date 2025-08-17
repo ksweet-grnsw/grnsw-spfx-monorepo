@@ -1461,3 +1461,122 @@
   color: var(--text-secondary);
   line-height: 1.4;
 }
+
+// Error and empty states
+.errorState {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-xxl;
+  color: var(--text-secondary);
+  
+  .errorIcon {
+    font-size: 48px;
+    margin-bottom: $spacing-md;
+  }
+  
+  p {
+    font-size: $font-size-lg;
+    margin-bottom: $spacing-lg;
+  }
+  
+  button {
+    padding: $spacing-sm $spacing-lg;
+    background: $brand-primary;
+    color: white;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-size: $font-size-md;
+    
+    &:hover {
+      background: darken($brand-primary, 10%);
+    }
+  }
+}
+
+.emptyState {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-xxl;
+  color: var(--text-secondary);
+  
+  .emptyIcon {
+    font-size: 48px;
+    margin-bottom: $spacing-md;
+    opacity: 0.5;
+  }
+  
+  p {
+    font-size: $font-size-lg;
+  }
+}
+
+.content {
+  padding: $spacing-lg;
+  background: var(--bg-primary);
+  min-height: 400px;
+}
+
+.title {
+  margin: 0;
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.backButton {
+  padding: $spacing-sm $spacing-md;
+  background: white;
+  border: 1px solid var(--border-default);
+  border-radius: $radius-md;
+  cursor: pointer;
+  font-size: $font-size-md;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--bg-secondary);
+    transform: translateX(-2px);
+  }
+}
+
+.searchBar {
+  padding: $spacing-md $spacing-lg;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.searchInput {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid var(--border-default);
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  
+  &:focus {
+    outline: none;
+    border-color: $brand-primary;
+    box-shadow: 0 0 0 2px rgba($brand-primary, 0.2);
+  }
+}
+
+.searchResults {
+  .resultSection {
+    margin-bottom: $spacing-xl;
+    
+    h3 {
+      margin: 0 0 $spacing-md 0;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: var(--text-primary);
+    }
+  }
+}
