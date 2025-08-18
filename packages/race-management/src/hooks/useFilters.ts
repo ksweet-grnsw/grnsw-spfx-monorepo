@@ -3,7 +3,9 @@ import { useState, useEffect, useCallback } from 'react';
 export interface FilterState {
   dateFrom?: Date;
   dateTo?: Date;
+  selectedAuthority?: string;
   selectedTrack?: string;
+  selectedDayOfWeek?: number; // 0-6 for Sunday-Saturday
   showInjuryFilter?: boolean;
   selectedInjuryCategories?: string[];
   searchTerm?: string;
@@ -107,7 +109,9 @@ export function useFilters(options: UseFiltersOptions = {}) {
     let count = 0;
     if (filters.dateFrom) count++;
     if (filters.dateTo) count++;
+    if (filters.selectedAuthority) count++;
     if (filters.selectedTrack) count++;
+    if (filters.selectedDayOfWeek !== undefined) count++;
     if (filters.showInjuryFilter && filters.selectedInjuryCategories?.length) {
       count += filters.selectedInjuryCategories.length;
     }
@@ -134,6 +138,11 @@ export function useFilters(options: UseFiltersOptions = {}) {
       // Date to filter
       if (filters.dateTo && filterMap.dateTo) {
         if (!filterMap.dateTo(item, filters.dateTo)) return false;
+      }
+      
+      // Authority filter
+      if (filters.selectedAuthority && filterMap.selectedAuthority) {
+        if (!filterMap.selectedAuthority(item, filters.selectedAuthority)) return false;
       }
       
       // Track filter
@@ -169,7 +178,9 @@ export function useFilters(options: UseFiltersOptions = {}) {
     // Individual filter values for convenience
     dateFrom: filters.dateFrom,
     dateTo: filters.dateTo,
+    selectedAuthority: filters.selectedAuthority,
     selectedTrack: filters.selectedTrack,
+    selectedDayOfWeek: filters.selectedDayOfWeek,
     showInjuryFilter: filters.showInjuryFilter,
     selectedInjuryCategories: filters.selectedInjuryCategories,
     searchTerm: filters.searchTerm,
@@ -177,7 +188,9 @@ export function useFilters(options: UseFiltersOptions = {}) {
     // Individual setters for convenience
     setDateFrom: (date: Date | undefined) => updateFilter('dateFrom', date),
     setDateTo: (date: Date | undefined) => updateFilter('dateTo', date),
+    setSelectedAuthority: (authority: string | undefined) => updateFilter('selectedAuthority', authority),
     setSelectedTrack: (track: string | undefined) => updateFilter('selectedTrack', track),
+    setSelectedDayOfWeek: (day: number | undefined) => updateFilter('selectedDayOfWeek', day),
     setShowInjuryFilter: (show: boolean | undefined) => updateFilter('showInjuryFilter', show),
     setSelectedInjuryCategories: (categories: string[] | undefined) => updateFilter('selectedInjuryCategories', categories),
     setSearchTerm: (term: string | undefined) => updateFilter('searchTerm', term)

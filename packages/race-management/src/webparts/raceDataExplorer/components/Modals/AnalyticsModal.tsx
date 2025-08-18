@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState, useMemo } from 'react';
 import styles from './Modals.module.scss';
 import { IMeeting } from '../../../../models/IRaceData';
+const logoUrl = require('../../../../assets/images/siteicon.png');
 
 interface IAnalyticsModalProps {
   isOpen: boolean;
@@ -82,10 +83,11 @@ export const AnalyticsModal: React.FC<IAnalyticsModalProps> = ({ isOpen, onClose
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px' }}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1000px' }}>
         <div className={styles.modalHeader}>
           <h2>
-            📊 Race Analytics
+            <img src={logoUrl} alt="GRNSW" className={styles.headerLogo} />
+            Race Analytics
             {analyticsData.isDemo && (
               <span className={styles.demoIndicator}>(Demo Data)</span>
             )}
@@ -166,7 +168,7 @@ export const AnalyticsModal: React.FC<IAnalyticsModalProps> = ({ isOpen, onClose
                         className={styles.bar}
                         style={{ 
                           width: `${percentage}%`,
-                          background: `linear-gradient(90deg, #667eea 0%, #764ba2 ${percentage}%)`
+                          background: `linear-gradient(90deg, #00426d 0%, #00426d ${percentage}%, #e9ecef ${percentage}%)`
                         }}
                       />
                       <span className={styles.barValue}>

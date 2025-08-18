@@ -19,15 +19,15 @@ export const renderPlacement = (placement: number | string | null | undefined): 
     return React.createElement('span', {
       style: {
         display: 'inline-block',
-        width: '28px',
-        height: '28px',
+        width: '22px',
+        height: '22px',
         borderRadius: '50%',
         backgroundColor: style.bg,
         color: style.color,
         textAlign: 'center',
-        lineHeight: '28px',
+        lineHeight: '22px',
         fontWeight: 'bold',
-        fontSize: '14px',
+        fontSize: '12px',
         boxShadow: style.shadow
       },
       title: `${place === 1 ? 'First' : place === 2 ? 'Second' : 'Third'} Place`
@@ -49,7 +49,9 @@ export const renderRugNumber = (value: number): React.ReactElement => {
     5: { bg: '#FFD700', color: '#000', name: 'Yellow' },    // Yellow/Gold
     6: { bg: '#228B22', color: '#FF0000', name: 'Green' },  // Green with red text
     7: { bg: '#000000', color: '#FFD700', name: 'Black' },  // Black with yellow text
-    8: { bg: '#FF69B4', color: '#000', name: 'Pink' }       // Pink
+    8: { bg: '#FF69B4', color: '#000', name: 'Pink' },      // Pink
+    9: { bg: '#228B22', color: '#000', name: 'Green Stripes', stripes: true }, // Green diagonal stripes
+    10: { bg: '#0073CF', color: '#000', name: 'Blue/White/Red', tricolor: true } // Blue, white, red vertical stripes
   };
   
   const rugStyle = rugColors[value] || { bg: '#ccc', color: '#000', name: 'Unknown' };
@@ -64,6 +66,48 @@ export const renderRugNumber = (value: number): React.ReactElement => {
         borderRadius: '4px',
         background: 'repeating-linear-gradient(0deg, #000 0, #000 7px, #FFF 7px, #FFF 14px)',
         color: '#FF0000',
+        textAlign: 'center',
+        lineHeight: '28px',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        border: '2px solid #333',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+      },
+      title: `Rug ${value} - ${rugStyle.name}`
+    }, value);
+  }
+  
+  // Special rendering for rug 9 (green diagonal stripes - rotated to 135 degrees)
+  if (value === 9) {
+    return React.createElement('span', {
+      style: {
+        display: 'inline-block',
+        width: '28px',
+        height: '28px',
+        borderRadius: '4px',
+        background: 'repeating-linear-gradient(135deg, #228B22 0, #228B22 7px, #FFFFFF 7px, #FFFFFF 14px)',
+        color: '#000',
+        textAlign: 'center',
+        lineHeight: '28px',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        border: '2px solid #333',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+      },
+      title: `Rug ${value} - ${rugStyle.name}`
+    }, value);
+  }
+  
+  // Special rendering for rug 10 (blue, white, red vertical stripes)
+  if (value === 10) {
+    return React.createElement('span', {
+      style: {
+        display: 'inline-block',
+        width: '28px',
+        height: '28px',
+        borderRadius: '4px',
+        background: 'linear-gradient(90deg, #0073CF 0%, #0073CF 33%, #FFFFFF 33%, #FFFFFF 66%, #FF0000 66%, #FF0000 100%)',
+        color: '#000',
         textAlign: 'center',
         lineHeight: '28px',
         fontWeight: 'bold',

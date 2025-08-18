@@ -402,7 +402,7 @@ export const VirtualDataGrid = <T extends Record<string, any>>({
                         ${styles.row}
                         ${isSelected ? styles.selected : ''}
                         ${onRowClick ? styles.clickable : ''}
-                        ${actualIndex % 2 === 1 && striped ? styles.striped : ''}
+                        ${actualIndex % 2 === 0 && striped ? styles.striped : ''}
                       `}
                       style={{ height: `${ROW_HEIGHT}px` }}
                       onClick={() => onRowClick?.(item, actualIndex)}

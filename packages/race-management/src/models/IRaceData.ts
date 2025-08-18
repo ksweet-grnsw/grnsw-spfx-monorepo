@@ -163,7 +163,7 @@ export interface IGreyhound {
 export interface IHealthCheck {
   cra5e_heathcheckid: string; // Note: misspelled in system
   cra5e_name?: string; // HC-00XXXXXX
-  _cra5e_greyhound_value: string; // Foreign key to Greyhound
+  cra5e_greyhound: string; // Foreign key to Greyhound
   cra5e_datechecked: Date | string;
   cra5e_type?: string; // Race Meeting Exam, etc.
   cra5e_trackname?: string;

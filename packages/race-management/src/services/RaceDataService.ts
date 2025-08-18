@@ -301,12 +301,34 @@ export class RaceDataService {
       return [];
     }
     
-    const cacheKey = `contestants_race_${raceId}`;
+    const cacheKey = `contestants_race_v2_${raceId}`; // Changed cache key to force refresh
     
     return cacheService.getOrFetch(
       cacheKey,
       async () => {
-        const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
+        // Explicitly select all fields we need including placement, margin, and weight
+        const selectFields = [
+          'cr616_contestantsid',
+          'cr616_rugnumber',
+          'cr616_greyhoundname',
+          'cr616_ownername',
+          'cr616_trainername',
+          'cr616_doggrade',
+          'cr616_placement',
+          'cr616_margin',
+          'cr616_weight',
+          'cr616_status',
+          'cr616_finishtime',
+          'cr616_dayssincelastrace',
+          'cr616_totalnumberofwinds',
+          'cr616_failedtofinish',
+          'cr616_racewithin2days',
+          'cr616_prizemoney',
+          '_cr616_race_value',
+          '_cr616_meeting_value'
+        ].join(',');
+        
+        const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$select=${selectFields}&$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
         const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
         return response.value;
       },
@@ -649,15 +671,16 @@ export class RaceDataService {
     }
   }
 
-  public async getLatestHealthCheckForGreyhound(greyhoundId: string): Promise<IHealthCheck | null> {
+  public async getLatestHealthCheckForGreyhound(greyhoundId: string, greyhoundName?: string): Promise<IHealthCheck | null> {
     if (!greyhoundId) return null;
     
     try {
-      // Get the most recent health check where the dog was injured (has classification)
-      // Try to expand the examining vet to get the name
+      // APPROACH 1: Try lookup field with expand (ideal case)
+      console.log(`Trying lookup field approach for greyhound ID: ${greyhoundId}`);
       const url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=_cra5e_greyhound_value eq ${greyhoundId} and cra5e_injuryclassification ne null&$expand=cra5e_ExaminingVet($select=cra5e_name,fullname)&$orderby=cra5e_datechecked desc&$top=1`;
       const response = await this.makeRequest<IDataverseResponse<any>>(url, true);
       if (response.value.length > 0) {
+        console.log(`✅ Found health check via lookup field for: ${greyhoundName || greyhoundId}`);
         const healthCheck = response.value[0];
         // If the examining vet was expanded, use the name
         if (healthCheck.cra5e_ExaminingVet) {
@@ -667,19 +690,36 @@ export class RaceDataService {
         }
         return healthCheck as IHealthCheck;
       }
-      return null;
+      console.log(`❌ No results via lookup field for: ${greyhoundName || greyhoundId} - likely lookup field not populated`);
     } catch (error) {
-      console.error('Error fetching latest health check:', error);
-      // If expand fails, try without it
-      try {
-        const fallbackUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=_cra5e_greyhound_value eq ${greyhoundId} and cra5e_injuryclassification ne null&$orderby=cra5e_datechecked desc&$top=1`;
-        const fallbackResponse = await this.makeRequest<IDataverseResponse<IHealthCheck>>(fallbackUrl, true);
-        return fallbackResponse.value.length > 0 ? fallbackResponse.value[0] : null;
-      } catch (fallbackError) {
-        console.error('Error fetching health check (fallback):', fallbackError);
-        return null;
-      }
+      console.log('❌ Lookup field approach failed:', error.message);
     }
+
+    try {
+      // APPROACH 2: Try lookup field without expand
+      console.log(`Trying lookup field without expand for: ${greyhoundName || greyhoundId}`);
+      const fallbackUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=_cra5e_greyhound_value eq ${greyhoundId} and cra5e_injuryclassification ne null&$orderby=cra5e_datechecked desc&$top=1`;
+      const fallbackResponse = await this.makeRequest<IDataverseResponse<IHealthCheck>>(fallbackUrl, true);
+      if (fallbackResponse.value.length > 0) {
+        console.log(`✅ Found health check via lookup field (no expand) for: ${greyhoundName || greyhoundId}`);
+        return fallbackResponse.value[0];
+      }
+      console.log(`❌ No results via lookup field (no expand) for: ${greyhoundName || greyhoundId} - lookup field not populated`);
+    } catch (fallbackError) {
+      console.log('❌ Lookup field fallback failed:', fallbackError.message);
+    }
+
+    // APPROACH 3: Name matching is not possible
+    // The health check table only has a lookup field (cra5e_greyhound) to the greyhound table,
+    // not the greyhound name stored directly. Name matching cannot work.
+    console.log(`ℹ️  Injury detection summary for ${greyhoundName || greyhoundId}:`);
+    console.log(`   - Lookup field exists: cra5e_greyhound`);
+    console.log(`   - Lookup field populated: NO (this is the issue)`);
+    console.log(`   - Name matching possible: NO (health check table doesn't store greyhound names)`);
+    console.log(`   - Solution: Populate the cra5e_greyhound lookup field in health check records`);
+
+    console.log(`❌ No health check found for greyhound: ${greyhoundName || greyhoundId}`);
+    return null;
   }
 
   /**
@@ -872,7 +912,7 @@ export class RaceDataService {
         cra5e_standdowndays: Math.floor(Math.random() * 30),
         cra5e_injurytype: 'Sample Injury',
         cra5e_injurynote: 'Sample injury note for testing',
-        _cra5e_greyhound_value: `greyhound-${Math.floor(Math.random() * 100)}`
+        cra5e_greyhound: `greyhound-${Math.floor(Math.random() * 100)}`
       } as unknown as IHealthCheck);
     }
     
@@ -953,20 +993,31 @@ export class RaceDataService {
         }
       });
       
+      console.log('Unique track/date combinations found:', Array.from(meetingKeys));
+      
       // Now fetch meetings that match these track/date combinations
       const meetings: IMeeting[] = [];
       
       for (const [track, dates] of Array.from(trackDates.entries())) {
         for (const dateStr of Array.from(dates)) {
-          // Query meetings for this track and date
-          const startDate = new Date(dateStr);
-          const endDate = new Date(dateStr);
-          endDate.setDate(endDate.getDate() + 1);
+          // Query meetings for this track and date - use date-only filtering
+          const startDate = new Date(dateStr + 'T00:00:00.000Z');
+          const endDate = new Date(dateStr + 'T23:59:59.999Z');
           
-          const meetingUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$filter=cr4cc_trackname eq '${encodeURIComponent(track)}' and cr4cc_meetingdate ge '${startDate.toISOString()}' and cr4cc_meetingdate lt '${endDate.toISOString()}'`;
+          console.log(`Querying meetings for ${track} on ${dateStr} between ${startDate.toISOString()} and ${endDate.toISOString()}`);
+          
+          const meetingUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$filter=cr4cc_trackname eq '${encodeURIComponent(track)}' and cr4cc_meetingdate ge '${startDate.toISOString()}' and cr4cc_meetingdate le '${endDate.toISOString()}'`;
           
           try {
             const meetingResponse = await this.makeRequest<IDataverseResponse<IMeeting>>(meetingUrl);
+            console.log(`Found ${meetingResponse.value.length} meetings for ${track} on ${dateStr}:`, 
+              meetingResponse.value.map(m => ({ 
+                id: m.cr4cc_racemeetingid, 
+                date: m.cr4cc_meetingdate, 
+                timeslot: m.cr4cc_timeslot,
+                type: m.cr4cc_type || m.cr4cc_meetingtype,
+                authority: m.cr4cc_authority
+              })));
             meetings.push(...meetingResponse.value);
           } catch (error) {
             console.error(`Error fetching meetings for ${track} on ${dateStr}:`, error);
@@ -974,14 +1025,45 @@ export class RaceDataService {
         }
       }
       
-      // Sort meetings by date descending
-      meetings.sort((a, b) => {
+      // Enhanced deduplication: first by ID, then by track+date+timeslot for logical duplicates
+      const uniqueMeetingsById = new Map<string, IMeeting>();
+      meetings.forEach(meeting => {
+        uniqueMeetingsById.set(meeting.cr4cc_racemeetingid, meeting);
+      });
+      
+      // Second pass: deduplicate by business logic (track + date + timeslot)
+      const uniqueMeetingsByLogic = new Map<string, IMeeting>();
+      Array.from(uniqueMeetingsById.values()).forEach(meeting => {
+        const meetingDate = new Date(meeting.cr4cc_meetingdate);
+        const dateStr = meetingDate.toISOString().split('T')[0];
+        const logicalKey = `${meeting.cr4cc_trackname}_${dateStr}_${meeting.cr4cc_timeslot || 'unknown'}`;
+        
+        // Keep the first meeting found for each logical combination
+        if (!uniqueMeetingsByLogic.has(logicalKey)) {
+          uniqueMeetingsByLogic.set(logicalKey, meeting);
+        } else {
+          console.log(`⚠️  Logical duplicate detected and removed:`, {
+            existing: uniqueMeetingsByLogic.get(logicalKey)?.cr4cc_racemeetingid,
+            duplicate: meeting.cr4cc_racemeetingid,
+            key: logicalKey
+          });
+        }
+      });
+      
+      // Convert back to array and sort by date descending
+      const deduplicatedMeetings = Array.from(uniqueMeetingsByLogic.values());
+      deduplicatedMeetings.sort((a, b) => {
         const dateA = new Date(a.cr4cc_meetingdate);
         const dateB = new Date(b.cr4cc_meetingdate);
         return dateB.getTime() - dateA.getTime();
       });
       
-      return meetings;
+      console.log(`📊 Deduplication stats:`);
+      console.log(`- Total meetings fetched: ${meetings.length}`);
+      console.log(`- Unique by ID: ${uniqueMeetingsById.size}`);
+      console.log(`- Unique by logic (track+date+timeslot): ${deduplicatedMeetings.length}`);
+      console.log(`- Final meeting IDs:`, deduplicatedMeetings.map(m => m.cr4cc_racemeetingid));
+      return deduplicatedMeetings;
     } catch (error) {
       console.error('Error fetching meetings with injuries:', error);
       return [];

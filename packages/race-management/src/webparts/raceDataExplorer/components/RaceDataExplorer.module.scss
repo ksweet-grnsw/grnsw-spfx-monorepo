@@ -24,13 +24,14 @@
   }
 }
 
-.header {
+.titleHeader {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: $spacing-lg;
-  padding-bottom: $spacing-md;
-  border-bottom: 2px solid var(--border-light);
+  align-items: stretch;
+  justify-content: flex-start;
+  margin: 0 0 $spacing-lg 0;  // Only bottom margin
+  padding: 0;
+  border: none;
+  width: 100%;  // Normal width
 }
 
 .mainTitle {
@@ -99,7 +100,7 @@
   padding: 6px 12px;
   min-width: 32px;
   height: 32px;
-  background: var(--primary-accent, $brand-primary);
+  background: #00426d;
   color: #ffffff !important;
   border: none;
   border-radius: 4px;
@@ -109,18 +110,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  
+  img {
+    width: 16px;
+    height: 16px;
+    filter: brightness(0) saturate(100%) invert(100%);
+  }
   
   &:hover {
-    background: darken($brand-primary, 10%);
+    background: darken(#00426d, 10%);
   }
 }
 
 .homeButton {
   padding: $spacing-sm $spacing-md;
-  background: $success;
+  background: #00426d;
   color: #ffffff !important;
   border: none;
   border-radius: 4px;
@@ -130,7 +134,7 @@
   transition: all 200ms ease;
   
   &:hover {
-    background: darken($success, 10%);
+    background: darken(#00426d, 10%);
   }
 }
 
@@ -220,12 +224,26 @@
 
 .filterContent {
   display: flex;
+  flex-direction: column;
   gap: $spacing-md;
-  align-items: flex-end;
   
   @include media-down('md') {
     flex-wrap: wrap;
   }
+}
+
+.dateRangeFilterSection {
+  width: 100%;
+  margin-top: $spacing-xs;  // Minimal top margin
+  padding-top: $spacing-xs;  // Minimal top padding
+}
+
+.filterInputsRow {
+  display: flex;
+  gap: $spacing-md;
+  align-items: flex-end;
+  margin-bottom: $spacing-xs;  // Minimal bottom margin before quick filters
+  flex-wrap: wrap;
 }
 
 .filterActions {
@@ -351,7 +369,7 @@
 
 .applyButton {
   padding: $spacing-sm $spacing-md;
-  background: var(--primary-accent, $brand-primary);
+  background: #00426d;
   color: #ffffff !important;
   border: none;
   border-radius: 4px;
@@ -362,7 +380,7 @@
   align-self: flex-end;
   
   &:hover {
-    background: darken($brand-primary, 10%);
+    background: darken(#00426d, 10%);
   }
 }
 
@@ -495,13 +513,13 @@
 }
 
 .actionIcon {
-  width: 18px;  // Reduced from 24px (25% smaller)
-  height: 18px;  // Reduced from 24px
+  width: 27px;  // 18px * 1.5 = 27px
+  height: 27px;  // 18px * 1.5 = 27px
   object-fit: contain;
   
   &.detailsIcon {
-    width: 20px;  // Reduced from 28px (proportionally)
-    height: 20px;  // Reduced from 28px
+    width: 30px;  // 20px * 1.5 = 30px
+    height: 30px;  // 20px * 1.5 = 30px
   }
 }
 
@@ -557,8 +575,8 @@
 }
 
 .drillDownIcon {
-  width: 20px;
-  height: 20px;
+  width: 20px;  // Back to original size
+  height: 20px;  // Back to original size
   color: #333;
   transition: transform 200ms ease;
   
@@ -569,8 +587,8 @@
 }
 
 .documentIcon {
-  width: 18px;
-  height: 18px;
+  width: 27px;  // 18px * 1.5 = 27px
+  height: 27px;  // 18px * 1.5 = 27px
   color: #666;
   transition: color 200ms ease;
   
@@ -594,9 +612,9 @@
   gap: $spacing-xs;
   
   &:hover {
-    background: var(--primary-accent, $brand-primary);
+    background: #00426d;
     color: white;
-    border-color: var(--primary-accent, $brand-primary);
+    border-color: #00426d;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
@@ -621,6 +639,10 @@
   cursor: pointer;
   transition: all 200ms ease;
   white-space: nowrap;
+  min-height: 36px;  // Consistent height with other elements
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
   
   &:hover {
     background: #fff3e0;
@@ -712,7 +734,7 @@
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-width: 600px;
+  max-width: 750px;  // 1.25x wider (600px * 1.25 = 750px)
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
@@ -772,7 +794,7 @@
 
 .detailRow {
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 150px auto;  // Changed from 1fr to auto to fit content width
   gap: $spacing-md;
   padding: $spacing-sm 0;
   border-bottom: 1px solid #e0e0e0;
@@ -921,7 +943,7 @@
 
 .primaryButton {
   padding: $spacing-sm $spacing-lg;
-  background: var(--primary-accent, $brand-primary);
+  background: #00426d;
   color: white !important;
   border: none;
   border-radius: 4px;
@@ -931,7 +953,7 @@
   transition: all 200ms ease;
   
   &:hover {
-    background: darken($brand-primary, 10%);
+    background: darken(#00426d, 10%);
     transform: translateX(2px);
   }
 }
@@ -1011,9 +1033,9 @@
 
 // Injury button style
 .injuryButton {
-  padding: 6px;  // Equal padding for square shape
-  min-width: 28px;  // Minimum width to ensure square
-  min-height: 28px;  // Minimum height to ensure square
+  padding: 8px;  // Increased padding for larger icon
+  min-width: 45px;  // Increased to accommodate 1.95x scaled health icon (~39px)
+  min-height: 45px;  // Increased to accommodate 1.95x scaled health icon (~39px)
   background: #fff3f3;  // Light red background
   border-color: #ffcccc;
   box-shadow: 0 1px 2px rgba(220, 20, 60, 0.08);  // Lighter shadow for smaller button
@@ -1081,8 +1103,8 @@
   
   &:hover {
     background: white;
-    border-color: var(--primary-accent, $brand-primary);
-    color: var(--primary-accent, $brand-primary);
+    border-color: #00426d;
+    color: #00426d;
     transform: translateX(-2px);
   }
 }
@@ -1496,23 +1518,25 @@
 // Analytics button style
 .analyticsButton {
   padding: $spacing-xs $spacing-md;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: 2px solid #667eea;
+  background: #00426d;
+  border: 2px solid #00426d;
   border-radius: 4px;
   color: white;
   font-size: $font-size-sm;
   cursor: pointer;
   transition: all 200ms ease;
   font-weight: $font-weight-semibold;
-  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 66, 109, 0.2);
   display: inline-flex;
   align-items: center;
   gap: 4px;
   white-space: nowrap;
+  min-height: 36px;  // Consistent height with other elements
+  box-sizing: border-box;
   
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 66, 109, 0.3);
   }
   
   &:active {
@@ -1520,9 +1544,66 @@
   }
   
   &.active {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    background: #003554;
+    box-shadow: 0 4px 12px rgba(0, 66, 109, 0.4);
   }
+}
+
+// Injury category selection panel
+.injuryCategoryPanel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
+  background: #fff3e0;
+  border: 1px solid #ffcc80;
+  border-radius: 4px;
+  margin-left: $spacing-sm;
+  flex-wrap: wrap;
+  min-height: 36px;  // Match button height (padding + font size + border)
+  box-sizing: border-box;
+}
+
+.categoryLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: #e65100;
+  white-space: nowrap;
+}
+
+.categoryCheckbox {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xxs;
+  cursor: pointer;
+  font-size: $font-size-xs;
+  color: #333;
+  white-space: nowrap;
+  
+  input[type="checkbox"] {
+    margin: 0;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: #00426d;  // Modern way to style checkboxes (dark blue)
+    
+    // Fallback for older browsers
+    &:checked {
+      background-color: #00426d;
+      border-color: #00426d;
+    }
+  }
+  
+  &:hover {
+    .categoryName {
+      color: #00426d;
+    }
+  }
+}
+
+.categoryName {
+  user-select: none;
+  transition: color 200ms ease;
 }
 
 // Cache statistics panel
@@ -1669,10 +1750,25 @@
 }
 
 .title {
-  margin: 0;
+  margin: 0;  // No negative margins - keep it aligned with content
   font-size: $font-size-xxl;
   font-weight: $font-weight-semibold;
-  color: var(--text-primary);
+  color: white;
+  background: #00426d;
+  padding: $spacing-lg;  // Standard padding
+  border-radius: $radius-md $radius-md 0 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  width: 100%;  // Match the width of searchContainer
+  box-sizing: border-box;  // Include padding in width calculation
+  
+  .titleLogo {
+    width: 48px;  // 1.5x bigger (32px * 1.5 = 48px)
+    height: 48px;  // 1.5x bigger (32px * 1.5 = 48px)
+    object-fit: contain;
+    filter: brightness(0) invert(1); // Convert logo to white for dark background
+  }
 }
 
 .header {

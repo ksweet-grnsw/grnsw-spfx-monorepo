@@ -1,11 +1,11 @@
 @import '../../../../enterprise-ui/styles/tokens/index.scss';
 
 .notification {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #00426d;
   border-radius: $radius-md;
   margin-bottom: $spacing-md;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 66, 109, 0.25);
   animation: slideDown 0.3s ease-out;
   
   .content {

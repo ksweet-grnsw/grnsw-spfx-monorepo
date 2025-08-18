@@ -2,7 +2,9 @@ import * as React from 'react';
 import { IMeeting } from '../../../../models/IRaceData';
 import { Modal, IconButton } from '@fluentui/react';
 import { StatusBadge } from '../../../../enterprise-ui/components/DataDisplay/StatusIndicator/StatusBadge';
+import { TimeslotPill } from '../../../../components/TimeslotPill';
 import styles from './Modals.module.scss';
+const logoUrl = require('../../../../assets/images/siteicon.png');
 
 interface MeetingDetailsModalProps {
   meeting: IMeeting | null;
@@ -27,6 +29,7 @@ export const MeetingDetailsModal: React.FC<MeetingDetailsModalProps> = ({
     });
   };
 
+
   return (
     <Modal
       isOpen={isOpen}
@@ -35,7 +38,10 @@ export const MeetingDetailsModal: React.FC<MeetingDetailsModalProps> = ({
       containerClassName={styles.modalContainer}
     >
       <div className={styles.modalHeader}>
-        <h2>Meeting Details</h2>
+        <h2>
+          <img src={logoUrl} alt="GRNSW" className={styles.headerLogo} />
+          Meeting Details
+        </h2>
         <IconButton
           iconProps={{ iconName: 'Cancel' }}
           ariaLabel="Close"
@@ -62,7 +68,7 @@ export const MeetingDetailsModal: React.FC<MeetingDetailsModalProps> = ({
             </div>
             <div className={styles.detailRow}>
               <span className={styles.label}>Timeslot:</span>
-              <StatusBadge status={meeting.cr4cc_timeslot} variant="neutral" size="small" />
+              <TimeslotPill timeslot={meeting.cr4cc_timeslot} size="medium" />
             </div>
             <div className={styles.detailRow}>
               <span className={styles.label}>Type:</span>
@@ -98,7 +104,7 @@ export const MeetingDetailsModal: React.FC<MeetingDetailsModalProps> = ({
           </div>
         )}
 
-        <div className={styles.detailSection}>
+        <div className={styles.systemInfoSection}>
           <h3>System Information</h3>
           <div className={styles.detailGrid}>
             <div className={styles.detailRow}>

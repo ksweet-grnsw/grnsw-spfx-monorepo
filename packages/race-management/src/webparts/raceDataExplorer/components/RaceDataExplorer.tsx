@@ -39,7 +39,19 @@ import {
 import { MeetingDetailsModal } from './Modals/MeetingDetailsModal';
 import { RaceDetailsModal } from './Modals/RaceDetailsModal';
 import { ContestantDetailsModal } from './Modals/ContestantDetailsModal';
+import { GreyhoundDetailsModal } from './Modals/GreyhoundDetailsModal';
 import { AnalyticsModal } from './Modals/AnalyticsModal';
+
+// Import date range filter component
+import { DateRangeFilter } from '../../../components/DateRangeFilter';
+
+// Import SVG icons for actions
+const detailsIcon = require('../../../assets/icons/details.svg');
+const downArrowIcon = require('../../../assets/icons/down-arrow.svg');
+const healthIcon = require('../../../assets/icons/health.svg');
+const searchIcon = require('../../../assets/icons/search.svg');
+const greyhoundIcon = require('../../../assets/icons/greyhound.png');
+const logoUrl = require('../../../assets/images/siteicon.png');
 
 type ViewType = 'meetings' | 'races' | 'contestants' | 'search';
 
@@ -104,8 +116,8 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
           console.log('Fetching meetings with injuries...');
           meetings = await dataService.getMeetingsWithInjuries(filters.selectedInjuryCategories || ['Cat D', 'Cat E']);
           
-          // Apply date and track filters to injury results
-          if (filters.dateFrom || filters.dateTo || filters.selectedTrack) {
+          // Apply date, authority, track and day of week filters to injury results
+          if (filters.dateFrom || filters.dateTo || filters.selectedAuthority || filters.selectedTrack || filters.selectedDayOfWeek !== undefined) {
             meetings = meetings.filter(meeting => {
               // Date from filter
               if (filters.dateFrom) {
@@ -119,9 +131,20 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
                 if (meetingDate > filters.dateTo) return false;
               }
               
+              // Authority filter
+              if (filters.selectedAuthority && filters.selectedAuthority !== '') {
+                if (meeting.cr4cc_authority !== filters.selectedAuthority) return false;
+              }
+              
               // Track filter
               if (filters.selectedTrack && filters.selectedTrack !== '') {
                 if (meeting.cr4cc_trackname !== filters.selectedTrack) return false;
+              }
+              
+              // Day of week filter
+              if (filters.selectedDayOfWeek !== undefined) {
+                const meetingDate = new Date(meeting.cr4cc_meetingdate);
+                if (meetingDate.getDay() !== filters.selectedDayOfWeek) return false;
               }
               
               return true;
@@ -132,8 +155,17 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
           meetings = await dataService.getMeetings({
             dateFrom: filters.dateFrom,
             dateTo: filters.dateTo,
+            authority: filters.selectedAuthority,
             track: filters.selectedTrack
           });
+          
+          // Apply day of week filter if set
+          if (filters.selectedDayOfWeek !== undefined) {
+            meetings = meetings.filter(meeting => {
+              const meetingDate = new Date(meeting.cr4cc_meetingdate);
+              return meetingDate.getDay() === filters.selectedDayOfWeek;
+            });
+          }
         }
         
         // Add injury status to meetings if we have injury data available
@@ -173,7 +205,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         throw error;
       }
     },
-    [filters.dateFrom, filters.dateTo, filters.selectedTrack, filters.showInjuryFilter, filters.selectedInjuryCategories],
+    [filters.dateFrom, filters.dateTo, filters.selectedAuthority, filters.selectedTrack, filters.selectedDayOfWeek, filters.showInjuryFilter, filters.selectedInjuryCategories],
     { 
       autoFetch: viewState.type === 'meetings',
       onError: (error) => {
@@ -233,30 +265,44 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       // Add injury status to contestants
       if (contestants && contestants.length > 0 && viewState.meeting) {
         try {
-          console.log('Checking for injury data for contestants...');
+          console.log('Checking for injury data for contestants...', {
+            contestantCount: contestants.length,
+            meetingDate: viewState.meeting.cr4cc_meetingdate,
+            meetingId: viewState.meeting.cr4cc_racemeetingid
+          });
           const contestantsWithInjuryStatus = await Promise.all(
             contestants.map(async (contestant) => {
               try {
                 // Get greyhound injury data by name
+                console.log(`Checking injury for: ${contestant.cr616_greyhoundname}`);
                 const greyhound = await dataService.getGreyhoundByName(contestant.cr616_greyhoundname);
                 if (greyhound) {
-                  const latestHealthCheck = await dataService.getLatestHealthCheckForGreyhound(greyhound.cra5e_greyhoundid);
+                  console.log(`Found greyhound: ${greyhound.cra5e_name}, ID: ${greyhound.cra5e_greyhoundid}`);
+                  const latestHealthCheck = await dataService.getLatestHealthCheckForGreyhound(greyhound.cra5e_greyhoundid, contestant.cr616_greyhoundname);
+                  console.log(`Health check for ${contestant.cr616_greyhoundname}:`, latestHealthCheck);
+                  
                   const hasRecentInjury = latestHealthCheck && 
                     latestHealthCheck.cra5e_injuryclassification &&
-                    new Date(latestHealthCheck.cra5e_datechecked) >= new Date(viewState.meeting.cr4cc_meetingdate);
+                    (latestHealthCheck.cra5e_injuryclassification.includes('Cat') || 
+                     latestHealthCheck.cra5e_injuryclassification !== 'No Injury') &&
+                    // Show injuries within 30 days before or after the meeting
+                    Math.abs(new Date(latestHealthCheck.cra5e_datechecked).getTime() - new Date(viewState.meeting.cr4cc_meetingdate).getTime()) <= (30 * 24 * 60 * 60 * 1000);
+                  
+                  console.log(`${contestant.cr616_greyhoundname} has injury: ${hasRecentInjury}`);
                   
                   return {
                     ...contestant,
                     hasInjuries: hasRecentInjury
                   };
                 } else {
+                  console.log(`No greyhound found for: ${contestant.cr616_greyhoundname}`);
                   return {
                     ...contestant,
                     hasInjuries: false
                   };
                 }
               } catch (error) {
-                console.warn('Could not fetch injury data for contestant:', contestant.cr616_greyhoundname);
+                console.warn('Could not fetch injury data for contestant:', contestant.cr616_greyhoundname, error);
                 return {
                   ...contestant,
                   hasInjuries: false
@@ -264,6 +310,10 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
               }
             })
           );
+          console.log('Final contestants with injury status:', contestantsWithInjuryStatus.map(c => ({
+            name: c.cr616_greyhoundname,
+            hasInjuries: c.hasInjuries
+          })));
           return contestantsWithInjuryStatus;
         } catch (error) {
           console.warn('Could not fetch injury data for contestants:', error);
@@ -377,36 +427,41 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   const meetingColumnsWithActions = useActionColumns(meetingColumns, [
     {
       label: 'Races',
-      icon: '▼',
+      icon: downArrowIcon,  // SVG down arrow for drill-down
       onClick: navigateToRaces
     },
     {
       label: 'Details',
-      icon: '📋',
+      icon: detailsIcon,  // SVG document icon for details
       onClick: (meeting) => modalManager.openModal('meeting', meeting)
     }
-  ]);
+  ], tableDensity);
 
   const raceColumnsWithActions = useActionColumns(raceColumns, [
     {
       label: 'Field',
-      icon: '▼',
+      icon: downArrowIcon,  // SVG down arrow for drill-down
       onClick: navigateToContestants
     },
     {
       label: 'Details',
-      icon: '📋',
+      icon: detailsIcon,  // SVG document icon for details
       onClick: (race) => modalManager.openModal('race', race)
     }
-  ]);
+  ], tableDensity);
 
   const contestantColumnsWithActions = useActionColumns(contestantColumns, [
     {
+      label: 'Greyhound',
+      icon: greyhoundIcon,  // SVG greyhound icon
+      onClick: (contestant) => modalManager.openModal('greyhound', contestant)
+    },
+    {
       label: 'Details',
-      icon: '📋',
+      icon: detailsIcon,  // SVG document icon for details
       onClick: (contestant) => modalManager.openModal('contestant', contestant)
     }
-  ]);
+  ], tableDensity);
 
   // Breadcrumb items
   const breadcrumbItems = useMemo(() => {
@@ -531,6 +586,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       case 'contestants':
         tableData = data as IContestant[];
         columns = contestantColumnsWithActions;
+        onRowClick = (contestant: IContestant) => modalManager.openModal('contestant', contestant);
         tableTitle = 'Contestants';
         break;
       case 'search':
@@ -576,6 +632,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
               data={results.meetings}
               columns={meetingColumnsWithActions}
               density={tableDensity}
+              striped={true}
               onRowClick={navigateToRaces}
             />
           </div>
@@ -607,8 +664,11 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   return (
     <div className={`${styles.raceDataExplorer} ${styles[`theme-${theme}`]}`}>
       {/* Header */}
-      <div className={styles.header}>
-        <h1 className={styles.title}>Race Data Explorer</h1>
+      <div className={styles.titleHeader}>
+        <h1 className={styles.title}>
+          <img src={logoUrl} alt="GRNSW" className={styles.titleLogo} />
+          Race Data Explorer
+        </h1>
       </div>
 
       {/* Search Bar */}
@@ -628,7 +688,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
                 onClick={() => handleSearch(filters.searchTerm || '')}
                 aria-label="Search"
               >
-                🔍
+                <img src={searchIcon} alt="Search" />
               </button>
               {filters.searchTerm && filters.searchTerm.length > 0 && (
                 <button 
@@ -689,6 +749,19 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
                     </button>
                   </div>
                 )}
+                {filters.selectedAuthority && (
+                  <div className={styles.filterChip}>
+                    <span className={styles.chipLabel}>Authority:</span>
+                    <span className={styles.chipValue}>{filters.selectedAuthority}</span>
+                    <button 
+                      className={styles.chipRemove}
+                      onClick={() => filters.setSelectedAuthority(undefined)}
+                      aria-label="Remove authority filter"
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
                 {filters.selectedTrack && (
                   <div className={styles.filterChip}>
                     <span className={styles.chipLabel}>Track:</span>
@@ -726,27 +799,47 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             )}
             
             <div className={styles.filterContent}>
-              <div className={styles.filterGroup}>
-                <label>Date From:</label>
-                <input 
-                  type="date" 
-                  value={filters.dateFrom?.toISOString().split('T')[0] || ''} 
-                  onChange={(e) => filters.setDateFrom(e.target.value ? new Date(e.target.value) : undefined)}
-                  className={styles.filterInput}
-                />
-              </div>
-              <div className={styles.filterGroup}>
-                <label>Date To:</label>
-                <input 
-                  type="date" 
-                  value={filters.dateTo?.toISOString().split('T')[0] || ''} 
-                  onChange={(e) => filters.setDateTo(e.target.value ? new Date(e.target.value) : undefined)}
-                  className={styles.filterInput}
-                />
-              </div>
-              <div className={styles.filterGroup}>
-                <label>Track:</label>
-                <select 
+              {/* Custom date inputs row */}
+              <div className={styles.filterInputsRow}>
+                <div className={styles.filterGroup}>
+                  <label>Date From:</label>
+                  <input 
+                    type="date" 
+                    value={filters.dateFrom?.toISOString().split('T')[0] || ''} 
+                    onChange={(e) => filters.setDateFrom(e.target.value ? new Date(e.target.value) : undefined)}
+                    className={styles.filterInput}
+                  />
+                </div>
+                <div className={styles.filterGroup}>
+                  <label>Date To:</label>
+                  <input 
+                    type="date" 
+                    value={filters.dateTo?.toISOString().split('T')[0] || ''} 
+                    onChange={(e) => filters.setDateTo(e.target.value ? new Date(e.target.value) : undefined)}
+                    className={styles.filterInput}
+                  />
+                </div>
+                <div className={styles.filterGroup}>
+                  <label>Authority:</label>
+                  <select 
+                    value={filters.selectedAuthority || ''} 
+                    onChange={(e) => filters.setSelectedAuthority(e.target.value)}
+                    className={styles.filterSelect}
+                  >
+                    <option value="">All Authorities</option>
+                    <option value="NSW">NSW</option>
+                    <option value="VIC">VIC</option>
+                    <option value="QLD">QLD</option>
+                    <option value="SA">SA</option>
+                    <option value="WA">WA</option>
+                    <option value="TAS">TAS</option>
+                    <option value="ACT">ACT</option>
+                    <option value="NT">NT</option>
+                  </select>
+                </div>
+                <div className={styles.filterGroup}>
+                  <label>Track:</label>
+                  <select 
                   value={filters.selectedTrack || ''} 
                   onChange={(e) => filters.setSelectedTrack(e.target.value)}
                   className={styles.filterSelect}
@@ -771,8 +864,31 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
                   <option value="Wagga Wagga">Wagga Wagga</option>
                   <option value="Wentworth Park">Wentworth Park</option>
                 </select>
+                </div>
+                <div className={styles.filterStatus}>Active filters: {filters.getActiveFilterCount()}</div>
               </div>
-              <div className={styles.filterStatus}>Active filters: {filters.getActiveFilterCount()}</div>
+              
+              {/* Date range preset buttons - moved below date inputs */}
+              <DateRangeFilter
+                onDateRangeChange={(from, to) => {
+                  filters.setDateFrom(from);
+                  filters.setDateTo(to);
+                  filters.setSelectedDayOfWeek(undefined); // Clear day of week when date range changes
+                }}
+                onDayOfWeekChange={(day) => {
+                  filters.setSelectedDayOfWeek(day);
+                  // Clear date range when day of week is selected
+                  if (day !== undefined) {
+                    filters.setDateFrom(undefined);
+                    filters.setDateTo(undefined);
+                  }
+                }}
+                currentDateFrom={filters.dateFrom}
+                currentDateTo={filters.dateTo}
+                currentDayOfWeek={filters.selectedDayOfWeek}
+                className={styles.dateRangeFilterSection}
+                showCustomPresets={false}
+              />
             </div>
             <div className={styles.filterActions}>
               <button
@@ -780,8 +896,45 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
                 onClick={() => filters.setShowInjuryFilter(!filters.showInjuryFilter)}
                 aria-label="Toggle injury filter"
               >
-                🏥 Injuries
+                <img 
+                  src={healthIcon} 
+                  alt="Health" 
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    marginRight: '6px',
+                    verticalAlign: 'middle',
+                    filter: filters.showInjuryFilter ? 
+                      'brightness(0) saturate(100%) invert(100%)' :  // White when active
+                      'brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(2000%) hue-rotate(15deg) brightness(100%) contrast(100%)'  // Orange color (#ff9800)
+                  }}
+                />
+                Injuries
               </button>
+              
+              {/* Injury Category Selection */}
+              {filters.showInjuryFilter && (
+                <div className={styles.injuryCategoryPanel}>
+                  <div className={styles.categoryLabel}>Categories:</div>
+                  {['Cat A', 'Cat B', 'Cat C', 'Cat D', 'Cat E'].map(category => (
+                    <label key={category} className={styles.categoryCheckbox}>
+                      <input
+                        type="checkbox"
+                        checked={filters.selectedInjuryCategories?.includes(category) || false}
+                        onChange={(e) => {
+                          const currentCategories = filters.selectedInjuryCategories || [];
+                          const newCategories = e.target.checked
+                            ? [...currentCategories, category]
+                            : currentCategories.filter(c => c !== category);
+                          filters.setSelectedInjuryCategories(newCategories);
+                        }}
+                      />
+                      <span className={styles.categoryName}>{category}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+              
               <button
                 className={styles.analyticsButton}
                 onClick={() => modalManager.openModal('analytics', {})}
@@ -834,6 +987,14 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       {modalManager.isModalOpen('contestant') && (
         <ContestantDetailsModal
           contestant={modalManager.getSelectedItem('contestant')}
+          isOpen={true}
+          onClose={() => modalManager.closeModal()}
+        />
+      )}
+      
+      {modalManager.isModalOpen('greyhound') && (
+        <GreyhoundDetailsModal
+          contestant={modalManager.getSelectedItem('greyhound')}
           isOpen={true}
           onClose={() => modalManager.closeModal()}
         />

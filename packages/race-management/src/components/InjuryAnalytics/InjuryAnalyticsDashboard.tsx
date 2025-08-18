@@ -90,7 +90,7 @@ export const InjuryAnalyticsDashboard: React.FC<IInjuryAnalyticsDashboardProps> 
         cra5e_trackname: tracks[Math.floor(Math.random() * tracks.length)],
         cra5e_standdowndays: Math.floor(Math.random() * 30),
         cra5e_name: `Sample Greyhound ${i}`,
-        _cra5e_greyhound_value: `greyhound-${i}`
+        cra5e_greyhound: `greyhound-${i}`
       } as IHealthCheck);
     }
     

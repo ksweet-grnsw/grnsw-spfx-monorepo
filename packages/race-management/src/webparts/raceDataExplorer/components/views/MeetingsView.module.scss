@@ -25,6 +25,7 @@
 .quickFilters {
   display: flex;
   align-items: center;
+  justify-content: flex-end;  // Right-justify the quick filters
   gap: $spacing-xs;
   flex-wrap: wrap;
   padding-bottom: $spacing-md;

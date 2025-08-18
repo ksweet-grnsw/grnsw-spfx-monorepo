@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { IContestant } from '../../../../models/IRaceData';
+import { IContestant, IHealthCheck, IGreyhound } from '../../../../models/IRaceData';
 import { Modal, IconButton } from '@fluentui/react';
 import { StatusBadge } from '../../../../enterprise-ui/components/DataDisplay/StatusIndicator/StatusBadge';
 import { renderRugNumber, renderPlacement } from '../../../../utils/tableConfig/columnHelpers';
+import { InjuryIndicator } from '../../../../components/InjuryIndicator';
 import styles from './Modals.module.scss';
+const logoUrl = require('../../../../assets/images/siteicon.png');
 
 interface ContestantDetailsModalProps {
   contestant: IContestant | null;
@@ -16,6 +18,44 @@ export const ContestantDetailsModal: React.FC<ContestantDetailsModalProps> = ({
   isOpen,
   onClose
 }) => {
+  const [healthCheck, setHealthCheck] = React.useState<IHealthCheck | null>(null);
+  const [greyhound, setGreyhound] = React.useState<IGreyhound | null>(null);
+  const [loadingHealthData, setLoadingHealthData] = React.useState(false);
+
+  // Import data service
+  const { RaceDataService } = require('../../../../services/RaceDataService');
+  const dataService = new RaceDataService();
+
+  // Load health check data when contestant changes
+  React.useEffect(() => {
+    if (!contestant || !isOpen) {
+      setHealthCheck(null);
+      setGreyhound(null);
+      return;
+    }
+
+    const loadHealthData = async () => {
+      setLoadingHealthData(true);
+      try {
+        // Get greyhound information first
+        const greyhoundData = await dataService.getGreyhoundByName(contestant.cr616_greyhoundname);
+        setGreyhound(greyhoundData);
+        
+        if (greyhoundData) {
+          // Get latest health check for this greyhound
+          const latestHealthCheck = await dataService.getLatestHealthCheckForGreyhound(greyhoundData.cra5e_greyhoundid);
+          setHealthCheck(latestHealthCheck);
+        }
+      } catch (error) {
+        console.warn('Could not load health data for contestant:', contestant.cr616_greyhoundname, error);
+      } finally {
+        setLoadingHealthData(false);
+      }
+    };
+
+    loadHealthData();
+  }, [contestant, isOpen]);
+
   if (!contestant) return null;
 
   return (
@@ -26,7 +66,10 @@ export const ContestantDetailsModal: React.FC<ContestantDetailsModalProps> = ({
       containerClassName={styles.modalContainer}
     >
       <div className={styles.modalHeader}>
-        <h2>Contestant Details</h2>
+        <h2>
+          <img src={logoUrl} alt="GRNSW" className={styles.headerLogo} />
+          Contestant Details{contestant.cr616_racenumber ? ` - Race ${contestant.cr616_racenumber}` : ''}
+        </h2>
         <IconButton
           iconProps={{ iconName: 'Cancel' }}
           ariaLabel="Close"
@@ -151,7 +194,90 @@ export const ContestantDetailsModal: React.FC<ContestantDetailsModalProps> = ({
           </div>
         </div>
 
+        {/* Health Check Information */}
         <div className={styles.detailSection}>
+          <h3>
+            Health Information
+            {loadingHealthData && <span className={styles.loading}> (Loading...)</span>}
+          </h3>
+          <div className={styles.detailGrid}>
+            <div className={styles.detailRow}>
+              <span className={styles.label}>Injury Status:</span>
+              <span className={styles.value}>
+                <InjuryIndicator 
+                  hasInjury={(contestant as any).hasInjuries || false} 
+                  size="medium" 
+                  inline={true}
+                  tooltip="Current injury status"
+                />
+                {(contestant as any).hasInjuries ? ' Has recent injury' : ' No recent injuries'}
+              </span>
+            </div>
+            {healthCheck && (
+              <>
+                <div className={styles.detailRow}>
+                  <span className={styles.label}>Last Health Check:</span>
+                  <span className={styles.value}>
+                    {new Date(healthCheck.cra5e_datechecked).toLocaleDateString('en-AU')}
+                  </span>
+                </div>
+                {healthCheck.cra5e_injuryclassification && (
+                  <div className={styles.detailRow}>
+                    <span className={styles.label}>Injury Classification:</span>
+                    <StatusBadge 
+                      status={healthCheck.cra5e_injuryclassification} 
+                      variant={
+                        healthCheck.cra5e_injuryclassification.includes('Cat A') || healthCheck.cra5e_injuryclassification.includes('Cat B') ? 'error' :
+                        healthCheck.cra5e_injuryclassification.includes('Cat C') ? 'warning' : 'info'
+                      } 
+                      size="small" 
+                    />
+                  </div>
+                )}
+                {healthCheck.cra5e_trackname && (
+                  <div className={styles.detailRow}>
+                    <span className={styles.label}>Health Check Track:</span>
+                    <span className={styles.value}>{healthCheck.cra5e_trackname}</span>
+                  </div>
+                )}
+                {healthCheck.cra5e_standdowndays && (
+                  <div className={styles.detailRow}>
+                    <span className={styles.label}>Stand Down Days:</span>
+                    <span className={styles.value}>{healthCheck.cra5e_standdowndays}</span>
+                  </div>
+                )}
+                {healthCheck.cra5e_standdowndaysenddate && (
+                  <div className={styles.detailRow}>
+                    <span className={styles.label}>Stand Down Until:</span>
+                    <span className={styles.value}>
+                      {new Date(healthCheck.cra5e_standdowndaysenddate).toLocaleDateString('en-AU')}
+                    </span>
+                  </div>
+                )}
+                {healthCheck.cra5e_followupinformation && (
+                  <div className={styles.detailRow}>
+                    <span className={styles.label}>Follow-up Info:</span>
+                    <span className={styles.value}>{healthCheck.cra5e_followupinformation}</span>
+                  </div>
+                )}
+              </>
+            )}
+            {greyhound && !healthCheck && !loadingHealthData && (
+              <div className={styles.detailRow}>
+                <span className={styles.label}>Health Check Status:</span>
+                <span className={styles.value}>No recent health checks found</span>
+              </div>
+            )}
+            {!greyhound && !loadingHealthData && (
+              <div className={styles.detailRow}>
+                <span className={styles.label}>Health Check Status:</span>
+                <span className={styles.value}>Greyhound not found in health system</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.systemInfoSection}>
           <h3>System Information</h3>
           <div className={styles.detailGrid}>
             <div className={styles.detailRow}>

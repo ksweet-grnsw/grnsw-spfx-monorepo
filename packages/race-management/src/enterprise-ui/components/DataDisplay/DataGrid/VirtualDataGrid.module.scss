@@ -263,7 +263,7 @@
           }
           
           &.striped {
-            background: var(--bg-striped);
+            background: #f8f9fa;  // Light gray for striped rows
           }
           
           .checkboxCell {
@@ -318,6 +318,7 @@
     .row .cell,
     .row .checkboxCell {
       padding: $spacing-xs $spacing-sm;
+      font-size: $font-size-sm;
     }
   }
   

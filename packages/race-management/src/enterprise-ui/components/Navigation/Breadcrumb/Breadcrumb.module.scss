@@ -22,7 +22,7 @@
   }
   
   &.theme-neutral {
-    --breadcrumb-color: #{$brand-primary};
+    --breadcrumb-color: #00426d;
   }
 }
 
@@ -58,16 +58,16 @@
   transition: all 200ms ease;
   
   &:hover {
-    background: var(--breadcrumb-color, $brand-primary);
+    background: var(--breadcrumb-color, #00426d);
     color: white;
-    border-color: var(--breadcrumb-color, $brand-primary);
+    border-color: var(--breadcrumb-color, #00426d);
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-decoration: none;
   }
   
   &:focus {
-    outline: 2px solid var(--breadcrumb-color, $brand-primary);
+    outline: 2px solid var(--breadcrumb-color, #00426d);
     outline-offset: 2px;
   }
 }
@@ -77,9 +77,9 @@
   align-items: center;
   gap: $spacing-xs;
   padding: $spacing-xs $spacing-md;
-  background: var(--breadcrumb-color, $brand-primary);
+  background: var(--breadcrumb-color, #00426d);
   color: white;
-  border: 1px solid var(--breadcrumb-color, $brand-primary);
+  border: 1px solid var(--breadcrumb-color, #00426d);
   border-radius: 4px;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;

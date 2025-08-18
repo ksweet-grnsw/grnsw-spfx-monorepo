@@ -44,7 +44,9 @@
   &.density-compact {
     .headerCell,
     .cell {
-      padding: $spacing-xs $spacing-sm;
+      padding: $spacing-xxs $spacing-sm;  // Reduced from xs to xxs (8px to 4px vertical)
+      font-size: $font-size-xs;  // Smaller font for more compact display
+      line-height: 1.2;  // Tighter line height
     }
   }
   

@@ -2,7 +2,7 @@
 
 .modalContainer {
   .ms-Modal-main {
-    max-width: 800px;
+    max-width: 750px;  // 1.25x wider than original 600px
     width: 90%;
     border-radius: $radius-lg;
     overflow: hidden;
@@ -57,13 +57,23 @@
   justify-content: space-between;
   align-items: center;
   padding: $spacing-lg $spacing-xl;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #00426d;
   color: white;
   
   h2 {
     margin: 0;
     font-size: $font-size-xl;
     font-weight: $font-weight-semibold;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+  
+  .headerLogo {
+    width: 48px;  // 1.5x bigger (32px * 1.5 = 48px)
+    height: 48px;  // 1.5x bigger (32px * 1.5 = 48px)
+    object-fit: contain;
+    filter: brightness(0) invert(1); // Convert logo to white
   }
   
   .closeButton {
@@ -122,6 +132,42 @@
   }
 }
 
+// System Information sections - smaller and less prominent
+.systemInfoSection {
+  margin-bottom: $spacing-lg; // Reduced from $spacing-xl
+  opacity: 0.7; // Make less prominent
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  h3 {
+    margin: 0 0 $spacing-sm 0; // Reduced from $spacing-md
+    font-size: $font-size-md; // Reduced from $font-size-lg
+    font-weight: $font-weight-medium; // Reduced from $font-weight-semibold
+    color: #8a8a8a; // Lighter gray color
+    padding-bottom: $spacing-xs; // Reduced from $spacing-sm
+    border-bottom: 1px solid #e0e0e0; // Lighter border
+  }
+  
+  .detailGrid {
+    gap: $spacing-sm; // Reduced from $spacing-md
+  }
+  
+  .detailRow {
+    .label {
+      font-size: $font-size-xs; // Smaller than normal
+      color: #999999; // Lighter gray
+      font-weight: $font-weight-regular; // Reduced from $font-weight-medium
+    }
+    
+    .value {
+      font-size: $font-size-sm; // Smaller than normal
+      color: #666666; // Lighter gray
+    }
+  }
+}
+
 .detailGrid {
   display: grid;
   gap: $spacing-md;
@@ -129,7 +175,7 @@
 
 .detailRow {
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 150px auto;  // Changed from 1fr to auto to prevent pill stretching
   gap: $spacing-md;
   align-items: center;
   
@@ -144,32 +190,65 @@
     font-size: $font-size-md;
     word-break: break-word;
   }
+  
+  // Prevent pills and badges from stretching in the grid
+  > *:last-child {
+    justify-self: start;  // Align pills to the left instead of stretching
+  }
 }
 
 .prizeGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: $spacing-md;
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-lg;
   padding: $spacing-md;
   background: var(--bg-secondary);
   border-radius: $radius-md;
+  flex-wrap: nowrap;
 }
 
 .prizeItem {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: $spacing-sm;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  white-space: nowrap;
   
   .placement {
     font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: var(--text-secondary);
-    margin-bottom: $spacing-xs;
+    font-weight: $font-weight-semibold;
+    color: white;  // Changed to white for better contrast on colored backgrounds
+    padding: 2px 8px;
+    border-radius: $radius-sm;
+    display: inline-block;
+    
+    // Gold background for 1st place
+    &.first {
+      background: #FFD700;  // Gold
+      color: #333;  // Dark text for better contrast on gold
+    }
+    
+    // Silver background for 2nd place
+    &.second {
+      background: #C0C0C0;  // Silver
+      color: #333;  // Dark text for better contrast on silver
+    }
+    
+    // Bronze background for 3rd place
+    &.third {
+      background: #CD7F32;  // Bronze
+      color: white;  // White text on bronze
+    }
+    
+    // Light blue background for 4th place
+    &.fourth {
+      background: #87CEEB;  // Sky Blue / Light Blue
+      color: #333;  // Dark text for better contrast on light blue
+    }
   }
   
   .amount {
-    font-size: $font-size-lg;
+    font-size: $font-size-md;
     font-weight: $font-weight-bold;
     color: var(--text-primary);
   }
@@ -205,7 +284,7 @@
 }
 
 .summaryCard {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #00426d;
   padding: $spacing-lg;
   border-radius: $radius-md;
   text-align: center;
@@ -248,8 +327,8 @@
   }
   
   &.active {
-    color: #667eea;
-    border-bottom-color: #667eea;
+    color: #00426d;
+    border-bottom-color: #00426d;
   }
 }
 
@@ -362,7 +441,7 @@
 
 .primaryButton {
   padding: $spacing-sm $spacing-lg;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #00426d;
   color: white;
   border: none;
   border-radius: $radius-md;
@@ -395,6 +474,12 @@
   &:hover {
     background: var(--bg-secondary);
   }
+}
+
+.loading {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  font-style: italic;
 }
 
 // Responsive styles
