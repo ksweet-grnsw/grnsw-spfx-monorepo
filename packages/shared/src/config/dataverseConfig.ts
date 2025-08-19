@@ -5,6 +5,14 @@ export const dataverseConfig = {
   tenantId: '78247cd5-7ce6-4361-bd6c-cadfc9f8f547'
 };
 
+// GAP Environment configuration
+export const gapDataverseConfig = {
+  environment: 'https://orgda56a300.crm6.dynamics.com',
+  apiVersion: 'v9.1',
+  clientId: '3e9eb05b-3a09-4a77-8b2b-9a714ab84e12', // Same client ID for all environments
+  tenantId: '78247cd5-7ce6-4361-bd6c-cadfc9f8f547' // Same tenant ID
+};
+
 // Table names for different domains
 export const dataverseTables = {
   // Track conditions tables (formerly weather)
@@ -24,7 +32,8 @@ export const dataverseTables = {
   veterinaryReports: 'cr4cc_veterinaryreports',
   
   // GAP (Greyhound Adoption Program) tables
-  adoptableGreyhounds: 'cr4cc_adoptablegreyhounds',
+  hounds: 'cr0d3_hounds', // Primary greyhound table for GAP
+  adoptableGreyhounds: 'cr4cc_adoptablegreyhounds', // Legacy - may not exist
   adoptionApplications: 'cr4cc_adoptionapplications',
   adoptions: 'cr4cc_adoptions',
   fosterCarers: 'cr4cc_fostercarers',

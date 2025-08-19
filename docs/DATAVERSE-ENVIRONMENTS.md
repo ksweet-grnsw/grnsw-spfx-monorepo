@@ -11,7 +11,7 @@ This document provides comprehensive documentation of all Microsoft Dataverse en
 | Racing Data | Race meetings, races, contestants | racingdata.crm6.dynamics.com | race-management |
 | Weather Data | Weather station data | org98489e5d.crm6.dynamics.com | track-conditions-spfx |
 | Injury Data | Health and injury tracking | orgfc8a11f1.crm6.dynamics.com | greyhound-health |
-| GAP | Greyhound Adoption Program | org16bdb053.crm6.dynamics.com | gap-spfx |
+| GAP | Greyhound Adoption Program | orgda56a300.crm6.dynamics.com | gap-spfx |
 
 ---
 
@@ -138,12 +138,19 @@ This document provides comprehensive documentation of all Microsoft Dataverse en
 **Purpose:** Manage greyhound adoption processes and records
 
 **Connection Details:**
-- **Environment URL:** https://org16bdb053.crm6.dynamics.com
-- **API Endpoint:** https://org16bdb053.crm6.dynamics.com/api/data/v9.1
+- **Environment URL:** https://orgda56a300.crm6.dynamics.com
+- **API Endpoint:** https://orgda56a300.crm6.dynamics.com/api/data/v9.1
 - **Authentication:** Azure AD
 - **API Version:** v9.1
 
-**Tables:** To be configured
+**Tables:**
+| Display Name | Logical Name (Singular) | Logical Name (Plural) | Description |
+|-------------|------------------------|---------------------|-------------|
+| Hounds | cr0d3_hound | cr0d3_hounds | Primary greyhound records for adoption |
+| Adoption Applications | cr4cc_adoptionapplication | cr4cc_adoptionapplications | Adoption application records |
+| Adoptions | cr4cc_adoption | cr4cc_adoptions | Completed adoption records |
+| Foster Carers | cr4cc_fostercarer | cr4cc_fostercarers | Foster carer information |
+| Behavioral Assessments | cr4cc_behavioralassessment | cr4cc_behavioralassessments | Greyhound behavioral assessments |
 
 ---
 

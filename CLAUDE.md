@@ -515,10 +515,13 @@ Each package connects to a specific Dataverse environment:
   | Health Check | cra5e_heathcheck | cra5e_heathchecks | Health check records (note: misspelled in system) |
 
 ### 4. GAP Environment (Greyhound Adoption Program)
-- **URL:** https://org16bdb053.crm6.dynamics.com/
-- **API Endpoint:** https://org16bdb053.crm6.dynamics.com/api/data/v9.1
+- **URL:** https://orgda56a300.crm6.dynamics.com/
+- **API Endpoint:** https://orgda56a300.crm6.dynamics.com/api/data/v9.1
 - **Used By:** gap-spfx package
-- **Tables:** Not yet configured
+- **Tables:**
+  | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
+  |-------------|------------------------|-------------------------------|-------------|
+  | Hounds | cr0d3_hound | cr0d3_hounds | Greyhound records for adoption program |
 
 ## Data Integration
 - **Primary Source:** Microsoft Dataverse (formerly CDS)

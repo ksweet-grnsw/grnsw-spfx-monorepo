@@ -1,12 +1,12 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { BaseDataverseService, dataverseConfig, dataverseTables } from '@grnsw/shared';
+import { BaseDataverseService, gapDataverseConfig, dataverseTables } from '@grnsw/shared';
 import { IAdoptableGreyhound, IAdoptionApplication, IAdoption, AdoptionStatus, ApplicationStatus } from '../models/IGAPModels';
 
 export class AdoptionService extends BaseDataverseService<IAdoptableGreyhound> {
-  protected tableName = 'cr4cc_adoptablegreyhounds'; // Update with actual table name
+  protected tableName = 'cr0d3_hounds'; // Using new GAP environment table
 
   constructor(context: WebPartContext) {
-    super(context, dataverseConfig);
+    super(context, gapDataverseConfig); // Use GAP-specific config
   }
 
   public async getAvailableGreyhounds(): Promise<IAdoptableGreyhound[]> {
@@ -98,10 +98,10 @@ export class AdoptionService extends BaseDataverseService<IAdoptableGreyhound> {
 }
 
 export class ApplicationService extends BaseDataverseService<IAdoptionApplication> {
-  protected tableName = 'cr4cc_adoptionapplications'; // Update with actual table name
+  protected tableName = 'cr4cc_adoptionapplications'; // Will need to verify actual table name in GAP environment
 
   constructor(context: WebPartContext) {
-    super(context, dataverseConfig);
+    super(context, gapDataverseConfig); // Use GAP-specific config
   }
 
   public async getPendingApplications(): Promise<IAdoptionApplication[]> {
