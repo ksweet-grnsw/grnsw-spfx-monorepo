@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
     "name": "grnsw-gap-spfx-client-side-solution",
-    "id": "d4e5f6a7-b8c9-0123-defg-234567890123",
-    "version": "1.0.0.0",
+    "id": "d4e5f6a7-b8c9-0123-abcd-234567890123",
+    "version": "1.5.1.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -19,7 +19,7 @@
         "default": "Greyhound Adoption Program (GAP) web parts for GRNSW"
       },
       "longDescription": {
-        "default": "SharePoint web parts for managing the Greyhound Adoption Program. Includes adoption tracking, foster care management, behavioral assessments, adoption applications, and program analytics."
+        "default": "SharePoint web parts for managing the Greyhound Adoption Program. Features advanced search and filtering for available greyhounds, with microchip and ear brand lookup capabilities."
       },
       "screenshotPaths": [],
       "videoUrl": "",
@@ -29,8 +29,8 @@
       {
         "title": "GRNSW GAP Feature",
         "description": "Greyhound Adoption Program management components",
-        "id": "c4d5e6f7-a8b9-0123-defg-234567890123",
-        "version": "1.0.0.0"
+        "id": "c4d5e6f7-a8b9-0123-abcd-234567890123",
+        "version": "1.5.1.0"
       }
     ]
   },

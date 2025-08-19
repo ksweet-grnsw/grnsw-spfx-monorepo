@@ -4,6 +4,7 @@ import { Modal, IconButton } from '@fluentui/react';
 import { StatusBadge } from '../../../../enterprise-ui/components/DataDisplay/StatusIndicator/StatusBadge';
 import { renderRugNumber, renderPlacement } from '../../../../utils/tableConfig/columnHelpers';
 import { InjuryIndicator } from '../../../../components/InjuryIndicator';
+import { RaceDataService } from '../../../../services/RaceDataService';
 import styles from './Modals.module.scss';
 const logoUrl = require('../../../../assets/images/siteicon.png');
 
@@ -11,20 +12,18 @@ interface ContestantDetailsModalProps {
   contestant: IContestant | null;
   isOpen: boolean;
   onClose: () => void;
+  dataService: RaceDataService;
 }
 
 export const ContestantDetailsModal: React.FC<ContestantDetailsModalProps> = ({
   contestant,
   isOpen,
-  onClose
+  onClose,
+  dataService
 }) => {
   const [healthCheck, setHealthCheck] = React.useState<IHealthCheck | null>(null);
   const [greyhound, setGreyhound] = React.useState<IGreyhound | null>(null);
   const [loadingHealthData, setLoadingHealthData] = React.useState(false);
-
-  // Import data service
-  const { RaceDataService } = require('../../../../services/RaceDataService');
-  const dataService = new RaceDataService();
 
   // Load health check data when contestant changes
   React.useEffect(() => {

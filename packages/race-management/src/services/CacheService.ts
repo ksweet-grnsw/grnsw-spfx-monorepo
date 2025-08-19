@@ -49,10 +49,16 @@ export class CacheService {
   
   private readonly MAX_CACHE_SIZE = 100; // Maximum number of entries
   private readonly STORAGE_PREFIX = 'grnsw_cache_';
+  private readonly MAX_STORAGE_SIZE = 2 * 1024 * 1024; // 2MB max per storage type
+  private readonly MIN_FREE_STORAGE = 500 * 1024; // Keep 500KB free
   
   private constructor() {
-    // Initialize cache from session storage if available
-    this.loadFromStorage();
+    // Try to initialize cache from session storage, but don't fail if it errors
+    try {
+      this.loadFromStorage();
+    } catch (error) {
+      console.warn('Could not load from storage, starting with empty cache:', error);
+    }
     
     // Set up periodic cleanup
     setInterval(() => this.cleanup(), 60000); // Cleanup every minute
@@ -376,18 +382,42 @@ export class CacheService {
   ): void {
     try {
       const storageObj = storage === 'session' ? sessionStorage : localStorage;
-      storageObj.setItem(key, JSON.stringify(entry));
+      const serialized = JSON.stringify(entry);
+      
+      // Check size before storing
+      if (serialized.length > this.MAX_STORAGE_SIZE) {
+        console.warn(`Cache entry too large (${(serialized.length / 1024 / 1024).toFixed(2)}MB), skipping storage for key:`, key);
+        return;
+      }
+      
+      // Check available space
+      const currentSize = this.getStorageSize(storage);
+      if (currentSize + serialized.length > this.MAX_STORAGE_SIZE) {
+        this.aggressiveCleanup(storage, serialized.length);
+      }
+      
+      // Try to set, but don't crash if it fails
+      try {
+        storageObj.setItem(key, serialized);
+      } catch (e) {
+        // Silently fail - memory cache will still work
+      }
     } catch (error) {
       console.error(`Failed to set in ${storage} storage:`, error);
       // If storage is full, clear old entries
-      if (error instanceof DOMException && error.code === 22) {
-        this.cleanupStorage(storage);
-        // Try again
+      if (error instanceof DOMException && (error.code === 22 || error.name === 'QuotaExceededError')) {
+        this.aggressiveCleanup(storage);
+        // Try again with reduced data
         try {
           const storageObj = storage === 'session' ? sessionStorage : localStorage;
-          storageObj.setItem(key, JSON.stringify(entry));
+          // Try to store a minimal version
+          const minimalEntry = this.createMinimalEntry(entry);
+          if (minimalEntry) {
+            storageObj.setItem(key, JSON.stringify(minimalEntry));
+          }
         } catch (retryError) {
-          console.error('Failed to set after cleanup:', retryError);
+          console.error('Failed to set even minimal data:', retryError);
+          // Just skip caching to storage, memory cache will still work
         }
       }
     }
@@ -467,9 +497,113 @@ export class CacheService {
     }
   }
   
-  private loadFromStorage(): void {
-    // Load from session storage on initialization
+  private getStorageSize(storage: 'session' | 'local'): number {
+    const storageObj = storage === 'session' ? sessionStorage : localStorage;
+    let totalSize = 0;
+    
+    for (let i = 0; i < storageObj.length; i++) {
+      const key = storageObj.key(i);
+      if (key && key.startsWith(this.STORAGE_PREFIX)) {
+        const item = storageObj.getItem(key);
+        if (item) {
+          totalSize += key.length + item.length;
+        }
+      }
+    }
+    
+    return totalSize;
+  }
+  
+  private aggressiveCleanup(storage: 'session' | 'local', requiredSpace: number = 0): void {
     try {
+      const storageObj = storage === 'session' ? sessionStorage : localStorage;
+      const entries: Array<{ key: string; size: number; timestamp: number }> = [];
+      
+      // Collect all cache entries with their metadata
+      for (let i = 0; i < storageObj.length; i++) {
+        const key = storageObj.key(i);
+        if (key && key.startsWith(this.STORAGE_PREFIX)) {
+          const item = storageObj.getItem(key);
+          if (item) {
+            try {
+              const entry = JSON.parse(item) as CacheEntry<any>;
+              entries.push({
+                key,
+                size: key.length + item.length,
+                timestamp: entry.timestamp || 0
+              });
+            } catch {
+              // Invalid entry, mark for removal
+              storageObj.removeItem(key);
+            }
+          }
+        }
+      }
+      
+      // Sort by timestamp (oldest first)
+      entries.sort((a, b) => a.timestamp - b.timestamp);
+      
+      // Remove oldest entries until we have enough space
+      let freedSpace = 0;
+      const targetSpace = requiredSpace + this.MIN_FREE_STORAGE;
+      
+      for (const entry of entries) {
+        if (freedSpace >= targetSpace) break;
+        
+        storageObj.removeItem(entry.key);
+        freedSpace += entry.size;
+      }
+    } catch (error) {
+      console.error(`Failed to perform aggressive cleanup on ${storage} storage:`, error);
+      // As last resort, clear all cache entries
+      this.clearStorage(storage);
+    }
+  }
+  
+  private createMinimalEntry<T>(entry: CacheEntry<T>): CacheEntry<any> | null {
+    try {
+      // For large data, try to store only essential metadata
+      const data = entry.data;
+      
+      if (Array.isArray(data) && data.length > 10) {
+        // For large arrays, store only first 10 items as preview
+        return {
+          ...entry,
+          data: data.slice(0, 10),
+          truncated: true
+        } as any;
+      }
+      
+      if (typeof data === 'object' && data !== null) {
+        // For large objects, try to minimize
+        const stringified = JSON.stringify(data);
+        if (stringified.length > 50000) {
+          // Too large, skip storage
+          return null;
+        }
+      }
+      
+      return entry;
+    } catch {
+      return null;
+    }
+  }
+  
+  private loadFromStorage(): void {
+    // Skip loading from session storage if we're having quota issues
+    // Just use memory cache instead
+    try {
+      // First check if we can even access sessionStorage
+      const testKey = '__test_storage_access__';
+      try {
+        sessionStorage.setItem(testKey, '1');
+        sessionStorage.removeItem(testKey);
+      } catch (e) {
+        // Can't write to storage, probably quota exceeded
+        return;
+      }
+      
+      // Load existing entries from session storage
       for (let i = 0; i < sessionStorage.length; i++) {
         const key = sessionStorage.key(i);
         if (key && key.startsWith(this.STORAGE_PREFIX)) {

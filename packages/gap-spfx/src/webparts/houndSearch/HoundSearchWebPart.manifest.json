@@ -1,0 +1,25 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "a7b8c9d0-e1f2-3456-7890-bcdef1234567",
+  "alias": "HoundSearchWebPart",
+  "componentType": "WebPart",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportedHosts": ["SharePointWebPart", "TeamsPersonalApp", "TeamsTab", "SharePointFullPage"],
+  "supportsThemeVariants": true,
+
+  "preconfiguredEntries": [{
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+    "group": { "default": "GRNSW Tools" },
+    "title": { "default": "GAP Hound Search" },
+    "description": { "default": "Search and filter greyhounds available for adoption" },
+    "officeFabricIconFontName": "SearchAndApps",
+    "properties": {
+      "title": "Find Your Perfect Greyhound",
+      "pageSize": 20,
+      "showOnlyAvailable": true,
+      "enableAdvancedFilters": true
+    }
+  }]
+}

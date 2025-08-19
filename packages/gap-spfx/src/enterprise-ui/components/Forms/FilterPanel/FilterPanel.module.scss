@@ -1,0 +1,118 @@
+@import '../../../styles/tokens';
+
+.filterPanel {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
+  
+  &.theme-meeting {
+    --filter-accent: #{$racing-meetings};
+  }
+  
+  &.theme-race {
+    --filter-accent: #{$racing-races};
+  }
+  
+  &.theme-contestant {
+    --filter-accent: #{$racing-contestants};
+  }
+  
+  &.theme-neutral {
+    --filter-accent: #{$brand-primary};
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-primary);
+  @include typography('h5');
+  transition: color 200ms ease;
+  
+  &:hover {
+    color: var(--filter-accent, $brand-primary);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--filter-accent, $brand-primary);
+    outline-offset: 2px;
+  }
+}
+
+.toggleIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  font-size: $font-size-md;
+  transition: all 200ms ease;
+  
+  .toggleButton:hover & {
+    border-color: var(--filter-accent, $brand-primary);
+    color: var(--filter-accent, $brand-primary);
+  }
+}
+
+.title {
+  @include typography('h5');
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.clearButton {
+  @include typography('button');
+  padding: $spacing-xs $spacing-md;
+  background: none;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    border-color: var(--filter-accent, $brand-primary);
+    color: var(--filter-accent, $brand-primary);
+    background: rgba(var(--filter-accent, $brand-primary), 0.08);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--filter-accent, $brand-primary);
+    outline-offset: 2px;
+  }
+}
+
+.content {
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.footer {
+  padding: $spacing-md;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-default);
+}

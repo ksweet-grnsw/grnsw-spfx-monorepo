@@ -37,7 +37,8 @@
       "Bash(touch:*)",
       "Bash(npm test:*)",
       "Bash(cd:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

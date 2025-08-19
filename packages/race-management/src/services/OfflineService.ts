@@ -46,7 +46,6 @@ export class OfflineService {
 
       request.onsuccess = () => {
         this.db = request.result;
-        console.log('IndexedDB initialized successfully');
         resolve();
       };
 
@@ -121,13 +120,11 @@ export class OfflineService {
   private setupEventListeners(): void {
     window.addEventListener('online', () => {
       this.isOnline = true;
-      console.log('Application is online');
       this.processSyncQueue();
     });
 
     window.addEventListener('offline', () => {
       this.isOnline = false;
-      console.log('Application is offline');
     });
   }
 
@@ -376,8 +373,6 @@ export class OfflineService {
   private async processSyncQueue(): Promise<void> {
     if (!this.isOnline || this.syncQueue.length === 0) return;
 
-    console.log(`Processing ${this.syncQueue.length} queued operations`);
-
     const operations = [...this.syncQueue];
     this.syncQueue = [];
 
@@ -411,7 +406,6 @@ export class OfflineService {
       const request = store.clear();
 
       request.onsuccess = () => {
-        console.log('Cache cleared successfully');
         resolve();
       };
 

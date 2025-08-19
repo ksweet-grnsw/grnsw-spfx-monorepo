@@ -1,0 +1,193 @@
+// Design tokens (following enterprise UI pattern)
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+$border-radius: 4px;
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+.houndSearch {
+  padding: $spacing-lg;
+  background-color: "[theme:white, default: #ffffff]";
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
+
+  .header {
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 2px solid "[theme:themePrimary, default: #0078d4]";
+    
+    h2 {
+      margin: 0;
+      color: "[theme:themeDarker, default: #004578]";
+      font-size: 24px;
+      font-weight: 600;
+    }
+  }
+
+  .searchSection {
+    background-color: "[theme:neutralLighter, default: #f3f2f1]";
+    padding: $spacing-lg;
+    border-radius: $border-radius;
+    margin-bottom: $spacing-lg;
+  }
+
+  .resultsSection {
+    min-height: 400px;
+  }
+
+  .resultsSummary {
+    padding: $spacing-md 0;
+    border-bottom: 1px solid "[theme:neutralLight, default: #edebe9]";
+    margin-bottom: $spacing-md;
+    
+    label {
+      font-weight: 600;
+      color: "[theme:neutralPrimary, default: #323130]";
+    }
+  }
+
+  .loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+
+  .noResults {
+    text-align: center;
+    padding: $spacing-xl * 2;
+    color: "[theme:neutralSecondary, default: #605e5c]";
+    
+    p {
+      margin: $spacing-sm 0;
+      
+      &:first-child {
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .pagination {
+    margin-top: $spacing-lg;
+    padding-top: $spacing-lg;
+    border-top: 1px solid "[theme:neutralLight, default: #edebe9]";
+  }
+
+  // Status styling
+  .statusYes {
+    color: "[theme:green, default: #107c10]";
+    font-weight: 600;
+  }
+
+  .statusNo {
+    color: "[theme:neutralSecondary, default: #605e5c]";
+  }
+
+  .statusAvailable {
+    color: "[theme:green, default: #107c10]";
+    font-weight: 600;
+    padding: 2px 8px;
+    background-color: rgba(16, 124, 16, 0.1);
+    border-radius: 12px;
+    display: inline-block;
+  }
+
+  .statusAdopted {
+    color: "[theme:themeDarker, default: #004578]";
+    font-weight: 600;
+    padding: 2px 8px;
+    background-color: rgba(0, 69, 120, 0.1);
+    border-radius: 12px;
+    display: inline-block;
+  }
+
+  .statusHased {
+    color: "[theme:orange, default: #ff8c00]";
+    font-weight: 600;
+    padding: 2px 8px;
+    background-color: rgba(255, 140, 0, 0.1);
+    border-radius: 12px;
+    display: inline-block;
+  }
+
+  .nameLink {
+    color: "[theme:themePrimary, default: #0078d4]";
+    text-decoration: none;
+    font-weight: 600;
+    
+    &:hover {
+      text-decoration: underline;
+      color: "[theme:themeDarker, default: #004578]";
+    }
+  }
+
+  .houndDetails {
+    padding: $spacing-lg 0;
+    
+    label {
+      font-weight: 600;
+      color: "[theme:neutralPrimary, default: #323130]";
+      margin-bottom: $spacing-xs;
+      display: block;
+    }
+    
+    div {
+      color: "[theme:neutralSecondary, default: #605e5c]";
+      margin-bottom: $spacing-xs;
+    }
+  }
+}
+
+// Dark theme overrides
+[data-theme="dark"] {
+  .houndSearch {
+    background-color: "[theme:neutralDark, default: #201f1e]";
+    
+    .header h2 {
+      color: "[theme:white, default: #ffffff]";
+    }
+    
+    .searchSection {
+      background-color: "[theme:neutralQuaternary, default: #2b2a28]";
+    }
+    
+    .noResults {
+      color: "[theme:neutralLight, default: #edebe9]";
+    }
+  }
+}
+
+// Responsive design
+@media screen and (max-width: 640px) {
+  .houndSearch {
+    padding: $spacing-md;
+    
+    .searchSection {
+      padding: $spacing-md;
+    }
+    
+    .header h2 {
+      font-size: 20px;
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .houndSearch {
+    box-shadow: none;
+    
+    .searchSection {
+      display: none;
+    }
+    
+    .pagination {
+      display: none;
+    }
+  }
+}

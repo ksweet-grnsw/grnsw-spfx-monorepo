@@ -1,950 +1,113 @@
-# Claude Instructions for GRNSW SPFx Monorepo
+# GRNSW SPFx Monorepo Instructions
 
-## 🔍 Quick References
-- **Field Documentation:** `docs/dataverse/dataverse-fields-latest.md` - Complete dictionary of all Dataverse fields
-- **Discovery Tool:** Run `npm run discover:fields` to update field documentation
-- **Pluralization Guide:** `docs/dataverse/README.md` - Explains Dataverse's weird pluralization rules
+## 🚨 CRITICAL: Version Before Build
+**ALWAYS update version BEFORE building. SharePoint will show wrong version if you don't!**
 
-## Project Overview
-This is a SharePoint Framework (SPFx) monorepo containing weather tracking and race management web parts for Greyhound Racing NSW.
+### Build Checklist (MANDATORY)
+1. Update version in BOTH `package.json` AND `config/package-solution.json`
+2. Run `gulp clean`
+3. Run `gulp bundle --ship`
+4. Run `gulp package-solution --ship`
+5. Copy .sppkg to releases folder
 
-## Monorepo Structure
+## Project Structure
 ```
 grnsw-spfx-monorepo/
 ├── packages/
-│   ├── track-conditions-spfx/    # Weather tracking web parts (v2.1.0+)
-│   ├── race-management/          # Race meeting calendar web parts (v1.0.0+)
-│   ├── gap-spfx/                 # Greyhound Adoption Program web parts
-│   ├── greyhound-health/         # Health and injury tracking web parts
-│   └── shared/                   # Shared utilities and services
-├── releases/                     # Production-ready .sppkg files
-├── scripts/                      # Build and deployment scripts
-└── shared-styles/               # Global SCSS variables
+│   ├── track-conditions-spfx/    # Weather tracking (6 web parts)
+│   ├── race-management/          # Race calendar
+│   ├── gap-spfx/                # Adoption program
+│   └── greyhound-health/        # Health tracking
+├── releases/                    # Production .sppkg files
+└── docs/dataverse/             # Field documentation
 ```
 
-## Web Parts Catalog
-
-### Track Conditions Package (6 web parts)
-1. **Temperature Web Part** (ID: 52d1bd5b-0541-4da2-9c88-c20ddc4edbc4)
-   - Current temperature with "feels like"
-   - Time period selection (today/week/month)
-   - Statistics and chart visualization
-
-2. **Rainfall Web Part** (ID: a3f9e8b2-1c4d-4e6f-9b8a-5d7c3e2a1f9b)
-   - Hourly, daily, monthly rainfall tracking
-   - Statistical analysis (total, max, average, rain days)
-   - Line and bar chart options
-
-3. **Wind Analysis Web Part** (ID: c5f8a2d1-4e9b-4a3c-8f7d-2b6e9c5a3d1f)
-   - Wind speed, direction, and gusts
-   - Wind rose visualization
-   - Cardinal direction conversion
-
-4. **Track Conditions Analysis** (ID: da04608a-c229-4ba5-a755-177695dfb3b7)
-   - Comprehensive track safety scoring
-   - Surface condition assessment (Dry/Damp/Wet)
-   - Grip level and visibility calculations
-   - Race-specific alerts and recommendations
-
-5. **Weather Dashboard** (ID: 9ee7883c-3ad1-45e5-a624-cf395903bf9e)
-   - Live multi-station weather display
-   - 181 data points from Dataverse
-   - Station health monitoring (battery, solar)
-
-6. **Historical Pattern Analyzer** (ID: b4a9c3e2-5d8f-4a7b-9c1e-3f2a8b7d4e5c)
-   - Advanced optimal score calculations
-   - Predictive insights and recovery time
-   - Volatility monitoring and alerts
-
-### Race Management Package (1 web part)
-1. **Race Meetings Calendar** (ID: f7e3a4b2-8c5d-4a6f-9d2c-7b1e5f3a8c9d)
-   - Calendar views (day/week/month)
-   - Authority and track filtering
-   - Color-coded racing authorities
-   - Meeting detail panels
-
-## Key Technologies and Dependencies
-- **Framework:** SharePoint Framework (SPFx) 1.21.1
-- **React:** 17.0.1
-- **TypeScript:** 5.3.3
-- **Charting:** Chart.js 4.5.0 with react-chartjs-2
-- **Node:** 22.14.0+ (< 23.0.0)
-- **UI:** Fluent UI React 8.106.4
-
-## ⚠️⚠️⚠️ STOP AND READ - CRITICAL BUILD PROCESS ⚠️⚠️⚠️
-# VERSION MUST BE UPDATED BEFORE BUILDING
-# THIS IS THE #1 CAUSE OF FAILED DEPLOYMENTS
-# FAILURE TO FOLLOW THIS WILL RESULT IN WRONG VERSION IN SHAREPOINT
-
-## 🚨 MANDATORY PRE-BUILD CHECKLIST - DO NOT SKIP 🚨
-Before ANY build operation, you MUST complete this checklist IN ORDER:
-- [ ] CHECK: Run `cat package.json | grep version` to see current version
-- [ ] CHECK: Run `cat config/package-solution.json | grep version` to verify both versions match
-- [ ] UPDATE: If creating new release, update BOTH files to new version FIRST
-- [ ] VERIFY: Run the version check commands again to confirm updates
-- [ ] CLEAN: Run `gulp clean` to remove ALL old artifacts
-- [ ] BUILD: Run `gulp bundle --ship` (MUST have --ship flag)
-- [ ] PACKAGE: Run `gulp package-solution --ship` (MUST have --ship flag)
-- [ ] COPY: Copy .sppkg to release folder ONLY after successful build
-
-## ❌ CRITICAL FAILURES - NEVER DO THESE ❌
-1. **NEVER** build before updating version - SharePoint will show old version
-2. **NEVER** run gulp bundle without --ship for production
-3. **NEVER** skip gulp clean after version update
-4. **NEVER** trust that the version is correct without checking
-5. **NEVER** update version AFTER building - the package will have wrong version
-6. **NEVER** proceed if package.json and package-solution.json versions don't match
-
-## Build and Release Process
-
-### ⚠️ CRITICAL: Version Update Sequence ⚠️
-**ALWAYS update versions BEFORE building!** Building with old versions then updating will result in SharePoint showing the wrong version number.
-
-**Correct Order:**
-1. ✅ Update version → Clean → Build → Package
-2. ❌ Build → Update version → Package (WRONG - will show old version!)
-
-When creating releases, always follow this EXACT sequence:
-1. **UPDATE VERSIONS FIRST** in both `package.json` and `config/package-solution.json`
-2. Run `gulp clean` to clean ALL previous build artifacts
-3. Run `gulp bundle --ship` for production bundling (REQUIRED for SharePoint deployment)
-4. Run `gulp package-solution --ship` to create the production .sppkg file
-5. Run `npm run lint` to check for issues
-6. Run `npm run typecheck` if available
-7. Copy the .sppkg from `sharepoint/solution/` to release folder
-8. Name releases with semantic versioning (e.g., v2.1.0)
-
-**CRITICAL**: The `--ship` flag is MANDATORY for production packages. Without it, the web parts will not appear correctly in SharePoint.
-
-## 🚨 CRITICAL VERSION SYNCHRONIZATION 🚨
-**THIS IS THE #1 CAUSE OF SHAREPOINT DEPLOYMENT ISSUES - READ CAREFULLY!**
-
-### Patch Version Strategy
-**IMPORTANT**: Always increment patch versions when creating new releases. Never overwrite existing release files!
-- v1.0.0 → v1.0.1 → v1.0.2 (patch increments for fixes)
-- v1.1.0 (minor increment for new features)
-- v2.0.0 (major increment for breaking changes)
-
-### Version Sync Requirements
-SharePoint Framework REQUIRES perfect version synchronization or it WILL display wrong version numbers. This causes major deployment problems for the user.
-
-**BEFORE ANY BUILD, YOU MUST:**
-1. Run `npm run check-version` to verify synchronization
-2. If versions are out of sync, run `npm run sync-version [version]` to fix them
-3. NEVER proceed with a build if versions are not synchronized
-
-### Version Files That MUST Match:
-1. `package.json` → `"version": "x.y.z"` (e.g., "2.2.7")
-2. `config/package-solution.json` → `"solution.version": "x.y.z.0"` (e.g., "2.2.7.0")
-3. `config/package-solution.json` → `"features[0].version": "x.y.z.0"` (e.g., "2.2.7.0")
-
-### Creating a New Release - MANDATORY STEPS:
-
-#### For packages WITHOUT version sync scripts (race-management, greyhound-health, etc.):
-```bash
-# 1. CRITICAL: Update versions FIRST (before ANY build commands!)
-cd packages/race-management
-
-# 2. Manually update BOTH files to the SAME version:
-#    - package.json: "version": "1.0.6"
-#    - config/package-solution.json: "solution.version": "1.0.6.0"
-#    - config/package-solution.json: "features[0].version": "1.0.6.0"
-
-# 3. ONLY AFTER versions are updated, clean and build:
-gulp clean
-gulp bundle --ship
-gulp package-solution --ship
-
-# 4. Create release folder and copy files
-mkdir -p ../../releases/race-management/v1.0.6
-cp sharepoint/solution/*.sppkg ../../releases/race-management/v1.0.6/
-```
-
-#### For packages WITH version sync scripts (track-conditions-spfx):
-```bash
-# 1. ALWAYS sync versions first
-cd packages/track-conditions-spfx
-npm run sync-version 2.2.8  # Replace with your version
-
-# 2. Verify sync was successful
-npm run check-version
-
-# 3. Only if verification passes, build with production flags
-gulp clean
-gulp bundle --ship
-gulp package-solution --ship
-
-# 4. Create release folder and copy files
-mkdir -p ../../releases/track-conditions/v2.2.8
-cp sharepoint/solution/*.sppkg ../../releases/track-conditions/v2.2.8/
-```
-
-### Version Sync Scripts Available:
-- `npm run check-version` - Checks if versions are synchronized (RUN BEFORE EVERY BUILD!)
-- `npm run sync-version [version]` - Automatically synchronizes all version files
-- `npm run build:prod` - Runs version check, then builds production package
-
-### Common Version Sync Failures:
-❌ **NEVER DO THIS:**
-- Building BEFORE updating versions (SharePoint will show old version!)
-- Updating only package.json
-- Updating only package-solution.json  
-- Using different version formats (2.2.7 vs 2.2.7.0)
-- Building without running version check
-- Running `gulp bundle` or `gulp package-solution` before version update
-
-✅ **ALWAYS DO THIS:**
-- **UPDATE VERSIONS FIRST, THEN BUILD**
-- Run `gulp clean` after version update to ensure clean build
-- Use the sync-version script for ALL version changes (if available)
-- Run check-version before EVERY build (if available)
-- Use the same version number everywhere (with .0 suffix in package-solution.json)
-- Verify the version shows correctly in SharePoint after deployment
-
-IMPORTANT: Releases are stored at the monorepo root level, NOT in the package folder!
-
-### Release Notes README.md Template
-Always create a README.md in each release folder with:
-- Release version and date
-- New Features (with details)
-- Bug Fixes (with specifics)
-- Technical Details (build warnings, compatibility)
-- Installation instructions
-- Configuration instructions (if applicable)
-
-Example structure:
-```
-grnsw-spfx-monorepo/
-  releases/
-    track-conditions/
-      v2.1.0/
-        track-conditions-spfx.sppkg
-      v2.1.1/
-        track-conditions-spfx.sppkg
-      v2.1.9/
-        track-conditions-spfx.sppkg
-    race-management/
-      v1.0.0/
-        race-management.sppkg
-```
-
-## Code Standards & Architecture Principles
-
-### 🏗️ MANDATORY Architecture Principles (MUST FOLLOW)
-
-#### SOLID Principles
-1. **Single Responsibility Principle (SRP)**
-   - Each class/function/module should have ONE reason to change
-   - Components should do ONE thing well
-   - Separate business logic from UI logic
-   - Example: Don't mix API calls, state management, and rendering in one component
-
-2. **Open/Closed Principle (OCP)**
-   - Code should be open for extension but closed for modification
-   - Use composition over inheritance
-   - Leverage React hooks for extending functionality
-   - Create abstract base classes/interfaces for common behaviors
-
-3. **Liskov Substitution Principle (LSP)**
-   - Derived classes must be substitutable for their base classes
-   - Component props interfaces should be consistent
-   - Don't break expected behaviors when extending components
-
-4. **Interface Segregation Principle (ISP)**
-   - Many specific interfaces are better than one general interface
-   - Don't force components to implement methods they don't use
-   - Split large interfaces into smaller, focused ones
-
-5. **Dependency Inversion Principle (DIP)**
-   - Depend on abstractions, not concretions
-   - Use dependency injection via props/context
-   - Services should depend on interfaces, not implementations
-
-#### DRY Principle (Don't Repeat Yourself)
-- **Extract common logic into custom hooks**
-- **Create utility functions for repeated calculations**
-- **Use shared components for common UI patterns**
-- **Centralize constants and configuration**
-- **Never copy-paste code blocks** - refactor into reusable functions
-
-#### React Best Practices
-1. **Component Design**
-   - Prefer functional components with hooks over class components
-   - Keep components small and focused (< 200 lines ideally)
-   - Use composition over inheritance
-   - Implement proper prop validation with TypeScript
-
-2. **State Management**
-   - Lift state up to the nearest common ancestor
-   - Use local state for UI-only concerns
-   - Consider context for cross-cutting concerns
-   - Implement optimistic updates for better UX
-
-3. **Performance**
-   - Use `React.memo` for expensive pure components
-   - Implement `useMemo` for expensive calculations
-   - Use `useCallback` for stable function references
-   - Lazy load components with `React.lazy` and Suspense
-   - Implement virtual scrolling for large lists (500+ items)
-
-4. **Hooks Guidelines**
-   - Custom hooks must start with `use`
-   - Keep hooks at the top level (no conditionals/loops)
-   - Extract complex logic into custom hooks
-   - Return consistent data structures from hooks
-
-5. **Error Handling**
-   - Implement error boundaries for component trees
-   - Use try-catch in async operations
-   - Provide user-friendly error messages
-   - Log errors for debugging
-
-### 📁 Project Structure (MANDATORY)
-```
-src/
-├── components/           # Shared UI components
-│   ├── common/          # Generic reusable components
-│   └── domain/          # Domain-specific components
-├── hooks/               # Custom React hooks
-│   ├── index.ts        # Barrel export
-│   └── use*.ts         # Individual hooks
-├── services/            # API and business logic
-│   ├── interfaces/     # Service interfaces
-│   └── implementations/# Concrete implementations
-├── utils/              # Pure utility functions
-│   ├── calculations/   # Math/calculation utilities
-│   ├── formatters/     # Data formatting utilities
-│   └── validators/     # Validation utilities
-├── models/             # TypeScript interfaces/types
-└── webparts/           # SPFx web part components
-```
-
-### 🔍 Code Review Checklist (BEFORE EVERY COMMIT)
-- [ ] No code duplication (DRY principle applied)
-- [ ] Single responsibility for each function/component
-- [ ] Proper TypeScript types (no `any` unless absolutely necessary)
-- [ ] Error handling implemented
-- [ ] Performance optimizations applied where needed
-- [ ] Custom hooks extracted for reusable logic
-- [ ] Comments only where necessary (code should be self-documenting)
-- [ ] Consistent naming conventions
-- [ ] Unit tests for utilities and hooks
-
-### TypeScript Standards
-- Use TypeScript strict mode where possible
-- Replace `null` with `undefined` in component state
-- Use `.catch()` for promise error handling instead of `void` operator
-- Always add explicit return types to functions
-- Use `unknown` instead of `any` for error parameters
-- Rename `.scss` files to `.module.scss` for CSS modules
-- **ALWAYS include version number in property pane**: Add an "About" group with PropertyPaneLabel showing the current version
-  ```typescript
-  {
-    groupName: 'About',
-    groupFields: [
-      PropertyPaneLabel('version', {
-        text: `Version: ${version}`
-      })
-    ]
-  }
-  ```
-
-## Enterprise UI Standards (MANDATORY for all new/refactored components)
-
-### Component Architecture
-- **Use Enterprise UI components** from `src/enterprise-ui/components` for all UI elements
-- **Replace Fluent UI components** with Enterprise UI equivalents where available:
-  - Tables → `DataGrid`
-  - Status displays → `StatusBadge`
-  - Navigation → `Breadcrumb`
-  - Filters → `FilterPanel`
-- **Use functional components** with React hooks instead of class components
-- **Implement proper TypeScript interfaces** for all props and state
-
-### Styling Rules (CRITICAL - Separation of Concerns)
-- **NEVER use hardcoded values** in SCSS files
-- **ALWAYS import design tokens** at the top of SCSS files:
-  ```scss
-  @import '../../../enterprise-ui/styles/tokens';
-  ```
-- **Use design tokens for ALL styling**:
-  - Colors: Use `$brand-primary`, `$text-primary`, etc., NOT `#0078d4`
-  - Spacing: Use `$spacing-md`, `$spacing-lg`, etc., NOT `16px`
-  - Typography: Use `@include typography('body')`, NOT custom font sizes
-  - Shadows: Use `$shadow-sm`, `$shadow-md`, etc.
-  - Borders: Use `var(--border-default)`, NOT `1px solid #ccc`
-
-### Theme Application
-- **Apply domain-specific themes** to components:
-  - Meetings: `theme="meeting"` (blue)
-  - Races: `theme="race"` (green)
-  - Contestants: `theme="contestant"` (orange)
-  - Weather: `theme="weather"` (dark blue)
-  - Health: `theme="health"` (green)
-  - Financial: `theme="financial"` (purple)
-
-### Responsive Design
-- **Use responsive mixins** for breakpoints:
-  ```scss
-  @include media-down('lg') {
-    // Tablet and below styles
-  }
-  ```
-- **Never use hardcoded media queries**
-
-### Example SCSS File Structure
-```scss
-// ALWAYS start with token import
-@import '../../../enterprise-ui/styles/tokens';
-
-.component {
-  // Use spacing tokens
-  padding: $spacing-lg;
-  margin-bottom: $spacing-md;
-  
-  // Use color variables
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  
-  // Use shadow tokens
-  box-shadow: $shadow-sm;
-  
-  // Use typography mixins
-  @include typography('h2');
-  
-  // Responsive design
-  @include media-down('md') {
-    padding: $spacing-md;
-  }
-}
-```
-
-### Component Refactoring Checklist
-When refactoring existing components:
-1. ✅ Convert class components to functional components
-2. ✅ Replace Fluent UI data tables with `DataGrid`
-3. ✅ Replace custom status displays with `StatusBadge`
-4. ✅ Import design tokens in SCSS
-5. ✅ Replace hardcoded colors with token variables
-6. ✅ Replace hardcoded spacing with token variables
-7. ✅ Use typography mixins for text styles
-8. ✅ Apply appropriate domain theme
-9. ✅ Use responsive mixins for breakpoints
-10. ✅ Remove inline styles and use CSS modules
-
-## Testing
-Before committing any changes:
-- Ensure no TypeScript errors with `npm run build`
-- Fix any ESLint warnings where possible
-- Test that all web parts load correctly
-
-## Common Commands
-- Build track-conditions: `cd packages/track-conditions-spfx && gulp bundle --ship && gulp package-solution --ship`
-- Build race-management: `cd packages/race-management && gulp bundle --ship && gulp package-solution --ship`
-- Build greyhound-health: `cd packages/greyhound-health && gulp bundle --ship && gulp package-solution --ship`
-- Clean and rebuild: `gulp clean && gulp bundle --ship && gulp package-solution --ship`
-- Create production package: `gulp package-solution --ship` (MUST run `gulp bundle --ship` first!)
-- Serve locally: `gulp serve` (opens https://grnsw21.sharepoint.com/_layouts/workbench.aspx)
-- Serve with no browser: `gulp serve --nobrowser`
-- Test in SharePoint Online workbench: Navigate to https://grnsw21.sharepoint.com/_layouts/workbench.aspx
-
-## API Considerations
-- The Dataverse API returns many `null` values that must be preserved
-- Weather data timestamps are in Unix seconds (need *1000 for JS dates)
-- Track names in API use spaces (e.g., "Wentworth Park")
-- API fields are prefixed with cr8e9_
-
-## SharePoint Environment
-- **Tenant:** grnsw21.sharepoint.com
-- **Tenant ID:** grnsw21
-- **SharePoint URL:** https://grnsw21.sharepoint.com
-- **App Catalog:** https://grnsw21.sharepoint.com/sites/appcatalog
-- **Workbench URL:** https://grnsw21.sharepoint.com/_layouts/workbench.aspx
-
-## 📚 COMPREHENSIVE FIELD DOCUMENTATION AVAILABLE
-**IMPORTANT:** Having trouble with Dataverse field names? We now have complete field documentation!
-- **Location:** `docs/dataverse/` folder
-- **Latest Fields:** `docs/dataverse/dataverse-fields-latest.md` (human-readable)
-- **JSON Format:** `docs/dataverse/dataverse-fields-latest.json` (for programmatic use)
-- **Discovery Tools:** Run `npm run discover:fields` to update field documentation
-- **README:** See `docs/dataverse/README.md` for usage instructions and pluralization guide
-
-This documentation includes:
-- All field names for every table
-- Correct API endpoint pluralization (e.g., cr616_races NOT cr616_raceses)
-- Sample values and data types
-- Foreign key relationships
-- Troubleshooting guide for common issues
+## Tech Stack
+- SPFx 1.21.1, React 17.0.1, TypeScript 5.3.3
+- Node 22.14.0+ (< 23.0.0)
+- Chart.js 4.5.0
 
 ## Dataverse Environments
-Each package connects to a specific Dataverse environment:
 
-### 1. Racing Data Environment
-- **URL:** https://racingdata.crm6.dynamics.com/
-- **Base URL:** https://racingdata.crm6.dynamics.com
-- **API Endpoint:** https://racingdata.crm6.dynamics.com/api/data/v9.1
-- **Used By:** race-management package
-- **Tables:**
-  | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
-  |-------------|------------------------|-------------------------------|-------------|
-  | Meeting | cr4cc_racemeeting | cr4cc_racemeetings | Race meeting information |
-  | Races | cr616_races | cr616_races (no extra plural!) | Individual race details |
-  | Contestants | cr616_contestants | cr616_contestants OR cr616_contestantses (test both!) | Greyhound contestants |
+### Racing Data
+- **URL:** https://racingdata.crm6.dynamics.com/api/data/v9.1
+- **Tables:** cr4cc_racemeetings, cr616_races, cr616_contestants
 
-### 2. Weather Data Production Environment
-- **URL:** https://org98489e5d.crm6.dynamics.com/
-- **API Endpoint:** https://org98489e5d.crm6.dynamics.com/api/data/v9.1
-- **Used By:** track-conditions-spfx package
-- **Tables:**
-  | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
-  |-------------|------------------------|-------------------------------|-------------|
-  | Weather Data | cr4cc_weatherdata | cr4cc_weatherdatas | Weather station data with 180+ fields |
-  
-  **Note:** Weather data includes extensive fields for temperature, rainfall, wind, humidity, solar radiation, battery status, and more.
+### Weather Data  
+- **URL:** https://org98489e5d.crm6.dynamics.com/api/data/v9.1
+- **Table:** cr4cc_weatherdatas (180+ fields)
 
-### 3. Injury Data Environment
-- **URL:** https://orgfc8a11f1.crm6.dynamics.com/
-- **API Endpoint:** https://orgfc8a11f1.crm6.dynamics.com/api/data/v9.1
-- **Used By:** greyhound-health package
-- **Tables:**
-  | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
-  |-------------|------------------------|-------------------------------|-------------|
-  | Injury Data | cra5e_injurydata | cra5e_injurydatas | Greyhound injury tracking records |
-  | Injuries | cr4cc_injury | cr4cc_injuries | Alternative injury table (legacy) |
-  | Greyhound | cra5e_greyhound | cra5e_greyhounds | Greyhound information and profiles |
-  | Health Check | cra5e_heathcheck | cra5e_heathchecks | Health check records (note: misspelled in system) |
+### Injury Data
+- **URL:** https://orgfc8a11f1.crm6.dynamics.com/api/data/v9.1
+- **Tables:** cra5e_injurydatas, cra5e_greyhounds, cra5e_heathchecks
 
-#### Greyhound Field Mappings (Salesforce Asset → cra5e_greyhounds)
-| Salesforce Field | Dataverse Field | Type | Description |
-|-----------------|-----------------|------|-------------|
-| Id | cra5e_sfid | String | Salesforce unique ID |
-| Name | cra5e_name | String | Greyhound name |
-| Status | cra5e_status | String | Current status |
-| InstallDate | cra5e_installdate | Date | Whelped date |
-| Left_Ear_Brand__c | cra5e_leftearbrand | String | Left ear tattoo |
-| Right_Ear_Brand__c | cra5e_rightearbrand | String | Right ear tattoo |
-| Microchip__c | cra5e_microchip | String | Primary microchip |
-| Colour__c | cra5e_colour | String | Coat color |
-| Gender__c | cra5e_gender | String | Gender |
-| State_Registered__c | cra5e_stateregistered | String | Registration state |
-| Date_Retired__c | cra5e_retirementdate | Date | Retirement date |
+### GAP (Adoption)
+- **URL:** https://orgda56a300.crm6.dynamics.com/api/data/v9.1
+- **Table:** cr0d3_hounds
 
-#### Health Check Field Mappings (Salesforce → cra5e_heathchecks)
-| Salesforce Field | Dataverse Field | Type | Description |
-|-----------------|-----------------|------|-------------|
-| Id | cra5e_sfid | String | Salesforce Health Check ID |
-| Name | cra5e_name | String | Health check identifier |
-| Greyhound__c | cra5e_greyhound | Lookup | Reference to greyhound record |
-| Date_Checked__c | cra5e_datechecked | DateTime | Examination date |
-| Injury_Classification__c | cra5e_injuryclassification | String | Injury type/classification |
-| Injury_Location__c | cra5e_injurylocation | String | Body location of injury |
+## Field Documentation
+Run `npm run discover:fields` to update field documentation in `docs/dataverse/`
 
-### 4. GAP Environment (Greyhound Adoption Program)
-- **URL:** https://orgda56a300.crm6.dynamics.com/
-- **API Endpoint:** https://orgda56a300.crm6.dynamics.com/api/data/v9.1
-- **Used By:** gap-spfx package
-- **Tables:**
-  | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
-  |-------------|------------------------|-------------------------------|-------------|
-  | Hounds | cr0d3_hound | cr0d3_hounds | Greyhound records for adoption program |
+## Build Commands
+```bash
+# Track Conditions
+cd packages/track-conditions-spfx
+npm run sync-version 2.2.8  # Has version sync scripts
+gulp clean && gulp bundle --ship && gulp package-solution --ship
 
-#### GAP Hounds Field Mappings (Salesforce → Dataverse)
-| Salesforce Field | Dataverse Field | Type | Description |
-|-----------------|-----------------|------|-------------|
-| Id | cr0d3_sfid | String | Salesforce unique ID |
-| Name | cr0d3_microchipnumber | String | Primary microchip number |
-| Microchip_no__c | cr0d3_microchipno | String | Additional microchip field |
-| Registered_name__c | cr0d3_racingname | String | Registered racing name |
-| Sex__c | cr0d3_sex | String | Male/Female |
-| Colour__c | cr0d3_colour | String | Coat color |
-| Whelping_Date__c | cr0d3_whelpingdate | DateTime | Birth date |
-| Ear_brand_left__c | cr0d3_earbrandleft | String | Left ear tattoo |
-| Ear_brand_right__c | cr0d3_earbrandright | String | Right ear tattoo |
-| Desexed__c | cr0d3_desexed | Boolean | Desexed status |
-| Available__c | cr0d3_available | String | Status (Adopted/HASed/Available) |
-| C5_vaccine_given__c | cr0d3_c5vaccinegiven | Boolean | C5 vaccination status |
-| Weight__c | cr0d3_weight | String | Weight in kg |
-| Assessment_Date__c | cr0d3_assessmentdate | DateTime | Assessment date |
+# Race Management (manual version update)
+cd packages/race-management
+# UPDATE package.json and config/package-solution.json MANUALLY
+gulp clean && gulp bundle --ship && gulp package-solution --ship
+```
 
-## Data Integration
-- **Primary Source:** Microsoft Dataverse (formerly CDS)
-- **Authentication:** Azure AD via AuthService
-- **API Version:** v9.1
-- **Multiple Environments:** Each functional area has its own Dataverse environment
+## Code Standards
 
-## Important Dataverse Notes
-### Table Naming Conventions - CRITICAL PLURALIZATION RULES
-Dataverse has extremely quirky pluralization behavior that MUST be understood:
+### Architecture
+- SOLID principles
+- DRY - no code duplication
+- Functional components with hooks
+- TypeScript strict mode
+- Error boundaries
 
-#### Standard Pluralization
-- **Normal tables:** singular → plural (e.g., cr4cc_racemeeting → cr4cc_racemeetings)
-- **Tables ending in 'y':** y → ies (e.g., cr4cc_injury → cr4cc_injuries)
-- **Tables ending in 'data':** data → datas (e.g., cr4cc_weatherdata → cr4cc_weatherdatas)
+### Project Structure
+```
+src/
+├── components/      # UI components
+├── hooks/          # Custom React hooks
+├── services/       # API and business logic
+├── utils/          # Utility functions
+├── models/         # TypeScript interfaces
+└── webparts/       # SPFx web parts
+```
 
-#### Double Pluralization (Dataverse Weirdness!)
-**CRITICAL:** Dataverse pluralization is INCONSISTENT! Sometimes it adds 'es', sometimes it doesn't:
+### Enterprise UI (when available)
+- Import design tokens: `@import '../../../enterprise-ui/styles/tokens';`
+- Use tokens for colors, spacing, typography
+- Apply domain themes (meeting, race, weather, health)
 
-**Tables that MAY or MAY NOT get double pluralized:**
-- **Races table:** cr616_races → might stay as cr616_races OR become cr616_raceses
-- **Contestants table:** cr616_contestants → might stay as cr616_contestants OR become cr616_contestantses
-- **Meetings (if plural):** cr4cc_racemeetings → might stay as cr4cc_racemeetings OR become cr4cc_racemeetingses
+## SharePoint
+- **Tenant:** grnsw21.sharepoint.com
+- **App Catalog:** https://grnsw21.sharepoint.com/sites/appcatalog
+- **Workbench:** https://grnsw21.sharepoint.com/_layouts/workbench.aspx
 
-**Why the inconsistency?**
-- If the entity was created with a plural name, Dataverse MIGHT not pluralize it again
-- If the entity was created with a singular name but looks plural, it MIGHT get double pluralized
-- The behavior depends on how the entity was originally created in Dataverse
-- You MUST test both forms to be sure!
+## Track Names (18 official)
+Broken Hill, Bulli, Casino, Dapto, Dubbo, Gosford, Goulburn, Grafton, Gunnedah, Lithgow, Maitland, Nowra, Richmond, Taree, Temora, The Gardens, Wagga Wagga, Wentworth Park
 
-#### Why This Happens
-- Dataverse automatically pluralizes entity names for API endpoints
-- If the entity logical name is already plural (like "races"), it still applies pluralization rules
-- This results in double plurals like "raceses" and "contestantses"
-- **VERIFIED:** These double-plural names have been tested and confirmed working as of August 2025
+## Dataverse Quirks
+- Tables may double-pluralize: cr616_races → cr616_raceses
+- Always test both forms
+- Unix timestamps need *1000 for JS dates
+- Many fields return null - preserve them
 
-#### Discovery Scripts
-The utility scripts in `/scripts` automatically try multiple plural forms to handle this:
-- They test both normal and double-plural forms
-- They report which plural form actually works
-- Always check the "actualPluralForm" in the discovery output
+## Current Versions
+- **Track Conditions:** 2.2.4
+- **Race Management:** 1.5.17  
+- **GAP:** 1.0.0
 
-### Key Field Mappings for Racing Data (VERIFIED via API Discovery - August 2025)
-
-#### Salesforce to Dataverse Field Mappings
-
-##### Meeting__c Object → cr4cc_racemeetings Table
-| Salesforce Field | Dataverse Field | Type | Description |
-|-----------------|-----------------|------|-------------|
-| Id | cr4cc_salesforceid | String | Unique Salesforce ID |
-| Name | cr4cc_meetingname | String | Meeting name |
-| Meeting_Date__c | cr4cc_meetingdate | DateTime | Meeting date/time |
-| Track_Name__c | cr4cc_trackname | String | Track name (e.g., "Wentworth Park") |
-| Authority__c | cr4cc_authority | String | Racing authority (e.g., "NSW") |
-| Time_Slot__c | cr4cc_timeslot | String | Morning/Afternoon/Evening |
-| Type__c | cr4cc_type | String | Meeting type |
-| Is_Cancelled__c | cr4cc_cancelled | Boolean | Cancellation status |
-| Weather__c | cr616_weather | String | Weather conditions |
-| Steward_Comment__c | cr616_stewardcomment | Text | Steward's comments |
-| Track_Condition__c | cr616_trackcondition | String | Track condition |
-
-##### Race__c Object → cr616_races Table
-| Salesforce Field | Dataverse Field | Type | Description |
-|-----------------|-----------------|------|-------------|
-| Id | cr616_sfraceid | String | Unique Salesforce ID |
-| Name | cr616_racename | String | Race name |
-| Race_Number__c | cr616_racenumber | Number | Race sequence number |
-| Race_Title__c | cr616_racetitle | String | Full race title |
-| Distance__c | cr616_distance | Number | Distance in meters |
-| Race_Grade__c | cr616_racegrading | String | Race grade/class |
-| Start_Time__c | cr616_starttime | DateTime | Scheduled start time |
-| Number_Of_Contestants__c | cr616_numberofcontestants | Number | Contestant count |
-| Race_Date__c | cr616_racedate | Date | Race date |
-| Meeting__c | _cr616_meeting_value | Lookup | Related meeting |
-| Prize_1__c | cr616_prize1 | Currency | First place prize |
-| Prize_2__c | cr616_prize2 | Currency | Second place prize |
-| Prize_3__c | cr616_prize3 | Currency | Third place prize |
-| Prize_4__c | cr616_prize4 | Currency | Fourth place prize |
-| Track_Held__c | cr616_trackheld | String | Track location |
-| Status__c | cr616_status | String | Race status |
-
-##### Contestant__c Object → cr616_contestants Table
-| Salesforce Field | Dataverse Field | Type | Description |
-|-----------------|-----------------|------|-------------|
-| Id | cr616_sfcontestantid | String | Unique Salesforce ID |
-| Rug_Number__c | cr616_rugnumber | Number | Box number (1-8) |
-| Greyhound_Name__c | cr616_greyhoundname | String | Dog name |
-| Owner_Name__c | cr616_ownername | String | Owner name |
-| Trainer_Name__c | cr616_trainername | String | Trainer name |
-| Dog_Grade__c | cr616_doggrade | String | Dog's grade |
-| Placement__c | cr616_placement | Number | Final position |
-| Margin__c | cr616_margin | Number | Win/loss margin |
-| Weight__c | cr616_weight | Number | Dog weight |
-| Status__c | cr616_status | String | Contestant status |
-| Race__c | _cr616_race_value | Lookup | Related race |
-| Meeting__c | _cr616_meeting_value | Lookup | Related meeting |
-| Finish_Time__c | cr616_finishtime | Number | Finish time |
-| Prize_Money__c | cr616_prizemoney | Currency | Prize won |
-
-#### Meeting Table (cr4cc_racemeetings) - 50 fields total
-**Key Fields:**
-- cr4cc_racemeetingid: Unique identifier
-- cr4cc_meetingdate: Date of the race meeting (includes time)
-- cr4cc_trackname: Track name (e.g., "Wentworth Park") - **CONFIRMED FIELD NAME**
-- cr4cc_authority: Racing authority (e.g., "NSW")
-- cr4cc_timeslot: Time slot (Morning/Afternoon/Evening)
-- cr4cc_type: Meeting type
-- cr4cc_meetingname: Meeting name
-- cr4cc_cancelled: Boolean for cancelled meetings
-- cr4cc_salesforceid: Salesforce integration ID
-
-**Additional Fields:**
-- cr616_weather: Weather conditions
-- cr616_stewardcomment: Steward's comments
-- cr616_trackcondition: Track condition
-- statecode: State code (active/inactive)
-- statuscode: Status code
-- versionnumber: Version number for concurrency
-- modifiedon: Last modified timestamp
-- createdon: Creation timestamp
-- _ownerid_value: Owner ID
-- _owningbusinessunit_value: Business unit ID
-- _modifiedby_value: Modified by user ID
-- _createdby_value: Created by user ID
-
-#### Races Table (cr616_races) - 84 fields total - NOTE: API might use cr616_races OR cr616_raceses
-**Key Fields:**
-- cr616_racesid: Unique identifier (NOTE: not "raceid")
-- cr616_racenumber: Race number in sequence
-- cr616_racename: Name of the race
-- cr616_racetitle: Full title of the race
-- cr616_distance: Race distance in meters
-- cr616_racegrading: Grade of the race (corrected from cr616_racegrading)
-- cr616_starttime: Scheduled start time
-- cr616_numberofcontestants: Number of contestants (corrected from cr616_noofcontestants)
-- cr616_racedate: Date of the race
-- _cr616_meeting_value: Foreign key to Meeting
-
-**Prize Money Fields:**
-- cr616_prize1: First place prize money
-- cr616_prize2: Second place prize money
-- cr616_prize3: Third place prize money
-- cr616_prize4: Fourth place prize money
-- cr616_prize1_base: Base currency value
-- cr616_prize2_base: Base currency value
-- cr616_prize3_base: Base currency value
-- cr616_prize4_base: Base currency value
-
-**Additional Fields:**
-- cr616_trackheld: Track where race was held
-- cr616_sfraceid: Salesforce race ID
-- cr616_firstsectionaltime: First sectional time
-- cr616_secondsectiontime: Second section time
-- cr616_racesectionaloverview: Sectional overview
-- cr616_status: Race status
-- cr616_stewardracecomment: Steward's race comment
-- _transactioncurrencyid_value: Currency ID
-- exchangerate: Exchange rate
-
-#### Contestants Table (cr616_contestants) - 78 fields total - NOTE: API might use cr616_contestants OR cr616_contestantses
-**Key Fields:**
-- cr616_contestantsid: Unique identifier (NOTE: not "contestantid")
-- cr616_rugnumber: Rug/box number (1-8)
-- cr616_greyhoundname: Name of the greyhound
-- cr616_ownername: Owner's name
-- cr616_trainername: Trainer's name
-- cr616_doggrade: Grade of the dog
-- cr616_placement: Final placement
-- cr616_margin: Margin of victory/defeat
-- cr616_weight: Weight of the greyhound
-- cr616_status: Contestant status
-- _cr616_race_value: Foreign key to Race
-- _cr616_meeting_value: Foreign key to Meeting
-
-**Performance Fields:**
-- cr616_finishtime: Finish time
-- cr616_dayssincelastrace: Days since last race
-- cr616_totalnumberofwinds: Total number of wins
-- cr616_failedtofinish: Boolean for DNF
-- cr616_racewithin2days: Raced within 2 days flag
-
-**Additional Fields:**
-- cr616_trackheld: Track where race was held
-- cr616_meetingdate: Meeting date
-- cr616_racenumber: Race number
-- cr616_leftearbrand: Left ear brand
-- cr616_sfcontestantid: Salesforce contestant ID
-- cr616_prizemoney: Prize money won
-- cr616_prizemoney_base: Base currency value
-
-## Known Issues
-- Some IDataverseWeatherData fields must remain as `any | null` due to unpredictable API responses
-- The monorepo structure requires careful path management for builds
-- Build warnings about missing fast-serve configuration can be ignored
-
-## Debugging and Troubleshooting
-- If web part properties aren't persisting, check that property changes trigger re-renders
-- For "includes is not a function" errors, ensure tsconfig.json includes 'es2015' in lib array
-- If seeing duplicate web parts, check manifest.json for duplicate preconfiguredEntries
-
-## Component Patterns
-- For circular progress gauges: strokeDashoffset = circumference - (percentage / 100) * circumference
-- Wind direction: Convert degrees to 16-point cardinal system using 22.5° segments
-- Timestamps from API are Unix seconds - multiply by 1000 for JavaScript Date objects
-
-## Git Commit Guidelines
-- Never commit unless explicitly asked by the user
-- Use descriptive commit messages focusing on what changed and why
-- Include version number in commit messages for releases
-
-## Property Persistence Pattern
-When fixing property persistence in web parts:
-1. Ensure property is defined in manifest.json
-2. Add property to web part props interface
-3. Pass property to React component
-4. Update property via web part's property update callback
-5. Trigger re-render when property changes
-
-## Common Fixes Applied
-- Floating promises: Add .catch() handlers
-- Void operators: Replace with proper promise handling
-- Variable declarations: Use const/let instead of var
-- React components: Use self-closing tags for components without children
-- Type safety: Replace any with unknown for error handling
-
-## Code Modularity and Reusability
-
-### Shared Services
-- DataverseService is used across multiple web parts - keep API logic centralized
-- Create shared services in `src/services/` for common functionality
-- Export services through index.ts barrel files for clean imports
-
-### Shared Components
-- Common UI patterns (like circular gauges) should be extracted to shared components
-- Place reusable components in `src/components/shared/`
-- Example candidates for extraction:
-  - CircularGauge component (used in track conditions)
-  - PeriodSelector buttons (used in multiple web parts)
-  - LoadingSpinner component
-  - ErrorMessage component
-
-### Shared Utilities
-- Common calculations belong in `src/utils/`:
-  - Wind direction conversion (degrees to cardinal)
-  - Temperature conversions
-  - Date/time formatting
-  - Percentage calculations for gauges
-  
-### Style Patterns
-- Extract common styles to shared SCSS modules:
-  - Button styles (active states, hover effects)
-  - Card layouts
-  - Loading states
-  - Error message styles
-- Use CSS variables for consistent theming
-
-### Configuration
-- Extract magic numbers to constants:
-  ```typescript
-  // Instead of inline values
-  const REFRESH_INTERVAL = 300000; // 5 minutes
-  const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 45;
-  const WIND_DIRECTION_SEGMENTS = 16;
-  ```
-
-### Inter-package Sharing
-- Since this is a monorepo, consider creating a shared package for:
-  - Common TypeScript interfaces (IWeatherData, ITrackInfo)
-  - Shared utilities used across packages
-  - Common React hooks (useWeatherData, useTrackSelection)
-
-## Package-Specific Information
-
-### Track Conditions SPFx Package
-- **Location:** `packages/track-conditions-spfx/`
-- **Current Version:** 2.1.0+ (check package-solution.json)
-- **Key Services:**
-  - DataverseService: Main API integration
-  - AuthService: Azure AD authentication
-  - CalculationService: Weather calculations and scoring
-  - WeatherDataService: Data transformation and caching
-
-### Race Management Package
-- **Location:** `packages/race-management/`
-- **Current Version:** 1.0.0+ (check package-solution.json)
-- **Key Services:**
-  - RaceMeetingService: Race meeting data operations
-  - ErrorHandler: Centralized error handling
-  - Logger: Structured logging
-
-### Shared Package
-- **Location:** `packages/shared/`
-- **Purpose:** Common utilities for all packages
-- **Exports:**
-  - BaseDataverseService
-  - AuthService
-  - ErrorHandler
-  - Logger
-
-## Track Names (Official API Values - All 18 GRNSW Tracks)
-- "Broken Hill"
-- "Bulli"
-- "Casino"
-- "Dapto"
-- "Dubbo"
-- "Gosford"
-- "Goulburn"
-- "Grafton"
-- "Gunnedah"
-- "Lithgow"
-- "Maitland"
-- "Nowra"
-- "Richmond"
-- "Taree"
-- "Temora"
-- "The Gardens"
-- "Wagga Wagga"
-- "Wentworth Park"
-
-## Weather Calculation Formulas
-- **Feels Like:** `temperature - (windSpeed * 0.7)`
-- **Wind Chill:** Applied when temp < 10°C
-- **Heat Index:** Applied when temp > 27°C
-- **Track Safety Score:** Complex algorithm considering:
-  - Temperature impact (optimal 15-25°C)
-  - Wind impact (exponential above 30 km/h)
-  - Rainfall impact (surface conditions)
-  - Visibility calculations
-
-## Release Naming Convention
-- Production: `track-conditions-spfx-v{version}-PROD.sppkg`
-- Development: `track-conditions-spfx-v{version}.sppkg`
-- Example: `track-conditions-spfx-v2.1.9-PROD.sppkg`
-
-## Web Part Group Configuration
-All GRNSW web parts are configured to appear in a custom "GRNSW Tools" section in SharePoint:
-- **Group ID:** `5c03119e-3074-46fd-976b-c60198311f70` (standard ID for custom groups)
-- **Group Name:** "GRNSW Tools"
-- This applies to all 7 web parts across both packages
-- After deployment, users will find all GRNSW web parts in the "GRNSW Tools" section of the web part picker
-
-## SharePoint Deployment Troubleshooting
-If users report seeing old versions after deployment:
-1. **Clear browser cache** (Ctrl+F5 or Cmd+Shift+R)
-2. **Check App Catalog** to ensure the new version is deployed
-3. **Delete old version first** before uploading new version
-4. **Remove and re-add the app** on affected sites
-5. **Wait 15-30 minutes** for SharePoint CDN to fully propagate
-6. **Check version in web part properties** to verify deployment
-7. **Note:** Custom group IDs may not work in all SharePoint Online tenants
-
-## Recent Fixes and Learnings
-- **Multi-select dropdowns:** Use arrays for state management, add `multiSelect` and `multiSelectDelimiter` props
-- **Historical Pattern Analyzer:** Must show all 22 tracks, validate track selection before API calls
-- **Error handling:** Display user-friendly messages instead of technical errors
-- **Version incrementing:** Always increment version numbers for SharePoint to recognize updates
-- **CRITICAL VERSION SYNC:** package.json and package-solution.json MUST have matching versions
-  - SPFx build uses package.json version number
-  - If they don't match, SharePoint shows wrong version
-  - Always update both files before building
-
-## Salesforce to Dataverse Sync Performance
-| Method | 1,000 Records | 10,000 Records | 50,000 Records | 85,000 Records |
-|--------|--------------|----------------|----------------|----------------|
-| Power Automate (200 batch) | ~45 min | ~8 hours | ~40 hours | ~68 hours |
-| Direct API (100-2000 batch) | ~15 sec | ~2 min | ~10 min | ~25-30 min |
-| **Improvement** | **180x** | **240x** | **240x** | **136x** |
-
-**Note:** Direct API sync replaces slow Power Automate workflows with 100-240x performance improvement
-
-## Current Package Versions (as of Dec 12, 2024)
-- **Race Management:** v1.5.17 (latest with injury tracking)
-- **Track Conditions:** v2.2.4 (in v2.2.5 folder - yes, folder name doesn't match)
-- **GAP:** v1.0.0 (initial setup, not yet built)
-
-## Important Notes
-- Do what has been asked; nothing more, nothing less
-- NEVER create files unless they're absolutely necessary
-- ALWAYS prefer editing an existing file to creating a new one
-- NEVER proactively create documentation files unless explicitly requested
-- When asked to create a release, always follow the complete process including README.md creation
-- Always clean build before creating production packages: `gulp clean && gulp bundle --ship && gulp package-solution --ship`
-- Double-check version numbers - folder names may not match package versions
+## Important Rules
+- NEVER create files unless necessary
+- ALWAYS prefer editing over creating
+- NEVER commit unless explicitly asked
+- Include version in property pane
+- Use --ship flag for production builds

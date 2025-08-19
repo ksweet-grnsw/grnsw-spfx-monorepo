@@ -15,6 +15,8 @@ import {
 } from '../models/IRaceData';
 import { dataverseConfig } from './SharedAuthService';
 import { cacheService } from './CacheService';
+import { injuryCacheService } from './InjuryCacheService';
+import { apiThrottle, injuryApiThrottle } from '../utils/requestThrottle';
 
 export class RaceDataService {
   private httpClient: HttpClient;
@@ -31,12 +33,6 @@ export class RaceDataService {
     // Use provided URL or fall back to configured URL
     this.dataverseUrl = dataverseUrl || dataverseConfig.apiUrl;
     
-    // Log the configuration for debugging
-    console.log('RaceDataService initialized with:', {
-      dataverseUrl: this.dataverseUrl,
-      hasContext: !!this.context,
-      hasHttpClient: !!this.httpClient
-    });
   }
 
   // Get AAD client for authenticated requests
@@ -174,7 +170,9 @@ export class RaceDataService {
   // Meeting operations
   public async getMeetings(filters?: IMeetingFilters): Promise<IMeeting[]> {
     // Create a cache key based on filters
-    const cacheKey = `meetings_${JSON.stringify(filters || {})}`;
+    const cacheKey = `meetings_${JSON.stringify(filters || {})}`;  
+    
+    // Log for debugging
     
     // Try to get from cache with stale-while-revalidate
     return cacheService.getOrFetch(
@@ -209,23 +207,37 @@ export class RaceDataService {
         }
         queryParts.push('$orderby=cr4cc_meetingdate desc');
         
+        // If no filters provided, get last 90 days of data to ensure we see something
+        if (!filters || (!filters.dateFrom && !filters.dateTo)) {
+          const ninetyDaysAgo = new Date();
+          ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+          filterParts.push(`cr4cc_meetingdate ge '${ninetyDaysAgo.toISOString()}'`);
+        }
+        
         const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?${queryParts.join('&')}`;
         
-        console.log('Fetching meetings from URL:', url);
         const response = await this.makeRequest<IDataverseResponse<IMeeting>>(url);
-        console.log('Meetings response:', response);
+        
+        // If still no data, try without any filters at all
+        if ((!response.value || response.value.length === 0) && filterParts.length > 0) {
+          const noFilterUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$orderby=cr4cc_meetingdate desc&$top=100`;
+          const noFilterResponse = await this.makeRequest<IDataverseResponse<IMeeting>>(noFilterUrl);
+          if (noFilterResponse.value && noFilterResponse.value.length > 0) {
+            return noFilterResponse.value;
+          }
+        }
         
         // Normalize track names - combine "Wentworth" and "Wentworth Park"
         const meetings = (response.value || []).map(meeting => ({
           ...meeting,
           cr4cc_trackname: meeting.cr4cc_trackname === 'Wentworth' ? 'Wentworth Park' : meeting.cr4cc_trackname
         }));
-        console.log(`Returning ${meetings.length} meetings`);
         return meetings;
       },
       {
-        storage: 'session',
-        staleWhileRevalidate: true
+        storage: 'memory', // Use memory instead of session to avoid quota issues with large datasets
+        staleWhileRevalidate: true,
+        ttl: 5 * 60 * 1000 // 5 minutes
       }
     );
   }
@@ -254,8 +266,9 @@ export class RaceDataService {
         return response.value;
       },
       {
-        storage: 'session',
-        staleWhileRevalidate: true
+        storage: 'memory', // Use memory for races to avoid quota issues
+        staleWhileRevalidate: true,
+        ttl: 5 * 60 * 1000 // 5 minutes
       }
     );
   }
@@ -333,8 +346,9 @@ export class RaceDataService {
         return response.value;
       },
       {
-        storage: 'session',
-        staleWhileRevalidate: true
+        storage: 'memory', // Use memory for contestants to avoid quota issues
+        staleWhileRevalidate: true,
+        ttl: 5 * 60 * 1000 // 5 minutes
       }
     );
   }
@@ -410,12 +424,6 @@ export class RaceDataService {
     // Search greyhounds in Injury Data environment - include microchip and Salesforce ID
     const greyhoundsUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_greyhounds?$filter=startswith(cra5e_name,'${escapedTerm}') or contains(cra5e_microchip,'${escapedTerm}') or contains(cra5e_sfid,'${escapedTerm}')&$top=10`;
     
-    console.log('Search URLs:', {
-      meetings: meetingsUrl,
-      races: racesUrl,
-      contestants: contestantsUrl,
-      greyhounds: greyhoundsUrl
-    });
     
     try {
       // Fetch all results, handling failures individually
@@ -460,12 +468,6 @@ export class RaceDataService {
       // Greyhounds from injury environment
       const mappedGreyhounds = greyhoundsResponse?.value || [];
       
-      console.log('Search results:', {
-        meetingsCount: mappedMeetings.length,
-        racesCount: mappedRaces.length,
-        contestantsCount: mappedContestants.length,
-        greyhoundsCount: mappedGreyhounds.length
-      });
       
       const results: ISearchResults = {
         meetings: mappedMeetings,
@@ -491,7 +493,7 @@ export class RaceDataService {
         }
       },
       {
-        storage: 'session',
+        storage: 'memory', // Use memory for search results
         ttl: 10 * 60 * 1000 // 10 minutes for search results
       }
     );
@@ -611,21 +613,39 @@ export class RaceDataService {
     if (!greyhoundName) return null;
     
     try {
-      // Build filter based on name and optionally ear brand
-      const filters: string[] = [];
-      filters.push(`cra5e_name eq '${encodeURIComponent(greyhoundName)}'`);
+      // Create cache key
+      const cacheKey = injuryCacheService.createGreyhoundKey(greyhoundName, earBrand);
       
-      if (earBrand) {
-        // Check both left and right ear brands
-        filters.push(`(cra5e_leftearbrand eq '${encodeURIComponent(earBrand)}' or cra5e_rightearbrand eq '${encodeURIComponent(earBrand)}')`);  
-      }
-      
-      const url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_greyhounds?$filter=${filters.join(' and ')}&$top=1`;
-      const response = await this.makeRequest<IDataverseResponse<IGreyhound>>(url, true);
-      
-      return response.value.length > 0 ? response.value[0] : null;
+      // Try to get from cache first
+      return await injuryCacheService.getOrFetch(
+        cacheKey,
+        async () => {
+          try {
+            // Build filter based on name and optionally ear brand
+            const filters: string[] = [];
+            filters.push(`cra5e_name eq '${encodeURIComponent(greyhoundName)}'`);
+            
+            if (earBrand) {
+              // Check both left and right ear brands
+              filters.push(`(cra5e_leftearbrand eq '${encodeURIComponent(earBrand)}' or cra5e_rightearbrand eq '${encodeURIComponent(earBrand)}')`);  
+            }
+            
+            const url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_greyhounds?$filter=${filters.join(' and ')}&$top=1`;
+            // Use throttled request for injury API
+            const response = await injuryApiThrottle.add(() => 
+              this.makeRequest<IDataverseResponse<IGreyhound>>(url, true)
+            );
+            
+            return response.value.length > 0 ? response.value[0] : null;
+          } catch (error) {
+            console.error('Error fetching greyhound from API:', error);
+            return null;
+          }
+        },
+        30 * 60 * 1000 // Cache for 30 minutes (greyhound data doesn't change often)
+      );
     } catch (error) {
-      console.error('Error fetching greyhound:', error);
+      console.error('Error in getGreyhoundByName:', error);
       return null;
     }
   }
@@ -675,51 +695,35 @@ export class RaceDataService {
     if (!greyhoundId) return null;
     
     try {
-      // APPROACH 1: Try lookup field with expand (ideal case)
-      console.log(`Trying lookup field approach for greyhound ID: ${greyhoundId}`);
-      const url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=_cra5e_greyhound_value eq ${greyhoundId} and cra5e_injuryclassification ne null&$expand=cra5e_ExaminingVet($select=cra5e_name,fullname)&$orderby=cra5e_datechecked desc&$top=1`;
-      const response = await this.makeRequest<IDataverseResponse<any>>(url, true);
-      if (response.value.length > 0) {
-        console.log(`✅ Found health check via lookup field for: ${greyhoundName || greyhoundId}`);
-        const healthCheck = response.value[0];
-        // If the examining vet was expanded, use the name
-        if (healthCheck.cra5e_ExaminingVet) {
-          healthCheck.cra5e_examiningvet = healthCheck.cra5e_ExaminingVet.cra5e_name || 
-                                           healthCheck.cra5e_ExaminingVet.fullname || 
-                                           healthCheck.cra5e_examiningvet;
+      // Create cache key
+      const cacheKey = injuryCacheService.createHealthCheckKey(greyhoundId);
+      
+      // Try to get from cache first
+      return await injuryCacheService.getOrFetch(
+      cacheKey,
+      async () => {
+        try {
+          // Get health check without expanding vet (problematic field)
+          const url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=_cra5e_greyhound_value eq ${greyhoundId} and cra5e_injuryclassification ne null&$orderby=cra5e_datechecked desc&$top=1`;
+          // Use throttled request for injury API
+          const response = await injuryApiThrottle.add(() => 
+            this.makeRequest<IDataverseResponse<any>>(url, true)
+          );
+          if (response.value.length > 0) {
+            const healthCheck = response.value[0];
+            return healthCheck as IHealthCheck;
+          }
+          return null;
+        } catch (error) {
+          return null;
         }
-        return healthCheck as IHealthCheck;
-      }
-      console.log(`❌ No results via lookup field for: ${greyhoundName || greyhoundId} - likely lookup field not populated`);
+      },
+      20 * 60 * 1000 // Cache for 20 minutes
+    );
     } catch (error) {
-      console.log('❌ Lookup field approach failed:', error.message);
+      console.error('Error in getLatestHealthCheckForGreyhound:', error);
+      return null;
     }
-
-    try {
-      // APPROACH 2: Try lookup field without expand
-      console.log(`Trying lookup field without expand for: ${greyhoundName || greyhoundId}`);
-      const fallbackUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=_cra5e_greyhound_value eq ${greyhoundId} and cra5e_injuryclassification ne null&$orderby=cra5e_datechecked desc&$top=1`;
-      const fallbackResponse = await this.makeRequest<IDataverseResponse<IHealthCheck>>(fallbackUrl, true);
-      if (fallbackResponse.value.length > 0) {
-        console.log(`✅ Found health check via lookup field (no expand) for: ${greyhoundName || greyhoundId}`);
-        return fallbackResponse.value[0];
-      }
-      console.log(`❌ No results via lookup field (no expand) for: ${greyhoundName || greyhoundId} - lookup field not populated`);
-    } catch (fallbackError) {
-      console.log('❌ Lookup field fallback failed:', fallbackError.message);
-    }
-
-    // APPROACH 3: Name matching is not possible
-    // The health check table only has a lookup field (cra5e_greyhound) to the greyhound table,
-    // not the greyhound name stored directly. Name matching cannot work.
-    console.log(`ℹ️  Injury detection summary for ${greyhoundName || greyhoundId}:`);
-    console.log(`   - Lookup field exists: cra5e_greyhound`);
-    console.log(`   - Lookup field populated: NO (this is the issue)`);
-    console.log(`   - Name matching possible: NO (health check table doesn't store greyhound names)`);
-    console.log(`   - Solution: Populate the cra5e_greyhound lookup field in health check records`);
-
-    console.log(`❌ No health check found for greyhound: ${greyhoundName || greyhoundId}`);
-    return null;
   }
 
   /**
@@ -742,11 +746,6 @@ export class RaceDataService {
       cacheKey,
       async () => {
         try {
-          console.log('RaceDataService.getInjuryData: Starting fetch with options:', options);
-          
-          // First, let's test if the table exists and what it's called
-          console.log('Testing table names...');
-          
           // Try both possible table names
           const tableNames = ['cra5e_heathchecks', 'cra5e_healthchecks'];
           let workingTableName = '';
@@ -754,27 +753,15 @@ export class RaceDataService {
           for (const tableName of tableNames) {
             try {
               const testUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/${tableName}?$top=1`;
-              console.log(`Testing table: ${tableName} at ${testUrl}`);
               const testResponse = await this.makeRequest<IDataverseResponse<IHealthCheck>>(testUrl, true);
-              console.log(`✅ Table ${tableName} exists! Found ${testResponse.value?.length || 0} records in test`);
               workingTableName = tableName;
               break;
             } catch (testError) {
-              console.log(`❌ Table ${tableName} failed:`, testError);
             }
           }
           
           if (!workingTableName) {
             console.error('Could not find health check table with either name!');
-            // Try to get any data to see what's available
-            try {
-              const anyDataUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/`;
-              console.log('Trying to get API root:', anyDataUrl);
-              const rootResponse = await this.makeRequest<any>(anyDataUrl, true);
-              console.log('API root response:', rootResponse);
-            } catch (rootError) {
-              console.error('Could not access API root:', rootError);
-            }
             return [];
           }
           
@@ -784,7 +771,6 @@ export class RaceDataService {
           
           // TEMPORARILY REMOVE ALL FILTERS to see if we can get ANY data
           // We'll filter in memory instead
-          console.log('REMOVING ALL API FILTERS - will filter in memory');
           
           // Store filter criteria for in-memory filtering
           const filterCriteria = {
@@ -804,13 +790,9 @@ export class RaceDataService {
             url += `?$orderby=cra5e_datechecked desc&$top=1000`;
           }
           
-          console.log('RaceDataService.getInjuryData: Final request URL:', url);
-          
           const response = await this.makeRequest<IDataverseResponse<IHealthCheck>>(url, true);
           
-          console.log('RaceDataService.getInjuryData: Response received, record count:', response.value?.length || 0);
           if (response.value && response.value.length > 0) {
-            console.log('First 3 records:', response.value.slice(0, 3));
             
             // Filter in memory based on criteria
             let filteredRecords = response.value;
@@ -819,7 +801,6 @@ export class RaceDataService {
             filteredRecords = filteredRecords.filter(r => 
               r.cra5e_injuryclassification || r.cra5e_injured === true
             );
-            console.log(`After injury filter: ${filteredRecords.length} records`);
             
             // Filter by date if specified
             if (filterCriteria.dateFrom) {
@@ -828,7 +809,6 @@ export class RaceDataService {
                 const recordDate = new Date(r.cra5e_datechecked);
                 return recordDate >= filterCriteria.dateFrom;
               });
-              console.log(`After dateFrom filter: ${filteredRecords.length} records`);
             }
             
             if (filterCriteria.dateTo) {
@@ -837,7 +817,6 @@ export class RaceDataService {
                 const recordDate = new Date(r.cra5e_datechecked);
                 return recordDate <= filterCriteria.dateTo;
               });
-              console.log(`After dateTo filter: ${filteredRecords.length} records`);
             }
             
             // Filter by track if specified
@@ -845,7 +824,6 @@ export class RaceDataService {
               filteredRecords = filteredRecords.filter(r => 
                 r.cra5e_trackname === filterCriteria.track
               );
-              console.log(`After track filter: ${filteredRecords.length} records`);
             }
             
             // Filter by categories if specified
@@ -853,10 +831,8 @@ export class RaceDataService {
               filteredRecords = filteredRecords.filter(r => 
                 filterCriteria.categories.indexOf(r.cra5e_injuryclassification) !== -1
               );
-              console.log(`After categories filter: ${filteredRecords.length} records`);
             }
             
-            console.log(`Final filtered count: ${filteredRecords.length} records`);
             return filteredRecords;
           }
           
@@ -865,19 +841,14 @@ export class RaceDataService {
           console.error('RaceDataService.getInjuryData: Error fetching injury data:', error);
           // Try without any filters to see if we can get ANY data
           try {
-            console.log('Attempting to get ANY health check data without filters...');
             const anyUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$top=100`;
             const anyResponse = await this.makeRequest<IDataverseResponse<IHealthCheck>>(anyUrl, true);
-            console.log('Got data without filters:', anyResponse.value?.length || 0, 'records');
             if (anyResponse.value && anyResponse.value.length > 0) {
-              console.log('Sample unfiltered record:', anyResponse.value[0]);
               // Filter the results in memory to get injured records
               const injuredRecords = anyResponse.value.filter(r => 
                 r.cra5e_injuryclassification || r.cra5e_injured
               );
-              console.log('Records with injuries after filtering in memory:', injuredRecords.length);
               if (injuredRecords.length > 0) {
-                console.log('Returning filtered injury records from unfiltered query');
                 return injuredRecords;
               }
             }
@@ -887,7 +858,7 @@ export class RaceDataService {
           return [];
         }
       },
-      { storage: 'session', ttl: 10 * 60 * 1000 } // Cache for 10 minutes
+      { storage: 'memory', ttl: 10 * 60 * 1000 } // Cache in memory for 10 minutes
     );
   }
   
@@ -1072,32 +1043,45 @@ export class RaceDataService {
 
   // Get injury summary for a meeting
   public async getInjurySummaryForMeeting(trackName: string, meetingDate: string | Date): Promise<{total: number; byCategory: Record<string, number>}> {
-    try {
-      const date = new Date(meetingDate);
-      const startDate = new Date(date);
-      startDate.setHours(0, 0, 0, 0);
-      const endDate = new Date(date);
-      endDate.setHours(23, 59, 59, 999);
+    // Create cache key
+    const cacheKey = injuryCacheService.createInjurySummaryKey(trackName, meetingDate);
+    
+    // Try to get from cache first
+    return injuryCacheService.getOrFetch(
+      cacheKey,
+      async () => {
+        try {
+          const date = new Date(meetingDate);
+          const startDate = new Date(date);
+          startDate.setHours(0, 0, 0, 0);
+          const endDate = new Date(date);
+          endDate.setHours(23, 59, 59, 999);
+          
+          // Get health checks for this track and date - check for classification instead of injured flag
+          const url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=cra5e_trackname eq '${encodeURIComponent(trackName)}' and cra5e_datechecked ge '${startDate.toISOString()}' and cra5e_datechecked le '${endDate.toISOString()}' and cra5e_injuryclassification ne null&$select=cra5e_injuryclassification`;
+          
+          // Use throttled request for injury API
+          const response = await injuryApiThrottle.add(() => 
+            this.makeRequest<IDataverseResponse<IHealthCheck>>(url, true)
+          );
       
-      // Get health checks for this track and date - check for classification instead of injured flag
-      const url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=cra5e_trackname eq '${encodeURIComponent(trackName)}' and cra5e_datechecked ge '${startDate.toISOString()}' and cra5e_datechecked le '${endDate.toISOString()}' and cra5e_injuryclassification ne null&$select=cra5e_injuryclassification`;
-      
-      const response = await this.makeRequest<IDataverseResponse<IHealthCheck>>(url, true);
-      
-      const byCategory: Record<string, number> = {};
-      response.value.forEach(hc => {
-        const category = hc.cra5e_injuryclassification || 'Unknown';
-        byCategory[category] = (byCategory[category] || 0) + 1;
-      });
-      
-      return {
-        total: response.value.length,
-        byCategory
-      };
-    } catch (error) {
-      console.error('Error fetching injury summary:', error);
-      return { total: 0, byCategory: {} };
-    }
+          const byCategory: Record<string, number> = {};
+          response.value.forEach(hc => {
+            const category = hc.cra5e_injuryclassification || 'Unknown';
+            byCategory[category] = (byCategory[category] || 0) + 1;
+          });
+          
+          return {
+            total: response.value.length,
+            byCategory
+          };
+        } catch (error) {
+          console.error('Error fetching injury summary:', error);
+          return { total: 0, byCategory: {} };
+        }
+      },
+      15 * 60 * 1000 // Cache for 15 minutes
+    );
   }
 
   // Get injuries for a specific race
@@ -1111,7 +1095,10 @@ export class RaceDataService {
       
       const url = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_heathchecks?$filter=cra5e_trackname eq '${encodeURIComponent(trackName)}' and cra5e_datechecked ge '${startDate.toISOString()}' and cra5e_datechecked le '${endDate.toISOString()}' and cra5e_racenumber eq ${raceNumber} and cra5e_injuryclassification ne null`;
       
-      const response = await this.makeRequest<IDataverseResponse<IHealthCheck>>(url, true);
+      // Use throttled request for injury API
+      const response = await injuryApiThrottle.add(() => 
+        this.makeRequest<IDataverseResponse<IHealthCheck>>(url, true)
+      );
       return response.value;
     } catch (error) {
       console.error('Error fetching race injuries:', error);

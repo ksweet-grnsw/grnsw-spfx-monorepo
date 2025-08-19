@@ -1,0 +1,334 @@
+@import '../../../styles/tokens';
+@import '../../../styles/mixins/layout';
+
+.dataGrid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  overflow: hidden;
+  
+  // Theme variations
+  &.theme-neutral {
+    --grid-primary: #{$brand-primary};
+    --grid-header-bg: #{$neutral-100};
+    --grid-border: #{$neutral-300};
+  }
+  
+  &.theme-meeting {
+    @extend .theme-meeting;
+  }
+  
+  &.theme-race {
+    @extend .theme-race;
+  }
+  
+  &.theme-contestant {
+    @extend .theme-contestant;
+  }
+  
+  &.theme-financial {
+    @extend .theme-financial;
+  }
+  
+  &.theme-weather {
+    @extend .theme-weather;
+  }
+  
+  &.theme-health {
+    @extend .theme-health;
+  }
+  
+  // Density variations
+  &.density-compact {
+    .headerCell,
+    .cell {
+      padding: $spacing-xs $spacing-sm;
+    }
+  }
+  
+  &.density-normal {
+    .headerCell,
+    .cell {
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+  
+  &.density-comfortable {
+    .headerCell,
+    .cell {
+      padding: $spacing-md $spacing-lg;
+    }
+  }
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  flex: 1;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+  
+  .bordered & {
+    border: 1px solid var(--grid-border, $neutral-300);
+  }
+}
+
+.header {
+  background: var(--header-bg, $neutral-100);
+  border-bottom: 2px solid var(--grid-border, $neutral-300);
+  
+  .stickyHeader & {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+}
+
+.headerCell {
+  @include typography('label');
+  text-align: left;
+  white-space: nowrap;
+  position: relative;
+  user-select: none;
+  
+  &.sortable {
+    cursor: pointer;
+    
+    &:hover {
+      background: var(--accent-hover, rgba($brand-primary, 0.08));
+    }
+  }
+  
+  &.sorted {
+    background: var(--accent-bg, rgba($brand-primary, 0.04));
+    color: var(--primary-color, $brand-primary);
+  }
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-xs;
+}
+
+.sortIcon {
+  display: inline-flex;
+  align-items: center;
+  font-size: $font-size-xs;
+  color: var(--primary-color, $brand-primary);
+}
+
+.body {
+  background: var(--bg-primary);
+}
+
+.row {
+  border-bottom: 1px solid var(--grid-border, $neutral-200);
+  transition: background-color 200ms ease;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  .striped &:nth-child(even) {
+    background: var(--bg-secondary, $neutral-100);
+  }
+  
+  .hoverable &:hover {
+    background: var(--row-hover, $neutral-100);
+  }
+  
+  &.selected {
+    background: var(--accent-selected, rgba($brand-primary, 0.12));
+  }
+  
+  &.clickable {
+    cursor: pointer;
+  }
+}
+
+.cell {
+  @include typography('body-small');
+  color: var(--text-primary);
+  vertical-align: middle;
+  
+  .bordered & {
+    border-right: 1px solid var(--grid-border, $neutral-200);
+    
+    &:last-child {
+      border-right: none;
+    }
+  }
+}
+
+.checkboxCell,
+.expandCell {
+  width: 40px;
+  text-align: center;
+  padding: $spacing-xs;
+}
+
+.expandButton {
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--grid-border, $neutral-300);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  cursor: pointer;
+  font-size: $font-size-md;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: var(--accent-hover, rgba($brand-primary, 0.08));
+    border-color: var(--primary-color, $brand-primary);
+  }
+}
+
+.expandedRow {
+  background: var(--bg-secondary, $neutral-100);
+  
+  td {
+    padding: 0;
+  }
+}
+
+.expandedContent {
+  padding: $spacing-md;
+  border-top: 1px solid var(--grid-border, $neutral-300);
+}
+
+// Footer with pagination
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  border-top: 1px solid var(--grid-border, $neutral-300);
+  background: var(--bg-secondary, $neutral-100);
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.paginationInfo {
+  @include typography('body-small');
+  color: var(--text-secondary);
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.pageSizeSelect {
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid var(--grid-border, $neutral-300);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  font-size: $font-size-sm;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color, $brand-primary);
+  }
+}
+
+.pageButton {
+  padding: $spacing-xs $spacing-md;
+  border: 1px solid var(--grid-border, $neutral-300);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover:not(:disabled) {
+    background: var(--accent-hover, rgba($brand-primary, 0.08));
+    border-color: var(--primary-color, $brand-primary);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.pageNumbers {
+  @include typography('body-small');
+  color: var(--text-primary);
+  padding: 0 $spacing-sm;
+}
+
+// State displays
+.loadingState,
+.errorState,
+.emptyState {
+  @include flex-center;
+  flex-direction: column;
+  padding: $spacing-xxl;
+  text-align: center;
+  min-height: 300px;
+  
+  h3 {
+    @include typography('h4');
+    color: var(--text-primary);
+    margin-bottom: $spacing-sm;
+  }
+  
+  p {
+    @include typography('body');
+    color: var(--text-secondary);
+    max-width: 400px;
+  }
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--grid-border, $neutral-300);
+  border-top-color: var(--primary-color, $brand-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: $spacing-md;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.retryButton {
+  margin-top: $spacing-md;
+  padding: $spacing-sm $spacing-lg;
+  background: var(--primary-color, $brand-primary);
+  color: var(--text-on-brand);
+  border: none;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 200ms ease;
+  
+  &:hover {
+    background: var(--primary-dark, darken($brand-primary, 10%));
+  }
+}
+
+.emptyIcon {
+  font-size: 48px;
+  color: var(--text-tertiary);
+  margin-bottom: $spacing-md;
+}
+
+.emptyAction {
+  margin-top: $spacing-lg;
+}

@@ -1,0 +1,159 @@
+// Domain-Specific Theme Classes
+// ==============================
+
+@import '../tokens';
+
+// Meeting Theme (Blue)
+.theme-meeting {
+  --primary-color: #{$racing-meetings};
+  --primary-light: #{lighten($racing-meetings, 40%)};
+  --primary-lighter: #{lighten($racing-meetings, 50%)};
+  --primary-dark: #{darken($racing-meetings, 10%)};
+  --primary-darker: #{darken($racing-meetings, 20%)};
+  
+  --accent-bg: #{rgba($racing-meetings, 0.08)};
+  --accent-border: #{rgba($racing-meetings, 0.24)};
+  --accent-hover: #{rgba($racing-meetings, 0.12)};
+  --accent-selected: #{rgba($racing-meetings, 0.16)};
+  
+  --badge-bg: #{$racing-meetings};
+  --badge-text: #{$neutral-000};
+  --icon-color: #{$racing-meetings};
+  
+  // Component overrides
+  --header-bg: #{lighten($racing-meetings, 48%)};
+  --header-border: #{lighten($racing-meetings, 35%)};
+  --row-hover: #{lighten($racing-meetings, 52%)};
+}
+
+// Race Theme (Green)
+.theme-race {
+  --primary-color: #{$racing-races};
+  --primary-light: #{lighten($racing-races, 40%)};
+  --primary-lighter: #{lighten($racing-races, 50%)};
+  --primary-dark: #{darken($racing-races, 10%)};
+  --primary-darker: #{darken($racing-races, 20%)};
+  
+  --accent-bg: #{rgba($racing-races, 0.08)};
+  --accent-border: #{rgba($racing-races, 0.24)};
+  --accent-hover: #{rgba($racing-races, 0.12)};
+  --accent-selected: #{rgba($racing-races, 0.16)};
+  
+  --badge-bg: #{$racing-races};
+  --badge-text: #{$neutral-000};
+  --icon-color: #{$racing-races};
+  
+  // Component overrides
+  --header-bg: #{lighten($racing-races, 48%)};
+  --header-border: #{lighten($racing-races, 35%)};
+  --row-hover: #{lighten($racing-races, 52%)};
+}
+
+// Contestant Theme (Orange)
+.theme-contestant {
+  --primary-color: #{$racing-contestants};
+  --primary-light: #{lighten($racing-contestants, 30%)};
+  --primary-lighter: #{lighten($racing-contestants, 40%)};
+  --primary-dark: #{darken($racing-contestants, 10%)};
+  --primary-darker: #{darken($racing-contestants, 20%)};
+  
+  --accent-bg: #{rgba($racing-contestants, 0.08)};
+  --accent-border: #{rgba($racing-contestants, 0.24)};
+  --accent-hover: #{rgba($racing-contestants, 0.12)};
+  --accent-selected: #{rgba($racing-contestants, 0.16)};
+  
+  --badge-bg: #{$racing-contestants};
+  --badge-text: #{$neutral-000};
+  --icon-color: #{$racing-contestants};
+  
+  // Component overrides
+  --header-bg: #{lighten($racing-contestants, 42%)};
+  --header-border: #{lighten($racing-contestants, 30%)};
+  --row-hover: #{lighten($racing-contestants, 45%)};
+}
+
+// Financial Theme (Purple)
+.theme-financial {
+  --primary-color: #{$financial};
+  --primary-light: #{lighten($financial, 40%)};
+  --primary-lighter: #{lighten($financial, 50%)};
+  --primary-dark: #{darken($financial, 10%)};
+  --primary-darker: #{darken($financial, 20%)};
+  
+  --accent-bg: #{rgba($financial, 0.08)};
+  --accent-border: #{rgba($financial, 0.24)};
+  --accent-hover: #{rgba($financial, 0.12)};
+  --accent-selected: #{rgba($financial, 0.16)};
+  
+  --badge-bg: #{$financial};
+  --badge-text: #{$neutral-000};
+  --icon-color: #{$financial};
+  
+  // Component overrides
+  --header-bg: #{lighten($financial, 48%)};
+  --header-border: #{lighten($financial, 35%)};
+  --row-hover: #{lighten($financial, 52%)};
+}
+
+// Weather Theme (Dark Blue)
+.theme-weather {
+  --primary-color: #{$weather};
+  --primary-light: #{lighten($weather, 40%)};
+  --primary-lighter: #{lighten($weather, 50%)};
+  --primary-dark: #{darken($weather, 10%)};
+  --primary-darker: #{darken($weather, 20%)};
+  
+  --accent-bg: #{rgba($weather, 0.08)};
+  --accent-border: #{rgba($weather, 0.24)};
+  --accent-hover: #{rgba($weather, 0.12)};
+  --accent-selected: #{rgba($weather, 0.16)};
+  
+  --badge-bg: #{$weather};
+  --badge-text: #{$neutral-000};
+  --icon-color: #{$weather};
+  
+  // Component overrides
+  --header-bg: #{lighten($weather, 48%)};
+  --header-border: #{lighten($weather, 35%)};
+  --row-hover: #{lighten($weather, 52%)};
+}
+
+// Health Theme (Green)
+.theme-health {
+  --primary-color: #{$health};
+  --primary-light: #{lighten($health, 40%)};
+  --primary-lighter: #{lighten($health, 50%)};
+  --primary-dark: #{darken($health, 10%)};
+  --primary-darker: #{darken($health, 20%)};
+  
+  --accent-bg: #{rgba($health, 0.08)};
+  --accent-border: #{rgba($health, 0.24)};
+  --accent-hover: #{rgba($health, 0.12)};
+  --accent-selected: #{rgba($health, 0.16)};
+  
+  --badge-bg: #{$health};
+  --badge-text: #{$neutral-000};
+  --icon-color: #{$health};
+  
+  // Component overrides
+  --header-bg: #{lighten($health, 48%)};
+  --header-border: #{lighten($health, 35%)};
+  --row-hover: #{lighten($health, 52%)};
+}
+
+// Utility mixin for applying domain themes
+@mixin apply-domain-theme($domain) {
+  @if $domain == 'meeting' {
+    @extend .theme-meeting;
+  } @else if $domain == 'race' {
+    @extend .theme-race;
+  } @else if $domain == 'contestant' {
+    @extend .theme-contestant;
+  } @else if $domain == 'financial' {
+    @extend .theme-financial;
+  } @else if $domain == 'weather' {
+    @extend .theme-weather;
+  } @else if $domain == 'health' {
+    @extend .theme-health;
+  }
+}

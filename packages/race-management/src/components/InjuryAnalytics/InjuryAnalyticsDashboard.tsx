@@ -122,8 +122,6 @@ export const InjuryAnalyticsDashboard: React.FC<IInjuryAnalyticsDashboardProps> 
   const loadInjuryData = async () => {
     setLoading(true);
     try {
-      console.log('InjuryAnalyticsDashboard: Loading injury data with filters:', { dateFrom, dateTo, selectedTrack, selectedCategories });
-      
       // Ensure dataService is available
       if (!dataService) {
         console.error('InjuryAnalyticsDashboard: dataService is not available');
@@ -140,8 +138,6 @@ export const InjuryAnalyticsDashboard: React.FC<IInjuryAnalyticsDashboardProps> 
       
       const queryDateTo = dateTo || new Date();
       
-      console.log('Using date range:', queryDateFrom, 'to', queryDateTo);
-      
       // Fetch injury data based on filters
       const data = await dataService.getInjuryData({
         dateFrom: queryDateFrom,
@@ -150,16 +146,12 @@ export const InjuryAnalyticsDashboard: React.FC<IInjuryAnalyticsDashboardProps> 
         categories: selectedCategories && selectedCategories.length > 0 ? selectedCategories : undefined
       });
       
-      console.log('Received injury data:', data.length, 'records');
       if (data.length > 0) {
-        console.log('Sample record:', data[0]);
         setInjuryData(data);
         setIsUsingDemoData(false);
       } else {
-        console.log('No injury data found. Using sample data for demonstration...');
         // Use sample data for demonstration
         const sampleData = getSampleData();
-        console.log('Generated', sampleData.length, 'sample records');
         setInjuryData(sampleData);
         setIsUsingDemoData(true);
       }

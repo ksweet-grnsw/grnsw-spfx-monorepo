@@ -1,0 +1,70 @@
+// Light Theme Configuration
+// =========================
+
+@import '../tokens';
+
+// Light theme color overrides
+.theme-light,
+:root {
+  // Background colors
+  --bg-primary: #{$neutral-000};
+  --bg-secondary: #{$neutral-100};
+  --bg-tertiary: #{$neutral-200};
+  --bg-hover: #{rgba($brand-primary, 0.08)};
+  --bg-selected: #{rgba($brand-primary, 0.12)};
+  --bg-disabled: #{rgba($neutral-600, 0.08)};
+  
+  // Text colors
+  --text-primary: #{$neutral-900};
+  --text-secondary: #{$neutral-800};
+  --text-tertiary: #{$neutral-700};
+  --text-disabled: #{$neutral-600};
+  --text-placeholder: #{$neutral-500};
+  --text-on-brand: #{$neutral-000};
+  --text-link: #{$brand-primary};
+  --text-link-hover: #{$brand-secondary};
+  
+  // Border colors
+  --border-default: #{$neutral-400};
+  --border-light: #{$neutral-300};
+  --border-hover: #{$brand-primary};
+  --border-focus: #{$brand-primary};
+  --border-error: #{$error};
+  --border-success: #{$success};
+  
+  // Component-specific colors
+  --card-bg: #{$neutral-000};
+  --card-border: #{$neutral-300};
+  --card-shadow: #{$shadow-card};
+  
+  --input-bg: #{$neutral-000};
+  --input-border: #{$neutral-400};
+  --input-focus-border: #{$brand-primary};
+  --input-disabled-bg: #{$neutral-200};
+  
+  --button-primary-bg: #{$brand-primary};
+  --button-primary-text: #{$neutral-000};
+  --button-primary-hover-bg: #{$brand-secondary};
+  
+  --button-secondary-bg: #{$neutral-000};
+  --button-secondary-text: #{$brand-primary};
+  --button-secondary-border: #{$brand-primary};
+  --button-secondary-hover-bg: #{rgba($brand-primary, 0.08)};
+  
+  --table-header-bg: #{$neutral-200};
+  --table-row-hover-bg: #{$neutral-100};
+  --table-row-selected-bg: #{rgba($brand-primary, 0.12)};
+  --table-border: #{$neutral-300};
+  
+  --modal-overlay-bg: #{rgba(0, 0, 0, 0.5)};
+  --modal-bg: #{$neutral-000};
+  --modal-border: #{$neutral-300};
+  
+  --tooltip-bg: #{$neutral-900};
+  --tooltip-text: #{$neutral-000};
+  
+  --dropdown-bg: #{$neutral-000};
+  --dropdown-border: #{$neutral-300};
+  --dropdown-item-hover-bg: #{$neutral-100};
+  --dropdown-item-selected-bg: #{rgba($brand-primary, 0.12)};
+}

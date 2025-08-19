@@ -81,14 +81,6 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
     try {
       const { startDate, endDate } = this.getDateRange();
       
-      console.log('Loading meetings for date range:', {
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-        view: this.state.currentView,
-        authorities: this.state.selectedAuthorities,
-        tracks: this.state.selectedTrackIds
-      });
-      
       const meetings = await this.raceMeetingService.getRaceMeetingsByDateRange(
         startDate,
         endDate,
@@ -96,7 +88,6 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         this.state.selectedTrackIds.length > 0 ? this.state.selectedTrackIds : undefined
       );
 
-      console.log(`Loaded ${meetings.length} meetings:`, meetings);
 
       // Filter based on past/future settings
       const now = new Date();
@@ -115,7 +106,6 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
         return true;
       });
 
-      console.log(`Filtered to ${filteredMeetings.length} meetings after applying past/future filters`);
 
       this.setState({ 
         meetings: filteredMeetings,
@@ -133,9 +123,7 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
 
   private async loadTracksByAuthority(authority: string): Promise<void> {
     try {
-      console.log(`Loading tracks for authority: ${authority}`);
       const tracks = await this.raceMeetingService.getTracksByAuthority(authority);
-      console.log(`Loaded ${tracks.length} tracks:`, tracks);
       this.setState({ tracks });
     } catch (error) {
       console.error('Error loading tracks:', error);
@@ -145,9 +133,7 @@ export default class RaceMeetings extends React.Component<IRaceMeetingsProps, IR
 
   private async loadTracksByAuthorities(authorities: string[]): Promise<void> {
     try {
-      console.log(`Loading tracks for authorities: ${authorities.join(', ')}`);
       const tracks = await this.raceMeetingService.getTracksByAuthorities(authorities);
-      console.log(`Loaded ${tracks.length} tracks:`, tracks);
       this.setState({ tracks });
     } catch (error) {
       console.error('Error loading tracks:', error);

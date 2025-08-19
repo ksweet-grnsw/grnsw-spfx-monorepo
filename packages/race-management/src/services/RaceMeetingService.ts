@@ -184,14 +184,11 @@ export class RaceMeetingService {
           method: 'GET',
           headers: headers
         });
-
-        console.log('Response status:', response.status);
         
         // Check for rate limiting (429) or service unavailable (503)
         if (response.status === 429 || response.status === 503) {
           retries--;
           if (retries > 0) {
-            console.log(`Rate limited or service unavailable. Retrying in 2 seconds... (${retries} retries left)`);
             await new Promise(resolve => setTimeout(resolve, 2000));
             continue;
           }
