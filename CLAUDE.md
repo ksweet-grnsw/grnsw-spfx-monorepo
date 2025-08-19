@@ -514,6 +514,31 @@ Each package connects to a specific Dataverse environment:
   | Greyhound | cra5e_greyhound | cra5e_greyhounds | Greyhound information and profiles |
   | Health Check | cra5e_heathcheck | cra5e_heathchecks | Health check records (note: misspelled in system) |
 
+#### Greyhound Field Mappings (Salesforce Asset → cra5e_greyhounds)
+| Salesforce Field | Dataverse Field | Type | Description |
+|-----------------|-----------------|------|-------------|
+| Id | cra5e_sfid | String | Salesforce unique ID |
+| Name | cra5e_name | String | Greyhound name |
+| Status | cra5e_status | String | Current status |
+| InstallDate | cra5e_installdate | Date | Whelped date |
+| Left_Ear_Brand__c | cra5e_leftearbrand | String | Left ear tattoo |
+| Right_Ear_Brand__c | cra5e_rightearbrand | String | Right ear tattoo |
+| Microchip__c | cra5e_microchip | String | Primary microchip |
+| Colour__c | cra5e_colour | String | Coat color |
+| Gender__c | cra5e_gender | String | Gender |
+| State_Registered__c | cra5e_stateregistered | String | Registration state |
+| Date_Retired__c | cra5e_retirementdate | Date | Retirement date |
+
+#### Health Check Field Mappings (Salesforce → cra5e_heathchecks)
+| Salesforce Field | Dataverse Field | Type | Description |
+|-----------------|-----------------|------|-------------|
+| Id | cra5e_sfid | String | Salesforce Health Check ID |
+| Name | cra5e_name | String | Health check identifier |
+| Greyhound__c | cra5e_greyhound | Lookup | Reference to greyhound record |
+| Date_Checked__c | cra5e_datechecked | DateTime | Examination date |
+| Injury_Classification__c | cra5e_injuryclassification | String | Injury type/classification |
+| Injury_Location__c | cra5e_injurylocation | String | Body location of injury |
+
 ### 4. GAP Environment (Greyhound Adoption Program)
 - **URL:** https://orgda56a300.crm6.dynamics.com/
 - **API Endpoint:** https://orgda56a300.crm6.dynamics.com/api/data/v9.1
@@ -522,6 +547,24 @@ Each package connects to a specific Dataverse environment:
   | Display Name | Logical Name (Singular) | Logical Name (Plural for API) | Description |
   |-------------|------------------------|-------------------------------|-------------|
   | Hounds | cr0d3_hound | cr0d3_hounds | Greyhound records for adoption program |
+
+#### GAP Hounds Field Mappings (Salesforce → Dataverse)
+| Salesforce Field | Dataverse Field | Type | Description |
+|-----------------|-----------------|------|-------------|
+| Id | cr0d3_sfid | String | Salesforce unique ID |
+| Name | cr0d3_microchipnumber | String | Primary microchip number |
+| Microchip_no__c | cr0d3_microchipno | String | Additional microchip field |
+| Registered_name__c | cr0d3_racingname | String | Registered racing name |
+| Sex__c | cr0d3_sex | String | Male/Female |
+| Colour__c | cr0d3_colour | String | Coat color |
+| Whelping_Date__c | cr0d3_whelpingdate | DateTime | Birth date |
+| Ear_brand_left__c | cr0d3_earbrandleft | String | Left ear tattoo |
+| Ear_brand_right__c | cr0d3_earbrandright | String | Right ear tattoo |
+| Desexed__c | cr0d3_desexed | Boolean | Desexed status |
+| Available__c | cr0d3_available | String | Status (Adopted/HASed/Available) |
+| C5_vaccine_given__c | cr0d3_c5vaccinegiven | Boolean | C5 vaccination status |
+| Weight__c | cr0d3_weight | String | Weight in kg |
+| Assessment_Date__c | cr0d3_assessmentdate | DateTime | Assessment date |
 
 ## Data Integration
 - **Primary Source:** Microsoft Dataverse (formerly CDS)
@@ -565,6 +608,61 @@ The utility scripts in `/scripts` automatically try multiple plural forms to han
 - Always check the "actualPluralForm" in the discovery output
 
 ### Key Field Mappings for Racing Data (VERIFIED via API Discovery - August 2025)
+
+#### Salesforce to Dataverse Field Mappings
+
+##### Meeting__c Object → cr4cc_racemeetings Table
+| Salesforce Field | Dataverse Field | Type | Description |
+|-----------------|-----------------|------|-------------|
+| Id | cr4cc_salesforceid | String | Unique Salesforce ID |
+| Name | cr4cc_meetingname | String | Meeting name |
+| Meeting_Date__c | cr4cc_meetingdate | DateTime | Meeting date/time |
+| Track_Name__c | cr4cc_trackname | String | Track name (e.g., "Wentworth Park") |
+| Authority__c | cr4cc_authority | String | Racing authority (e.g., "NSW") |
+| Time_Slot__c | cr4cc_timeslot | String | Morning/Afternoon/Evening |
+| Type__c | cr4cc_type | String | Meeting type |
+| Is_Cancelled__c | cr4cc_cancelled | Boolean | Cancellation status |
+| Weather__c | cr616_weather | String | Weather conditions |
+| Steward_Comment__c | cr616_stewardcomment | Text | Steward's comments |
+| Track_Condition__c | cr616_trackcondition | String | Track condition |
+
+##### Race__c Object → cr616_races Table
+| Salesforce Field | Dataverse Field | Type | Description |
+|-----------------|-----------------|------|-------------|
+| Id | cr616_sfraceid | String | Unique Salesforce ID |
+| Name | cr616_racename | String | Race name |
+| Race_Number__c | cr616_racenumber | Number | Race sequence number |
+| Race_Title__c | cr616_racetitle | String | Full race title |
+| Distance__c | cr616_distance | Number | Distance in meters |
+| Race_Grade__c | cr616_racegrading | String | Race grade/class |
+| Start_Time__c | cr616_starttime | DateTime | Scheduled start time |
+| Number_Of_Contestants__c | cr616_numberofcontestants | Number | Contestant count |
+| Race_Date__c | cr616_racedate | Date | Race date |
+| Meeting__c | _cr616_meeting_value | Lookup | Related meeting |
+| Prize_1__c | cr616_prize1 | Currency | First place prize |
+| Prize_2__c | cr616_prize2 | Currency | Second place prize |
+| Prize_3__c | cr616_prize3 | Currency | Third place prize |
+| Prize_4__c | cr616_prize4 | Currency | Fourth place prize |
+| Track_Held__c | cr616_trackheld | String | Track location |
+| Status__c | cr616_status | String | Race status |
+
+##### Contestant__c Object → cr616_contestants Table
+| Salesforce Field | Dataverse Field | Type | Description |
+|-----------------|-----------------|------|-------------|
+| Id | cr616_sfcontestantid | String | Unique Salesforce ID |
+| Rug_Number__c | cr616_rugnumber | Number | Box number (1-8) |
+| Greyhound_Name__c | cr616_greyhoundname | String | Dog name |
+| Owner_Name__c | cr616_ownername | String | Owner name |
+| Trainer_Name__c | cr616_trainername | String | Trainer name |
+| Dog_Grade__c | cr616_doggrade | String | Dog's grade |
+| Placement__c | cr616_placement | Number | Final position |
+| Margin__c | cr616_margin | Number | Win/loss margin |
+| Weight__c | cr616_weight | Number | Dog weight |
+| Status__c | cr616_status | String | Contestant status |
+| Race__c | _cr616_race_value | Lookup | Related race |
+| Meeting__c | _cr616_meeting_value | Lookup | Related meeting |
+| Finish_Time__c | cr616_finishtime | Number | Finish time |
+| Prize_Money__c | cr616_prizemoney | Currency | Prize won |
 
 #### Meeting Table (cr4cc_racemeetings) - 50 fields total
 **Key Fields:**
@@ -828,9 +926,19 @@ If users report seeing old versions after deployment:
   - If they don't match, SharePoint shows wrong version
   - Always update both files before building
 
+## Salesforce to Dataverse Sync Performance
+| Method | 1,000 Records | 10,000 Records | 50,000 Records | 85,000 Records |
+|--------|--------------|----------------|----------------|----------------|
+| Power Automate (200 batch) | ~45 min | ~8 hours | ~40 hours | ~68 hours |
+| Direct API (100-2000 batch) | ~15 sec | ~2 min | ~10 min | ~25-30 min |
+| **Improvement** | **180x** | **240x** | **240x** | **136x** |
+
+**Note:** Direct API sync replaces slow Power Automate workflows with 100-240x performance improvement
+
 ## Current Package Versions (as of Dec 12, 2024)
-- **Race Management:** v1.0.4 (in v1.0.5 folder - yes, folder name doesn't match)
+- **Race Management:** v1.5.17 (latest with injury tracking)
 - **Track Conditions:** v2.2.4 (in v2.2.5 folder - yes, folder name doesn't match)
+- **GAP:** v1.0.0 (initial setup, not yet built)
 
 ## Important Notes
 - Do what has been asked; nothing more, nothing less
