@@ -1,0 +1,201 @@
+.dataGrid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary, #ffffff);
+  border: 1px solid var(--border-default, #e0e0e0);
+  border-radius: 4px;
+  overflow: hidden;
+
+  &.light {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --border-default: #e0e0e0;
+    --hover-bg: #f0f0f0;
+    --selected-bg: #e3f2fd;
+  }
+
+  &.dark {
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #2d2d2d;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --border-default: #404040;
+    --hover-bg: #333333;
+    --selected-bg: #0d47a1;
+  }
+
+  &.compact {
+    .headerCell,
+    .cell {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+  }
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+}
+
+.exportButton {
+  padding: 6px 12px;
+  background: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #106ebe;
+  }
+
+  &:active {
+    background: #005a9e;
+  }
+}
+
+.tableContainer {
+  flex: 1;
+  overflow: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-primary);
+}
+
+.headerCell {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-default);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  user-select: none;
+
+  &.sortable {
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: var(--hover-bg);
+    }
+  }
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sortIcon {
+  margin-left: 8px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.row {
+  transition: background 0.2s;
+  border-bottom: 1px solid var(--border-default);
+
+  &:hover {
+    background: var(--hover-bg);
+  }
+
+  &.selected {
+    background: var(--selected-bg);
+  }
+}
+
+.cell {
+  padding: 12px 16px;
+  color: var(--text-primary);
+}
+
+.checkboxCell {
+  width: 40px;
+  padding: 8px;
+  text-align: center;
+}
+
+.actionsCell {
+  width: 100px;
+  padding: 8px;
+  text-align: center;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px;
+  border-top: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+}
+
+.pageButton {
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: var(--hover-bg);
+    border-color: #0078d4;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.pageInfo {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.loading,
+.error,
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 32px;
+}
+
+.spinner {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.errorMessage {
+  color: #d32f2f;
+  font-size: 16px;
+  text-align: center;
+}
+
+.emptyMessage {
+  color: var(--text-secondary);
+  font-size: 16px;
+  text-align: center;
+}
