@@ -64,11 +64,12 @@ gulp clean && gulp bundle --ship && gulp package-solution --ship
 ## Code Standards
 
 ### Architecture
-- SOLID principles
-- DRY - no code duplication
+- SOLID principles - strictly enforced
+- DRY - no code duplication 
+- Separation of Concerns - clear layer separation
 - Functional components with hooks
 - TypeScript strict mode
-- Error boundaries
+- Error boundaries - MANDATORY for all components
 
 ### Project Structure
 ```
@@ -81,10 +82,140 @@ src/
 └── webparts/       # SPFx web parts
 ```
 
-### Enterprise UI (when available)
-- Import design tokens: `@import '../../../enterprise-ui/styles/tokens';`
-- Use tokens for colors, spacing, typography
-- Apply domain themes (meeting, race, weather, health)
+## 🚀 Infrastructure Components (MANDATORY)
+
+### Error Handling & Recovery
+```typescript
+// ALWAYS wrap components with error boundaries
+import { ErrorBoundary, DataverseErrorBoundary } from '@grnsw/shared';
+
+<ErrorBoundary fallback={ErrorFallback}>
+  <DataverseErrorBoundary>
+    <YourComponent />
+  </DataverseErrorBoundary>
+</ErrorBoundary>
+```
+
+### Loading States & Skeletons
+```typescript
+// ALWAYS use professional loading states
+import { LoadingSpinner, DashboardSkeleton, useLoadingState } from '@grnsw/shared';
+
+const { loadingState, startLoading, stopLoading } = useLoadingState();
+
+// Show skeleton while loading
+{loadingState.isLoading && <DashboardSkeleton type="safety" />}
+```
+
+### Telemetry & Monitoring
+```typescript
+// ALWAYS track performance and errors in production
+import { useTelemetry } from '@grnsw/shared';
+
+const { trackAction, trackPerformance, trackError } = useTelemetry(context, {
+  componentName: 'YourComponent',
+  enabled: true
+});
+
+// Track all user actions and API calls
+await trackPerformance('operation_name', () => yourOperation());
+```
+
+### Code Splitting & Lazy Loading
+```typescript
+// ALWAYS lazy load heavy components (charts, tables, analytics)
+import { LazyComponent } from '@grnsw/shared';
+
+<LazyComponent
+  importFunction={() => import(/* webpackChunkName: "charts" */ './ChartComponent')}
+  loadingText="Loading chart..."
+  retryAttempts={3}
+/>
+```
+
+### Caching Strategy
+```typescript
+// ALWAYS cache Dataverse responses
+import { CacheService } from '@grnsw/shared';
+
+const cached = CacheService.get(cacheKey);
+if (cached && !CacheService.isExpired(cacheKey)) {
+  return cached;
+}
+const data = await fetchData();
+CacheService.set(cacheKey, data, 5 * 60 * 1000); // 5 minutes
+```
+
+### Progressive Loading for Dashboards
+```typescript
+// ALWAYS use progressive loading for complex dashboards
+import { useProgressiveLoading } from '@grnsw/shared';
+
+const { loadingState, results, executeSteps } = useProgressiveLoading();
+
+await executeSteps([
+  { id: 'data', name: 'Loading data...', execute: () => loadData() },
+  { id: 'stats', name: 'Calculating stats...', execute: () => calculateStats() },
+  { id: 'charts', name: 'Generating charts...', execute: () => generateCharts() }
+]);
+```
+
+### Available Infrastructure Components
+```typescript
+// Core Components (from @grnsw/shared)
+import {
+  // Error Handling
+  ErrorBoundary,
+  DataverseErrorBoundary,
+  useErrorHandler,
+  useDataverseErrorHandler,
+  
+  // Loading States
+  LoadingSpinner,
+  LoadingOverlay,
+  ProgressBar,
+  DashboardSkeleton,
+  SkeletonLoader,
+  
+  // Lazy Loading
+  LazyComponent,
+  useLazyComponent,
+  createLazyComponent,
+  PreloadUtils,
+  
+  // Telemetry
+  TelemetryService,
+  useTelemetry,
+  useServiceTelemetry,
+  useDashboardTelemetry,
+  
+  // Loading Hooks
+  useLoadingState,
+  useAsyncOperation,
+  useProgressiveLoading,
+  
+  // Services
+  CacheService,
+  ThrottleService,
+  
+  // Bundle Optimization
+  BundleAnalyzer
+} from '@grnsw/shared';
+```
+
+### Performance Requirements
+- Bundle size per web part: < 500KB
+- Initial load time: < 3 seconds
+- Time to interactive: < 5 seconds
+- Lighthouse score: > 80
+- Error rate: < 1%
+
+### Monitoring Requirements
+- Application Insights MUST be configured for production
+- Track all errors with context
+- Monitor API performance
+- Track user interactions
+- Report business metrics
 
 ## SharePoint
 - **Tenant:** grnsw21.sharepoint.com
