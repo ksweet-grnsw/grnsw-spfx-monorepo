@@ -7,6 +7,8 @@ export interface ICacheEntry<T> {
   expiresAt: number;
   hits: number;
   key: string;
+  /** Tags for bulk invalidation */
+  tags?: string[];
 }
 
 /**
@@ -31,13 +33,34 @@ export interface ICacheStats {
 }
 
 /**
- * Unified Cache Service for all packages
- * Provides in-memory and localStorage caching with TTL and LRU eviction
+ * Advanced Cache Service for Dataverse API responses with multiple storage strategies
+ * Provides in-memory and localStorage caching with TTL, LRU eviction, request deduplication,
+ * and tag-based invalidation to optimize performance and reduce API calls
+ * 
+ * @example
+ * ```typescript
+ * const cacheService = new CacheService('injuries');
+ * 
+ * // Cache with tags for bulk invalidation
+ * cacheService.set('recent-injuries', data, 10*60*1000, ['injuries', 'dashboard']);
+ * 
+ * // Get or fetch with request deduplication  
+ * const data = await cacheService.getOrSet(
+ *   'injury-stats',
+ *   () => injuryService.getStats(),
+ *   15*60*1000
+ * );
+ * 
+ * // Invalidate all injury-related cache
+ * cacheService.invalidateByTag('injuries');
+ * ```
  */
 export class CacheService {
   private cache: Map<string, ICacheEntry<any>> = new Map();
   private stats: ICacheStats = { hits: 0, misses: 0, size: 0, evictions: 0 };
   private cleanupTimer: number | null = null;
+  /** Track pending requests to prevent duplicate API calls */
+  private pendingRequests = new Map<string, Promise<any>>();
   
   private readonly DEFAULT_CONFIG: ICacheConfig = {
     defaultTTL: 5 * 60 * 1000, // 5 minutes
@@ -90,9 +113,13 @@ export class CacheService {
   }
 
   /**
-   * Set item in cache
+   * Set item in cache with optional tags for bulk invalidation
+   * @param key - Cache key
+   * @param data - Data to cache
+   * @param ttl - Time to live in milliseconds
+   * @param tags - Tags for bulk invalidation
    */
-  public set<T>(key: string, data: T, ttl?: number): void {
+  public set<T>(key: string, data: T, ttl?: number, tags?: string[]): void {
     const expiresAt = Date.now() + (ttl || this.config.defaultTTL);
     
     const entry: ICacheEntry<T> = {
@@ -100,7 +127,8 @@ export class CacheService {
       timestamp: Date.now(),
       expiresAt,
       hits: 0,
-      key
+      key,
+      tags
     };
     
     // Check if we need to evict
@@ -164,23 +192,42 @@ export class CacheService {
   }
 
   /**
-   * Get or set with factory function
+   * Get or set with factory function - includes request deduplication
+   * @param key - Cache key
+   * @param factory - Function to execute on cache miss
+   * @param ttl - Time to live in milliseconds
+   * @param tags - Tags for bulk invalidation
+   * @returns Promise resolving to cached or fresh data
    */
   public async getOrSet<T>(
     key: string,
     factory: () => Promise<T>,
-    ttl?: number
+    ttl?: number,
+    tags?: string[]
   ): Promise<T> {
     const cached = this.get<T>(key);
     
     if (cached !== null) {
       return cached;
     }
-    
-    const data = await factory();
-    this.set(key, data, ttl);
-    
-    return data;
+
+    // Check if request is already in progress (deduplication)
+    if (this.pendingRequests.has(key)) {
+      return this.pendingRequests.get(key) as Promise<T>;
+    }
+
+    // Execute function and cache result
+    const promise = factory().then(data => {
+      this.set(key, data, ttl, tags);
+      this.pendingRequests.delete(key);
+      return data;
+    }).catch(error => {
+      this.pendingRequests.delete(key);
+      throw error;
+    });
+
+    this.pendingRequests.set(key, promise);
+    return promise;
   }
 
   /**
@@ -380,5 +427,56 @@ export class CacheService {
     keysToDelete.forEach(key => this.delete(key));
     
     return keysToDelete.length;
+  }
+
+  /**
+   * Invalidate all cache entries with the specified tag
+   * @param tag - Tag to invalidate
+   * @returns Number of entries invalidated
+   * 
+   * @example
+   * ```typescript
+   * // Invalidate all injury-related cache entries
+   * const invalidated = cache.invalidateByTag('injuries');
+   * console.log(`Invalidated ${invalidated} entries`);
+   * ```
+   */
+  public invalidateByTag(tag: string): number {
+    const keysToDelete: string[] = [];
+    
+    this.cache.forEach((entry, key) => {
+      if (entry.tags && entry.tags.includes(tag)) {
+        keysToDelete.push(key);
+      }
+    });
+    
+    keysToDelete.forEach(key => this.delete(key));
+    
+    return keysToDelete.length;
+  }
+
+  /**
+   * Get all entries with a specific tag
+   * @param tag - Tag to search for
+   * @returns Array of cache entries with the tag
+   */
+  public getByTag<T>(tag: string): Array<{key: string, data: T}> {
+    const results: Array<{key: string, data: T}> = [];
+    
+    this.cache.forEach((entry, key) => {
+      if (entry.tags && entry.tags.includes(tag) && !this.isExpired(entry)) {
+        results.push({ key, data: entry.data });
+      }
+    });
+    
+    return results;
+  }
+
+  /**
+   * Check if entry is expired
+   * @private
+   */
+  private isExpired(entry: ICacheEntry<any>): boolean {
+    return Date.now() > entry.expiresAt;
   }
 }
