@@ -14,7 +14,7 @@ import WindAnalysis from './components/WindAnalysis';
 import { IWindAnalysisProps } from './components/IWindAnalysisProps';
 import { trackOptions } from '../shared/trackOptions';
 
-const packageSolution: any = require('../../../config/package-solution.json'); // eslint-disable-line @typescript-eslint/no-var-requires
+const packageSolution: any = require('../../../config/package-solution.json');
 
 export interface IWindAnalysisWebPartProps {
   selectedTrack: string;

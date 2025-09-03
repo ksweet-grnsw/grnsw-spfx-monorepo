@@ -83,10 +83,7 @@ export default class HistoricalPatternAnalyzer extends React.Component<
   }
 
   public async componentDidMount(): Promise<void> {
-    console.log('HistoricalPatternAnalyzer - componentDidMount');
-    console.log('Default Track:', this.props.defaultTrack);
-    console.log('Default Tracks:', this.props.defaultTracks);
-    console.log('Selected Tracks in State:', this.state.selectedTracks);
+    // Component mounted - loading data
     
     await this.loadData();
     this.startAutoRefresh();
@@ -102,7 +99,7 @@ export default class HistoricalPatternAnalyzer extends React.Component<
     if (this.state.autoRefresh && this.props.refreshInterval > 0) {
       this.refreshTimer = window.setInterval(() => {
         this.loadCurrentConditions().catch(error => {
-          console.error('Auto-refresh failed:', error);
+          // Auto-refresh failed
         });
       }, this.props.refreshInterval * 60 * 1000);
     }
@@ -537,7 +534,7 @@ export default class HistoricalPatternAnalyzer extends React.Component<
                 tracks={selectedTracks}
                 currentConditions={currentConditions}
                 optimalScores={optimalScores}
-                onTrackSelect={(track) => console.log('Track selected:', track)}
+                onTrackSelect={(track) => { /* Track selected */ }}
               />
             </div>
 

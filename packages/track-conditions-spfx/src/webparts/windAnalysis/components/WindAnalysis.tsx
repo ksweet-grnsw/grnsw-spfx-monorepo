@@ -35,7 +35,7 @@ interface IWindAnalysisState {
   selectedPeriod: TimePeriod;
   windData: IDataverseWeatherData[];
   loading: boolean;
-  error: string | undefined;
+  error: string | null;
   trackName: string;
   viewType: ViewType;
 }
@@ -89,7 +89,7 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
       return;
     }
 
-    this.setState({ loading: true, error: undefined });
+    this.setState({ loading: true, error: null });
     
     try {
       const filter = this.buildFilter();

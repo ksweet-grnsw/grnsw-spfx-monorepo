@@ -147,7 +147,7 @@ export const useTelemetry = (
           component: componentName,
           operationName 
         },
-        metrics: { duration }
+        metrics: { apiResponseTime: duration } as any
       });
 
       return result;
@@ -173,9 +173,8 @@ export const useTelemetry = (
     userAction?: string
   ) => {
     telemetryRef.current?.trackError(error, source || componentName, userAction, {
-      component: componentName,
       page: window.location.pathname
-    });
+    } as any);
   }, [componentName]);
 
   // Track business metric
@@ -261,7 +260,7 @@ export const useServiceTelemetry = <TService extends Record<string, any>>(
       const originalMethod = service[methodName];
       
       if (typeof originalMethod === 'function') {
-        enhanced[methodName] = async (...args: any[]) => {
+        (enhanced as any)[methodName] = async (...args: any[]) => {
           try {
             return await trackPerformance(
               `${serviceName}.${methodName}`,
@@ -273,7 +272,7 @@ export const useServiceTelemetry = <TService extends Record<string, any>>(
           }
         };
       } else {
-        enhanced[methodName] = originalMethod;
+        (enhanced as any)[methodName] = originalMethod;
       }
     });
 

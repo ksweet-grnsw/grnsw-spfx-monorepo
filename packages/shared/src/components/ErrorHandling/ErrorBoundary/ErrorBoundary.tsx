@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Component, ErrorInfo } from 'react';
 import { IErrorBoundaryProps, IErrorBoundaryState, IErrorInfo } from './ErrorBoundary.types';
 import { UnifiedErrorHandler, UnifiedLogger } from '../../../index';
-import styles from './ErrorBoundary.module.scss';
+// import styles from './ErrorBoundary.module.scss';
+const styles: any = {}; // Temporary placeholder for styles
 
 /**
  * Shared ErrorBoundary Component

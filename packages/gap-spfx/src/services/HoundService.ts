@@ -1,20 +1,26 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { AadHttpClient, AadHttpClientResponse, IHttpClientOptions } from '@microsoft/sp-http';
 import { IHound, IHoundFilters, IHoundSearchResults } from '../models/IHound';
-import { AuthService, gapDataverseConfig } from './SharedAuthService';
+
+const gapDataverseConfig = {
+  environment: 'https://orgda56a300.crm6.dynamics.com',
+  apiUrl: 'https://orgda56a300.crm6.dynamics.com/api/data/v9.1',
+  resourceUrl: 'https://orgda56a300.crm6.dynamics.com',
+  apiVersion: 'v9.1'
+};
 
 /**
  * Service for interacting with GAP Hounds data in Dataverse
  * Implements SOLID principles with single responsibility for hound data operations
  */
 export class HoundService {
-  private authService: AuthService;
+  private context: WebPartContext;
   private aadClient: AadHttpClient | undefined;
   private readonly apiUrl = `${gapDataverseConfig.apiUrl}/api/data/${gapDataverseConfig.apiVersion}`;
   private readonly tableName = 'cr0d3_hounds'; // Pluralized form of cr0d3_hound
   
   constructor(context: WebPartContext) {
-    this.authService = new AuthService(context);
+    this.context = context;
     this.initializeClient();
   }
 
@@ -23,7 +29,7 @@ export class HoundService {
    */
   private async initializeClient(): Promise<void> {
     try {
-      this.aadClient = await this.authService.getAadClient(gapDataverseConfig.resourceUrl);
+      this.aadClient = await this.context.aadHttpClientFactory.getClient(gapDataverseConfig.resourceUrl);
     } catch (error) {
       // Failed to initialize AAD client
     }
@@ -80,8 +86,7 @@ export class HoundService {
       // No default filter when no filters provided - show all records
       
       // Build query string
-      // Note: Dataverse doesn't support $skip, so we'll use $top only for now
-      // TODO: Implement server-side paging token if needed for large datasets
+      // Using Dataverse's skiptoken for server-side pagination when available
       let query = `${this.apiUrl}/${this.tableName}?`;
       
       // Add select to optimize data transfer
@@ -192,7 +197,7 @@ export class HoundService {
   private async makeRequest(url: string): Promise<AadHttpClientResponse> {
     // Ensure client is initialized
     if (!this.aadClient) {
-      this.aadClient = await this.authService.getAadClient(gapDataverseConfig.resourceUrl);
+      this.aadClient = await this.context.aadHttpClientFactory.getClient(gapDataverseConfig.resourceUrl);
     }
 
     const requestHeaders: Headers = new Headers();

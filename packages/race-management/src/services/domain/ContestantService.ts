@@ -2,8 +2,8 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { 
   UnifiedBaseDataverseService,
   DATAVERSE_ENVIRONMENTS,
-  IODataQuery,
-  IDataverseResponse
+  IUnifiedODataQuery as IODataQuery,
+  IUnifiedDataverseResponse as IDataverseResponse
 } from '@grnsw/shared';
 import { IContestant, IContestantFilters } from '../../models/IRaceData';
 
@@ -298,7 +298,7 @@ export class ContestantService extends UnifiedBaseDataverseService<IContestant> 
     };
     
     if (finishTime !== undefined) {
-      updateData.cr616_finishtime = finishTime;
+      updateData.cr616_finishtime = finishTime.toString();
     }
     
     if (margin !== undefined) {

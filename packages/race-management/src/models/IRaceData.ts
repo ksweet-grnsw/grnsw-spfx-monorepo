@@ -79,24 +79,35 @@ export interface IContestant {
 export interface IMeetingFilters {
   dateFrom?: Date;
   dateTo?: Date;
+  startDate?: Date;
+  endDate?: Date;
   track?: string;
   authority?: string;
   status?: string;
+  excludeCancelled?: boolean;
+  pageSize?: number;
 }
 
 export interface IRaceFilters {
   meetingId?: string;
   distance?: number;
+  minDistance?: number;
+  maxDistance?: number;
   grading?: string;
   status?: string;
+  pageSize?: number;
 }
 
 export interface IContestantFilters {
   raceId?: string;
+  meetingId?: string;
   greyhoundName?: string;
   ownerName?: string;
   trainerName?: string;
   status?: string;
+  placement?: number;
+  onlyWinners?: boolean;
+  pageSize?: number;
 }
 
 export interface ISearchResults {
@@ -162,7 +173,7 @@ export interface IGreyhound {
 // Health Check information from Injury Data environment
 export interface IHealthCheck {
   cra5e_heathcheckid: string; // Note: misspelled in system
-  cra5e_name?: string; // HC-00XXXXXX
+  cra5e_name?: string; // Health check name format: HC-00XXXXXX (e.g., HC-00123456)
   cra5e_greyhound: string; // Foreign key to Greyhound
   cra5e_datechecked: Date | string;
   cra5e_type?: string; // Race Meeting Exam, etc.
@@ -205,4 +216,16 @@ export interface IHealthCheck {
   cra5e_sedatives?: boolean;
   cra5e_sutures?: boolean;
   cra5e_injurycategory?: string;
+}
+
+export interface IInjury {
+  cra5e_injuryid: string;
+  cra5e_injurydate: string;
+  cra5e_injurytype: string;
+  cra5e_severity: string;
+  cra5e_description?: string;
+  cra5e_treatmentnotes?: string;
+  cra5e_recoverydays?: number;
+  _cra5e_greyhound_value: string;
+  cra5e_Greyhound?: IGreyhound;
 }

@@ -144,7 +144,7 @@ export function useDataFetching<T = any>(
     if (autoFetch) {
       fetchData(true); // Force fetch on dependency changes
     }
-  }, [...dependencies, autoFetch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [fetchData, autoFetch, ...dependencies]);
 
   // Cleanup
   useEffect(() => {

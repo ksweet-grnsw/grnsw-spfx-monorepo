@@ -1,5 +1,5 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { BaseDataverseService } from './BaseDataverseService';
+import { BaseDataverseService } from '@grnsw/shared';
 import { 
   ICra5eInjurydata, 
   ICreateInjuryData, 
@@ -12,7 +12,10 @@ export class Cra5eInjuryDataService extends BaseDataverseService<ICra5eInjurydat
   protected tableName = 'cra5e_injurydatas'; // Plural form for Dataverse API
 
   constructor(context: WebPartContext) {
-    super(context);
+    super(context, {
+      environment: 'https://orgfc8a11f1.crm6.dynamics.com',
+      apiVersion: 'v9.1'
+    });
   }
 
   /**

@@ -22,6 +22,7 @@ export interface ICra5eInjurydata {
   cra5e_racedate?: string; // Date of race/trial (ISO string)
   cra5e_racenumber?: number; // Race number
   cra5e_trackname?: string; // Track where injury occurred
+  cra5e_track?: string; // Track (alternative field)
   cra5e_racedistance?: number; // Race distance
   cra5e_distancetype?: string; // Distance type
   cra5e_runbox?: number; // Starting box number
@@ -32,6 +33,11 @@ export interface ICra5eInjurydata {
   // Injury Details
   cra5e_injurycategory?: string; // Injury Category
   cra5e_injurystate?: string; // Injury State
+  cra5e_injurytype?: string; // Injury Type (e.g., fracture, muscle strain)
+  cra5e_injurydate?: string; // Date of injury (ISO string)
+  cra5e_severity?: string; // Injury severity level
+  cra5e_bodypart?: string; // Body part affected
+  cra5e_recoverydays?: number; // Expected recovery days
   cra5e_determinedserious?: string; // Determined Serious
   cra5e_failedtofinish?: string; // Failed to Finish
   cra5e_runstage?: string; // Run Stage
@@ -47,6 +53,14 @@ export interface ICra5eInjurydata {
   cra5e_stewartcomment?: string; // Stewart Comment (max 2000 chars)
   cra5e_followupinformation?: string; // Follow Up Information (max 2000 chars)
   cra5e_videolink?: string; // Video Link
+  cra5e_notes?: string; // Additional notes
+  cra5e_description?: string; // Injury description
+  
+  // Recovery and Status
+  cra5e_status?: string; // Current status of the injury
+  cra5e_recovered?: boolean; // Whether the greyhound has recovered
+  cra5e_recoverydate?: string; // Date of recovery
+  cra5e_euthanasia?: boolean; // Whether euthanasia was required
   
   // System Fields
   createdby?: string; // Created By (lookup)
@@ -143,3 +157,5 @@ export interface IInjurySearchFilters {
   endDate?: string;
   microchip?: number;
 }
+// Export alias for backward compatibility
+export type ICra5eInjuryData = ICra5eInjurydata;

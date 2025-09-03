@@ -3,17 +3,34 @@
     "target": "es2021",
     "module": "commonjs",
     "lib": ["es2021", "dom"],
+    "jsx": "react",
     "outDir": "./lib",
     "rootDir": "./src",
     "strict": true,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "noEmit": false,
+    "types": ["node"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+  "exclude": [
+    "node_modules", 
+    "lib", 
+    "**/*.test.ts", 
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/examples/**",
+    "**/tests/**",
+    "**/setupTests.ts"
+  ]
 }

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { IDataGridProps, IDataGridColumn, SelectionMode } from './DataGrid.types';
-import styles from './DataGrid.module.scss';
+// import styles from './DataGrid.module.scss';
+const styles: any = {}; // Temporary placeholder for styles
 
 /**
  * Shared DataGrid Component

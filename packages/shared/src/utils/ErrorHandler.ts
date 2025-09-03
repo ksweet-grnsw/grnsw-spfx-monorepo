@@ -1,11 +1,22 @@
 import { Logger } from './Logger';
 
+export enum ErrorType {
+  AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
+  AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
+  NOT_FOUND_ERROR = 'NOT_FOUND_ERROR',
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  NETWORK_ERROR = 'NETWORK_ERROR',
+  SERVER_ERROR = 'SERVER_ERROR',
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+}
+
 export interface IError {
   message: string;
   code?: string;
   details?: any;
   timestamp: Date;
   context?: string;
+  type?: ErrorType;
 }
 
 export class ErrorHandler {
@@ -19,7 +30,7 @@ export class ErrorHandler {
     };
 
     // Log the error
-    Logger.getInstance().error(`[${context || 'Unknown'}] ${errorInfo.message}`, errorInfo);
+    Logger.error(`[${context || 'Unknown'}] ${errorInfo.message}`, errorInfo);
 
     // Return a user-friendly error
     if (error?.status === 401) {
@@ -42,5 +53,25 @@ export class ErrorHandler {
     error.code = code;
     error.details = details;
     return error;
+  }
+
+  public static formatErrorMessage(error: any): string {
+    if (!error) {
+      return 'An unexpected error occurred';
+    }
+    
+    if (typeof error === 'string') {
+      return error;
+    }
+    
+    if (error.message) {
+      return error.message;
+    }
+    
+    if (error.toString && typeof error.toString === 'function') {
+      return error.toString();
+    }
+    
+    return 'An unexpected error occurred';
   }
 }

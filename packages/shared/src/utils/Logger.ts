@@ -54,4 +54,25 @@ export class Logger {
   public log(message: string, ...args: any[]): void {
     this.info(message, ...args);
   }
+
+  // Static convenience methods that use the singleton instance
+  public static error(message: string, ...args: any[]): void {
+    Logger.getInstance().error(message, ...args);
+  }
+
+  public static warn(message: string, ...args: any[]): void {
+    Logger.getInstance().warn(message, ...args);
+  }
+
+  public static info(message: string, ...args: any[]): void {
+    Logger.getInstance().info(message, ...args);
+  }
+
+  public static debug(message: string, ...args: any[]): void {
+    Logger.getInstance().debug(message, ...args);
+  }
+
+  public static log(message: string, ...args: any[]): void {
+    Logger.getInstance().log(message, ...args);
+  }
 }

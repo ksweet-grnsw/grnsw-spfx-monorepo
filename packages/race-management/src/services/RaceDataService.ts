@@ -13,7 +13,7 @@ import {
   IDataverseResponse,
   IDataverseError
 } from '../models/IRaceData';
-import { dataverseConfig } from './SharedAuthService';
+import { dataverseConfig } from '@grnsw/shared';
 import { cacheService } from './CacheService';
 import { injuryCacheService } from './InjuryCacheService';
 import { apiThrottle, injuryApiThrottle } from '../utils/requestThrottle';

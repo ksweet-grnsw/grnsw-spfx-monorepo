@@ -229,9 +229,7 @@ export class TelemetryService {
 
     this.addToBuffer(enrichedEvent);
 
-    if (this.config.logToConsole) {
-      console.log(`[Telemetry] ${event.name}:`, enrichedEvent);
-    }
+    // Telemetry event tracked
   }
 
   /**
@@ -539,9 +537,8 @@ export class TelemetryService {
       this.sendToApplicationInsights(eventsToSend);
     } else if (this.config.endpoint) {
       this.sendToCustomEndpoint(eventsToSend);
-    } else if (this.config.logToConsole) {
-      console.log('[Telemetry] Sending events:', eventsToSend);
     }
+    // Events batched for sending
   }
 
   /**
@@ -550,8 +547,7 @@ export class TelemetryService {
    */
   private sendToApplicationInsights(events: ITelemetryEvent[]): void {
     // This would integrate with Application Insights SDK
-    // For now, just log the events
-    console.log('[Telemetry] Would send to Application Insights:', events);
+    // Events would be sent to Application Insights here
     
     // Example implementation:
     // if (window.appInsights) {

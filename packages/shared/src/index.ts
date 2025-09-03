@@ -4,22 +4,6 @@
  */
 
 // ============================================
-// ENVIRONMENT CONFIGURATION
-// ============================================
-
-export {
-  IDataverseEnvironment,
-  IDataverseEnvironments,
-  IDataverseTable,
-  DATAVERSE_ENVIRONMENTS,
-  getEnvironment,
-  getTableEndpoint,
-  buildODataUrl,
-  getEnvironmentNames,
-  isValidEnvironment
-} from './config/environments';
-
-// ============================================
 // SERVICES
 // ============================================
 
@@ -29,7 +13,11 @@ export { UnifiedAuthService } from './services/UnifiedAuthService';
 
 // Base Services
 export { BaseDataverseService } from './services/BaseDataverseService';
-export { UnifiedBaseDataverseService } from './services/UnifiedBaseDataverseService';
+export { 
+  UnifiedBaseDataverseService,
+  IODataQuery as IUnifiedODataQuery,
+  IDataverseResponse as IUnifiedDataverseResponse
+} from './services/UnifiedBaseDataverseService';
 
 // Service Types
 export type {
@@ -51,170 +39,92 @@ export {
   TelemetrySeverity
 } from './services/TelemetryService';
 
-// Telemetry Types
-export type {
-  ITelemetryEvent,
-  IPerformanceEvent,
-  IErrorEvent,
-  IUserEvent,
-  IBusinessEvent,
-  ITelemetryConfig
-} from './services/TelemetryService';
-
 // ============================================
 // UTILITIES
 // ============================================
 
 // Error Handling
-export { ErrorHandler } from './utils/ErrorHandler';
+export { ErrorHandler, ErrorType } from './utils/ErrorHandler';
 export { UnifiedErrorHandler } from './utils/UnifiedErrorHandler';
+export type { IError } from './utils/ErrorHandler';
 
 // Logging
 export { Logger, LogLevel } from './utils/Logger';
 export { UnifiedLogger } from './utils/UnifiedLogger';
 
-// Bundle Analysis
-export { BundleAnalyzer } from './utils/bundleAnalyzer';
-
 // ============================================
-// REACT COMPONENTS & HOOKS
+// REACT COMPONENTS
 // ============================================
 
 // Error Boundary Components
-export { ErrorBoundary, DefaultErrorFallback } from './components/ErrorBoundary';
-export { DataverseErrorBoundary, DataverseErrorFallback } from './components/DataverseErrorBoundary';
-
-// Error Handler Hooks
-export { useErrorHandler, useDataverseErrorHandler } from './hooks/useErrorHandler';
-
-// Telemetry Hooks
-export { 
-  useTelemetry, 
-  useServiceTelemetry, 
-  useDashboardTelemetry 
-} from './hooks/useTelemetry';
-
-// Component & Hook Types
-export type { 
-  IErrorBoundaryProps, 
-  IErrorFallbackProps, 
-  IErrorBoundaryState 
-} from './components/ErrorBoundary';
-
-export type { 
-  IErrorState, 
-  IUseErrorHandlerReturn 
-} from './hooks/useErrorHandler';
-
-// ============================================
-// LOADING COMPONENTS & HOOKS
-// ============================================
+export { ErrorBoundary } from './components/ErrorBoundary';
+export { DataverseErrorBoundary } from './components/DataverseErrorBoundary';
+export type { IErrorBoundaryProps, IErrorFallbackProps, IErrorBoundaryState } from './components/ErrorBoundary';
 
 // Loading Components
-export { LoadingSpinner, LoadingOverlay, ProgressBar } from './components/LoadingSpinner';
-export { 
-  SkeletonLoader, 
-  SkeletonCard, 
-  SkeletonTable, 
-  SkeletonChart 
-} from './components/SkeletonLoader';
-export { DashboardSkeleton, SimpleLoadingState } from './components/DashboardSkeleton';
+export { LoadingSpinner } from './components/LoadingSpinner';
+export { SkeletonLoader } from './components/SkeletonLoader';
+export { DashboardSkeleton } from './components/DashboardSkeleton';
+export { LazyComponent } from './components/LazyComponent';
 
-// Lazy Loading Components
-export {
-  LazyComponent,
-  useLazyComponent,
-  createLazyComponent,
-  PreloadUtils,
-  LazyPatterns
-} from './components/LazyComponent';
+// Data Display
+export { DataGrid } from './components/DataDisplay/DataGrid/DataGrid';
+export type { IDataGridProps, IDataGridColumn } from './components/DataDisplay/DataGrid/DataGrid.types';
 
-// Loading Hooks
+// UI Components
+export { StatusBadge } from './components/StatusBadge/StatusBadge';
+export type { IStatusBadgeProps } from './components/StatusBadge/StatusBadge';
+export { FilterPanel } from './components/FilterPanel/FilterPanel';
+export type { IFilterPanelProps } from './components/FilterPanel/FilterPanel';
+
+// ============================================
+// HOOKS
+// ============================================
+
+// Data fetching
+export { useDataverse } from './hooks/useDataverse';
+
+// State management
+export { useOptimisticUpdate } from './hooks/useOptimisticUpdate';
+
+// Loading state
 export { 
-  useLoadingState, 
-  useAsyncOperation, 
-  useProgressiveLoading 
+  useLoadingState,
+  useAsyncOperation,
+  useProgressiveLoading
 } from './hooks/useLoadingState';
 
-// Loading Component Types
-export type {
-  ILoadingSpinnerProps,
-  ILoadingOverlayProps,
-  IProgressBarProps
-} from './components/LoadingSpinner';
+// Error handling
+export { useErrorHandler } from './hooks/useErrorHandler';
 
-export type {
-  ISkeletonLoaderProps,
-  ISkeletonCardProps,
-  ISkeletonTableProps,
-  ISkeletonChartProps
-} from './components/SkeletonLoader';
-
-export type {
-  IDashboardSkeletonProps,
-  ISimpleLoadingStateProps
-} from './components/DashboardSkeleton';
-
-export type {
-  ILazyComponentProps
-} from './components/LazyComponent';
-
-// Loading Hook Types
-export type {
-  ILoadingState,
-  IUseLoadingStateReturn,
-  IAsyncOperationOptions,
-  IUseAsyncOperationReturn,
-  IProgressiveLoadingOptions,
-  IProgressiveStep,
-  IProgressiveStepResult,
-  IUseProgressiveLoadingReturn
-} from './hooks/useLoadingState';
-
-// Telemetry Hook Types
-export type {
-  IUseTelemetryOptions,
-  IUseTelemetryReturn
-} from './hooks/useTelemetry';
-
-// Bundle Analysis Types
-export type {
-  IBundleAnalysisResult,
-  IChunkAnalysis,
-  IModuleAnalysis,
-  IDependencyAnalysis
-} from './utils/bundleAnalyzer';
+// Telemetry
+export { useTelemetry } from './hooks/useTelemetry';
 
 // ============================================
 // CONFIGURATION
 // ============================================
 
-// Legacy Config (these files exist)
 export { dataverseConfig, dataverseTables } from './config/dataverseConfig';
-
-// Bundle Optimization
-export {
-  sharedChunkConfig,
-  webpackOptimizationConfig,
-  bundleSizeLimits,
-  performanceBudget,
-  dynamicImportPatterns,
-  bundleAnalysisUtils,
-  treeShakingHelpers,
-  loadingStrategies,
-  environmentOptimizations
-} from './config/bundleOptimization';
-
-// Common interfaces
-export interface IBaseEntity {
-  createdon: string;
-  modifiedon: string;
-  statecode: number;
-  statuscode: number;
-}
+export { 
+  DATAVERSE_ENVIRONMENTS,
+  getEnvironment,
+  getTableEndpoint,
+  buildODataUrl,
+  getEnvironmentNames,
+  isValidEnvironment
+} from './config/environments';
+export type { 
+  IDataverseEnvironment, 
+  IDataverseEnvironments, 
+  IDataverseTable 
+} from './config/environments';
 
 // ============================================
-// VERSION INFO
+// RE-EXPORTS FOR CONVENIENCE
 // ============================================
 
-export const SHARED_PACKAGE_VERSION = '1.0.0';
+// Components
+export * from './components';
+
+// Hooks
+export * from './hooks';

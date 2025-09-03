@@ -65,7 +65,7 @@ export default class SchemaExplorerWebPart extends BaseClientSideWebPart<ISchema
       const fetcher = new DataverseSchemaFetcher(this.context);
       
       // Fetch schema
-      console.log(`Fetching schema for table: ${tableName}`);
+      // Fetching schema for table
       const schema = await fetcher.getTableSchema(tableName);
       
       // Generate TypeScript interface
@@ -76,7 +76,7 @@ export default class SchemaExplorerWebPart extends BaseClientSideWebPart<ISchema
       try {
         samples = await fetcher.getSampleData(tableName, 3);
       } catch (err) {
-        console.warn('Could not fetch sample data:', err);
+        // Could not fetch sample data
       }
 
       // Display results
@@ -91,13 +91,10 @@ export default class SchemaExplorerWebPart extends BaseClientSideWebPart<ISchema
       }
       if (schemaOutput) schemaOutput.style.display = 'block';
 
-      // Also log to console for easy copying
-      console.log('Table Schema:', schema);
-      console.log('TypeScript Interface:', tsInterfaceCode);
-      console.log('Sample Data:', samples);
+      // Schema, interface and samples processed successfully
 
     } catch (err: any) {
-      console.error('Error fetching schema:', err);
+      // Error fetching schema
       if (error) {
         error.textContent = `Error: ${err.message || 'Failed to fetch table schema'}`;
         error.style.display = 'block';

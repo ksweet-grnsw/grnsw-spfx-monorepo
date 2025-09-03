@@ -12,18 +12,11 @@ import {
   LoadingSpinner,
   DashboardSkeleton,
   useTelemetry,
-  useAsyncOperation,
+  useLoadingState,
   LazyComponent
 } from '@grnsw/shared';
-// TODO: Re-enable when @grnsw/shared is properly configured as dependency
-// import { 
-//   DataGrid, 
-//   StatusBadge, 
-//   FilterPanel,
-//   DataGridColumn 
-// } from '@grnsw/shared';
 
-// Temporary placeholder types and components for build compatibility
+// Placeholder types and components - to be moved to @grnsw/shared in future
 interface DataGridColumn<T> {
   key: keyof T;
   label: string;
@@ -124,11 +117,8 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
   });
 
   // Advanced loading state management with error handling and progress tracking
-  const { loadingState, data, execute } = useAsyncOperation<IDataverseWeatherData[]>({
-    minLoadingTime: 500, // Prevent loading flash
-    showProgress: true,
-    clearErrorOnStart: true
-  });
+  const { loadingState, startLoading, stopLoading, setError } = useLoadingState();
+  const [data, setData] = useState<IDataverseWeatherData[]>([]);
 
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   
@@ -138,28 +128,30 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
   // Load weather data with telemetry tracking
   const loadWeatherData = useCallback(async () => {
     trackAction('click', 'refresh_weather_data');
+    startLoading();
     
     try {
-      const data = await execute(
-        () => trackPerformance('load_weather_data', async () => {
-          const result = await dataverseService.getLatestWeatherData(20);
-          
-          // Track business metrics
-          trackMetric('data_usage', 'weather_records_loaded', result.length, 'count');
-          trackMetric('performance', 'weather_data_points', 
-            result.reduce((sum, record) => sum + Object.keys(record).length, 0), 'count');
-          
-          return result;
-        }),
-        'Loading weather data from Dataverse...'
-      );
+      const result = await trackPerformance('load_weather_data', async () => {
+        const weatherData = await dataverseService.getLatestWeatherData(20);
+        
+        // Track business metrics
+        trackMetric('data_usage', 'weather_records_loaded', weatherData.length, 'count');
+        trackMetric('performance', 'weather_data_points', 
+          weatherData.reduce((sum, record) => sum + Object.keys(record).length, 0), 'count');
+        
+        return weatherData;
+      });
       
-      return data;
+      setData(result);
+      stopLoading();
+      return result;
     } catch (error: any) {
       trackError(error, 'weather_service', 'load_weather_data');
+      setError(error);
+      stopLoading();
       throw error;
     }
-  }, [execute, dataverseService, trackAction, trackPerformance, trackError, trackMetric]);
+  }, [dataverseService, trackAction, trackPerformance, trackError, trackMetric, startLoading, stopLoading, setError]);
 
   // Load data on component mount
   useEffect(() => {
@@ -384,7 +376,7 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
               pageSize={10}
               sortable
               loading={loadingState.isLoading}
-              error={loadingState.error}
+              error={loadingState.error || undefined}
             />
           ) : (
             <div className={styles.weatherGrid}>
@@ -393,11 +385,12 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
           )}
 
           {/* Lazy-loaded Weather Trend Chart */}
+          {/* Chart component will be re-enabled when WeatherTrendChart is implemented
           {data.length > 5 && (
             <div style={{ marginTop: '32px' }}>
               <h3>Weather Trends (Lazy Loaded)</h3>
               <LazyComponent
-                importFunction={() => import(/* webpackChunkName: "weather-charts" */ '../../../components/charts/WeatherTrendChart')}
+                importFunction={() => import('../../../components/charts/WeatherTrendChart')}
                 componentProps={{ data }}
                 loadingText="Loading weather trend chart..."
                 preload={false}
@@ -405,6 +398,7 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
               />
             </div>
           )}
+          */}
         </>
       )}
 
@@ -441,7 +435,7 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
 const WeatherDashboardWithErrorBoundaries: React.FC<IWeatherDashboardProps> = (props) => {
   return (
     <ErrorBoundary
-      fallback={({ error, retry }) => (
+      fallback={(props: any) => (
         <div style={{ 
           padding: '40px 20px', 
           textAlign: 'center',
@@ -452,10 +446,10 @@ const WeatherDashboardWithErrorBoundaries: React.FC<IWeatherDashboardProps> = (p
           <h2>🛠️ Component Error</h2>
           <p>The Weather Dashboard encountered an unexpected error and needs to be reloaded.</p>
           <p style={{ fontSize: '14px', color: '#666', marginTop: '12px' }}>
-            <strong>Technical Details:</strong> {error.message}
+            <strong>Technical Details:</strong> {props.error?.message}
           </p>
           <button 
-            onClick={retry}
+            onClick={props.retry || (() => window.location.reload())}
             style={{ 
               marginTop: '16px',
               padding: '12px 24px', 

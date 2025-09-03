@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './SafetyDashboard.module.scss';
 import type { ISafetyDashboardProps } from './ISafetyDashboardProps';
 import { InjuryDataService, IInjuryDataRecord } from '../../../services/InjuryDataService';
@@ -7,12 +7,16 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import { Dropdown, IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { Stack, StackItem } from '@fluentui/react/lib/Stack';
 import { Text } from '@fluentui/react/lib/Text';
+import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
   ArcElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
@@ -28,8 +32,14 @@ import {
   useTelemetry,
   useAsyncOperation,
   useProgressiveLoading,
-  LazyComponent
+  LazyComponent,
+  FilterPanel,
+  StatusBadge,
+  DataGrid,
+  IDataGridColumn
 } from '@grnsw/shared';
+
+type DataGridColumn<T> = IDataGridColumn<T>;
 
 // Register Chart.js components
 ChartJS.register(
@@ -96,9 +106,10 @@ export const SafetyDashboardModern: React.FC<ISafetyDashboardProps> = (props) =>
         loading: false
       }));
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       setState(prev => ({
         ...prev,
-        error: `Failed to load injury data: ${error.message}`,
+        error: `Failed to load injury data: ${errorMessage}`,
         loading: false
       }));
     }
@@ -114,8 +125,8 @@ export const SafetyDashboardModern: React.FC<ISafetyDashboardProps> = (props) =>
     const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
     
     const euthanasias = injuries.filter(i => i.cra5e_euthanasia === true).length;
-    const ninetyDayCount = injuries.filter(i => new Date(i.createdon) >= ninetyDaysAgo).length;
-    const sixtyDayCount = injuries.filter(i => new Date(i.createdon) >= sixtyDaysAgo).length;
+    const ninetyDayCount = injuries.filter(i => i.createdon && new Date(i.createdon) >= ninetyDaysAgo).length;
+    const sixtyDayCount = injuries.filter(i => i.createdon && new Date(i.createdon) >= sixtyDaysAgo).length;
     const uniqueTracks = new Set(injuries.map(i => i.cra5e_track_name)).size;
     
     return {
@@ -132,19 +143,28 @@ export const SafetyDashboardModern: React.FC<ISafetyDashboardProps> = (props) =>
   const columns: DataGridColumn<IInjuryDataRecord>[] = [
     {
       key: 'cra5e_greyhound_name',
-      label: 'Greyhound',
-      sortable: true
+      name: 'Greyhound',
+      fieldName: 'cra5e_greyhound_name',
+      minWidth: 150,
+      maxWidth: 200,
+      isResizable: true
     },
     {
       key: 'cra5e_track_name',
-      label: 'Track',
-      sortable: true
+      name: 'Track',
+      fieldName: 'cra5e_track_name',
+      minWidth: 120,
+      maxWidth: 180,
+      isResizable: true
     },
     {
       key: 'cra5e_injury_category',
-      label: 'Category',
-      sortable: true,
-      render: (item) => (
+      name: 'Category',
+      fieldName: 'cra5e_injury_category',
+      minWidth: 100,
+      maxWidth: 150,
+      isResizable: true,
+      onRender: (item) => (
         <StatusBadge
           status={item.cra5e_injury_category || 'Unknown'}
           variant={getSeverityVariant(item.cra5e_injury_category)}
@@ -154,9 +174,12 @@ export const SafetyDashboardModern: React.FC<ISafetyDashboardProps> = (props) =>
     },
     {
       key: 'cra5e_euthanasia',
-      label: 'Status',
-      sortable: true,
-      render: (item) => (
+      name: 'Status',
+      fieldName: 'cra5e_euthanasia',
+      minWidth: 100,
+      maxWidth: 130,
+      isResizable: true,
+      onRender: (item) => (
         <StatusBadge
           status={item.cra5e_euthanasia ? 'Euthanised' : 'Treated'}
           variant={item.cra5e_euthanasia ? 'error' : 'success'}
@@ -167,9 +190,12 @@ export const SafetyDashboardModern: React.FC<ISafetyDashboardProps> = (props) =>
     },
     {
       key: 'createdon',
-      label: 'Date',
-      sortable: true,
-      render: (item) => new Date(item.createdon).toLocaleDateString()
+      name: 'Date',
+      fieldName: 'createdon',
+      minWidth: 90,
+      maxWidth: 120,
+      isResizable: true,
+      onRender: (item) => new Date(item.createdon || '').toLocaleDateString()
     }
   ];
 
@@ -206,7 +232,7 @@ export const SafetyDashboardModern: React.FC<ISafetyDashboardProps> = (props) =>
           ninetyDayInjuries, sixtyDayInjuries, activeTracks, injuries } = state;
 
   return (
-    <section className={`${styles.safetyDashboard} ${hasTeamsContext ? styles.teams : ''} ${isDarkTheme ? styles.dark : ''}`}>
+    <section className={`${styles.safetyDashboard} ${hasTeamsContext ? styles.teams : ''}`}>
       <div className={styles.header}>
         <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
           <div>
@@ -235,13 +261,13 @@ export const SafetyDashboardModern: React.FC<ISafetyDashboardProps> = (props) =>
             <label>View Mode:</label>
             <Stack horizontal tokens={{ childrenGap: 10 }}>
               <button 
-                className={viewMode === 'dashboard' ? styles.activeButton : ''}
+                className={''}
                 onClick={() => setState(prev => ({ ...prev, viewMode: 'dashboard' }))}
               >
                 Dashboard
               </button>
               <button 
-                className={viewMode === 'table' ? styles.activeButton : ''}
+                className={''}
                 onClick={() => setState(prev => ({ ...prev, viewMode: 'table' }))}
               >
                 Table
@@ -276,15 +302,12 @@ export const SafetyDashboardModern: React.FC<ISafetyDashboardProps> = (props) =>
           {/* Charts would go here - keeping existing chart implementation */}
         </>
       ) : (
-        <DataGrid<IInjuryDataRecord>
-          data={injuries}
+        <DataGrid
+          items={injuries}
           columns={columns}
-          theme="health"
-          pagination
+          compact={false}
           pageSize={20}
-          sortable
-          loading={loading}
-          error={error}
+          isLoading={loading}
         />
       )}
     </section>

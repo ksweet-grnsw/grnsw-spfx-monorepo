@@ -95,7 +95,7 @@ export const LazyComponent: React.FC<ILazyComponentProps> = ({
 
   const renderLoading = () => {
     if (fallback) {
-      return React.isValidElement(fallback) ? fallback : React.createElement(fallback);
+      return React.isValidElement(fallback) ? fallback : React.createElement(fallback as any);
     }
     
     return (
@@ -166,10 +166,10 @@ export const LazyComponent: React.FC<ILazyComponentProps> = ({
   return (
     <div className={className}>
       <ErrorBoundary
-        fallback={({ error, retry }) => (
+        fallback={(props: any) => (
           <div style={{ padding: '20px', textAlign: 'center' }}>
-            <p>Component crashed: {error.message}</p>
-            <button onClick={retry}>Reload Component</button>
+            <p>Component crashed: {props.error?.message}</p>
+            <button onClick={props.retry || handleRetry}>Reload Component</button>
           </div>
         )}
       >
@@ -201,8 +201,11 @@ export const useLazyComponent = <TProps extends Record<string, any>>(
 
   const loadComponent = React.useCallback(async () => {
     if (cacheKey && componentCache.has(cacheKey)) {
-      setComponent(componentCache.get(cacheKey));
-      return;
+      const cachedComponent = componentCache.get(cacheKey);
+      if (cachedComponent) {
+        setComponent(cachedComponent);
+        return;
+      }
     }
 
     setLoading(true);
@@ -245,7 +248,7 @@ export const useLazyComponent = <TProps extends Record<string, any>>(
  * @example
  * ```typescript
  * const LazyChartComponent = createLazyComponent(
- *   () => import('./charts/ChartComponent'),
+ *   () => 
  *   {
  *     loadingText: 'Loading chart...',
  *     preload: false,
@@ -368,36 +371,5 @@ export const PreloadUtils = {
 /**
  * Common lazy-loaded component patterns
  */
-export const LazyPatterns = {
-  /**
-   * Lazy chart component with chart.js
-   */
-  LazyChart: createLazyComponent(
-    () => import(/* webpackChunkName: "chart-components" */ './charts/ChartComponent'),
-    { loadingText: 'Loading chart...', preload: false }
-  ),
-
-  /**
-   * Lazy data table with large datasets
-   */
-  LazyDataTable: createLazyComponent(
-    () => import(/* webpackChunkName: "table-components" */ './tables/DataTable'),
-    { loadingText: 'Loading data table...', preload: false }
-  ),
-
-  /**
-   * Lazy advanced analytics components
-   */
-  LazyAnalytics: createLazyComponent(
-    () => import(/* webpackChunkName: "analytics-components" */ './analytics/AnalyticsComponent'),
-    { loadingText: 'Loading analytics...', preload: false, retryAttempts: 2 }
-  ),
-
-  /**
-   * Lazy export/reporting components
-   */
-  LazyReporting: createLazyComponent(
-    () => import(/* webpackChunkName: "reporting-components" */ './reporting/ReportingComponent'),
-    { loadingText: 'Loading reporting tools...', preload: false }
-  )
-};
+// LazyPatterns removed - components don't exist yet
+// These can be implemented in individual packages as needed

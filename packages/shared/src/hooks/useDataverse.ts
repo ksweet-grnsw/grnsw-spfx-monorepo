@@ -381,7 +381,7 @@ export function useDataverse<T>(
     if (autoFetch) {
       debouncedFetch();
     }
-  }, [...dependencies, autoFetch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [debouncedFetch, autoFetch, ...dependencies]);
 
   // Set up polling
   useEffect(() => {

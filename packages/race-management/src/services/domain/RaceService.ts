@@ -2,8 +2,8 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { 
   UnifiedBaseDataverseService,
   DATAVERSE_ENVIRONMENTS,
-  IODataQuery,
-  IDataverseResponse
+  IUnifiedODataQuery as IODataQuery,
+  IUnifiedDataverseResponse as IDataverseResponse
 } from '@grnsw/shared';
 import { IRace, IRaceFilters } from '../../models/IRaceData';
 

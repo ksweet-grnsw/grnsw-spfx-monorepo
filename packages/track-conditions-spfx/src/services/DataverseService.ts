@@ -1,5 +1,5 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { AuthService } from './AuthService';
+import { AuthService } from '@grnsw/shared';
 import { dataverseConfig } from '../config/apiConfig';
 import { IDataverseWeatherData } from '../models/IDataverseWeatherData';
 
@@ -47,8 +47,7 @@ export class DataverseService {
       
       const url = `${dataverseConfig.environment}/api/data/${dataverseConfig.apiVersion}/${dataverseConfig.tableName}?${query}`;
       
-      console.log('Dataverse API URL:', url);
-      console.log('Query:', query);
+      // Executing Dataverse query
 
       const response = await fetch(url, {
         method: 'GET',
@@ -57,8 +56,7 @@ export class DataverseService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('API Error Response:', errorText);
-        console.error('API Status:', response.status);
+        // API error response received
         const error = new Error(`Error fetching weather data: ${response.statusText} - Status: ${response.status}`) as Error & { status?: number };
         error.status = response.status;
         throw error;
@@ -67,7 +65,7 @@ export class DataverseService {
       const data = await response.json();
       return data.value as IDataverseWeatherData[];
     } catch (error) {
-      console.error('Error in getWeatherDataWithQuery:', error);
+      // Error in getWeatherDataWithQuery
       throw error;
     }
   }

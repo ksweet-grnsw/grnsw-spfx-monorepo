@@ -64,8 +64,9 @@ export class UnifiedAuthService {
       
       return token;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(`Failed to get token for ${this.environment.name}:`, error);
-      throw new Error(`Authentication failed for ${this.environment.displayName}: ${error.message}`);
+      throw new Error(`Authentication failed for ${this.environment.displayName}: ${errorMessage}`);
     }
   }
 
@@ -141,7 +142,7 @@ export class UnifiedAuthService {
         return JSON.parse(responseText);
         
       } catch (error) {
-        lastError = error;
+        lastError = error instanceof Error ? error : new Error(String(error));
         
         if (attempt < maxRetries) {
           await this.delay(this.environment.retryDelay || 1000);

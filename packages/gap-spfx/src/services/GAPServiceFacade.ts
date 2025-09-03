@@ -324,7 +324,7 @@ export class GAPServiceFacade {
       const filters: any = {};
       
       // Apply preference-based filters
-      if (hasChildren) {
+      if (preferences.hasChildren) {
         filters.goodWithKids = true;
       }
       

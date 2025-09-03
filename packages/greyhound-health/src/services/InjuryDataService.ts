@@ -5,7 +5,9 @@ export interface IInjuryDataRecord {
   cra5e_greyhoundname?: string;
   cra5e_racedate?: string;
   cra5e_trackname?: string;
+  cra5e_track_name?: string;       // alternative field name
   cra5e_injurycategory?: string;  // was injurytype
+  cra5e_injury_category?: string;  // alternative field name
   cra5e_runstage?: string;         // was injurylocation
   cra5e_determinedserious?: boolean; // was fatality (fixed typo)
   cra5e_standdowndays?: number;     // was severity
@@ -13,6 +15,8 @@ export interface IInjuryDataRecord {
   cra5e_racenumber?: number;       // race number
   cra5e_injurystate?: string;      // new field
   cra5e_placement?: string;        // new field
+  cra5e_euthanasia?: boolean;      // whether euthanasia was required
+  createdon?: string;              // created date
 }
 
 export class InjuryDataService {
@@ -39,7 +43,7 @@ export class InjuryDataService {
   }
 
   public async getInjuryData(filter?: string): Promise<IInjuryDataRecord[]> {
-    console.log('getInjuryData called with filter:', filter);
+    // Getting injury data with filter
     try {
       const headers = await this.getHeaders();
       let url = `${this.environment}/api/data/${this.apiVersion}/${this.tableName}`;
@@ -60,24 +64,14 @@ export class InjuryDataService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('API Error Response:', {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText,
-          url: url
-        });
+        // API error response received
         throw new Error(`Failed to fetch data: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const data = await response.json();
       return data.value || [];
     } catch (error: any) {
-      console.error('Error fetching injury data:', {
-        message: error.message,
-        stack: error.stack,
-        environment: this.environment,
-        tableName: this.tableName
-      });
+      // Error fetching injury data
       throw error;
     }
   }

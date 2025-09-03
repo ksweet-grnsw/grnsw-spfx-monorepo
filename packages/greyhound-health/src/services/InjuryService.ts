@@ -1,12 +1,15 @@
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { BaseDataverseService } from './BaseDataverseService';
+import { BaseDataverseService } from '@grnsw/shared';
 import { IInjury, InjurySeverity } from '../models/IGreyhoundHealth';
 
 export class InjuryService extends BaseDataverseService<IInjury> {
   protected tableName = 'cr4cc_injuries'; // Update this to your actual table name
 
   constructor(context: WebPartContext) {
-    super(context);
+    super(context, {
+      environment: 'https://orgfc8a11f1.crm6.dynamics.com',
+      apiVersion: 'v9.1'
+    });
   }
 
   public async getActiveInjuries(): Promise<IInjury[]> {

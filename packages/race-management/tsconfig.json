@@ -11,7 +11,8 @@
     "skipLibCheck": true,
     "outDir": "lib",
     "inlineSources": false,
-    "noImplicitAny": false,
+    "strict": true,
+    "noImplicitAny": true,
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@microsoft",
@@ -28,8 +29,10 @@
       "es2015.collection",
       "es2015.promise",
       "es2017.object",
+      "es2017.string",
       "es2016.array.include",
-      "es2018.promise"
+      "es2018.promise",
+      "es2019.array"
     ]
   },
   "include": [

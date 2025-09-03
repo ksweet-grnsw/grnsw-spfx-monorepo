@@ -326,7 +326,7 @@ export class RaceManagementFacade {
    */
   async searchAll(searchText: string): Promise<ISearchResults> {
     if (!searchText || searchText.length < 2) {
-      return { meetings: [], races: [], contestants: [] };
+      return { meetings: [], races: [], contestants: [], totalResults: 0 };
     }
     
     try {
@@ -352,12 +352,13 @@ export class RaceManagementFacade {
       return {
         meetings: meetings.slice(0, 10),
         races: races.slice(0, 10),
-        contestants: contestants.slice(0, 10)
+        contestants: contestants.slice(0, 10),
+        totalResults: meetings.length + races.length + contestants.length
       };
       
     } catch (error) {
       this.logger.error('Search failed', { searchText, error });
-      return { meetings: [], races: [], contestants: [] };
+      return { meetings: [], races: [], contestants: [], totalResults: 0 };
     }
   }
   

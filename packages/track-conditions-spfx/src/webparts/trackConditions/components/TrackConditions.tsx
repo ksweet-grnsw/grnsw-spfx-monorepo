@@ -7,7 +7,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import { degreesToCardinal } from '../../../utils/windUtils';
 
 export interface ITrackConditionsState {
-  weatherData: IDataverseWeatherData | undefined;
+  weatherData: IDataverseWeatherData | null;
   loading: boolean;
   error: string | null;
   selectedPeriod: string;
@@ -36,7 +36,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
     this.state = {
       weatherData: null,
       loading: false,
-      error: undefined,
+      error: null,
       selectedPeriod: '1h',
       historicalData: []
     };
@@ -47,7 +47,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
     await this.loadWeatherData();
     this.refreshInterval = window.setInterval(() => {
       this.loadWeatherData().catch(error => {
-        console.error('Failed to load weather data:', error);
+        // Failed to load weather data
       });
     }, 300000);
   }
@@ -61,7 +61,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
   public componentDidUpdate(prevProps: ITrackConditionsProps): void {
     if (prevProps.selectedTrackId !== this.props.selectedTrackId) {
       this.loadWeatherData().catch(error => {
-        console.error('Failed to load weather data:', error);
+        // Failed to load weather data
       });
     }
   }
@@ -71,7 +71,7 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
       return;
     }
 
-    this.setState({ loading: true, error: undefined });
+    this.setState({ loading: true, error: null });
 
     try {
       // Get the display name for the track
@@ -80,23 +80,22 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
       const filter = `cr4cc_track_name eq '${trackDisplayName}'`;
       const query = `$filter=${filter}&$orderby=createdon desc&$top=1`;
       
-      console.log('Track Conditions - Loading data for:', trackDisplayName);
-      console.log('Track Conditions - Filter:', filter);
+      // Loading data for track with filter
       
       const data = await this.dataverseService.getWeatherDataWithQuery(query);
       const weatherData = data && data.length > 0 ? data[0] : null;
       
       this.setState({ 
-        weatherData,
+        weatherData: weatherData,
         historicalData: [],
         loading: false 
       });
       
       if (!weatherData) {
-        console.log('Track Conditions - No data found for track:', trackDisplayName);
+        // No data found for track
       }
     } catch (error) {
-      console.error('Track Conditions - Error loading weather data:', error);
+      // Error loading weather data
       this.setState({ 
         error: 'Failed to load weather data',
         loading: false 
