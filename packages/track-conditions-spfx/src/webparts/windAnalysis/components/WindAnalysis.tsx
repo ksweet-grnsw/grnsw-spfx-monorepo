@@ -84,6 +84,13 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
     }
   }
 
+  public componentWillUnmount(): void {
+    // Cancel any pending requests and dispose of service
+    if (this.dataverseService) {
+      this.dataverseService.dispose();
+    }
+  }
+
   private async loadWindData(): Promise<void> {
     if (!this.props.selectedTrack) {
       return;
@@ -115,6 +122,10 @@ export default class WindAnalysis extends React.Component<IWindAnalysisProps, IW
       
       Logger.info(`Loaded ${data.length} wind records`, 'WindAnalysis');
     } catch (error) {
+      // Don't show errors for cancelled/aborted requests
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
       const errorObj = ErrorHandler.handleError(error, 'WindAnalysis');
       console.error('Wind data loading error:', error);
       this.setState({ 

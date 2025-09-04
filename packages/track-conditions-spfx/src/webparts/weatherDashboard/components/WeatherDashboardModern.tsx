@@ -9,11 +9,9 @@ import { Icon } from '@fluentui/react/lib/Icon';
 // Import new infrastructure components from @grnsw/shared
 import { 
   ErrorBoundary,
-  LoadingSpinner,
   DashboardSkeleton,
   useTelemetry,
-  useLoadingState,
-  LazyComponent
+  useLoadingState
 } from '@grnsw/shared';
 
 // Placeholder types and components - to be moved to @grnsw/shared in future
@@ -21,7 +19,7 @@ interface DataGridColumn<T> {
   key: keyof T;
   label: string;
   sortable?: boolean;
-  render?: (item: T) => any;
+  render?: (item: T) => React.ReactNode;
 }
 
 interface StatusBadgeProps {
@@ -33,7 +31,7 @@ interface StatusBadgeProps {
 
 interface FilterPanelProps {
   title: string;
-  theme?: any;
+  theme?: unknown;
   collapsible?: boolean;
   defaultExpanded?: boolean;
   children: React.ReactNode;
@@ -42,7 +40,7 @@ interface FilterPanelProps {
 interface DataGridProps<T> {
   data: T[];
   columns: DataGridColumn<T>[];
-  theme?: any;
+  theme?: unknown;
   pagination?: boolean;
   pageSize?: number;
   sortable?: boolean;
@@ -64,7 +62,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ title, children, collapsible,
   </div>
 );
 
-const DataGrid = <T extends any>({ data, columns, loading, error }: DataGridProps<T>) => {
+const DataGrid = <T extends object>({ data, columns, loading, error }: DataGridProps<T>): JSX.Element => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!data.length) return <div>No data available</div>;
@@ -145,20 +143,32 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
       setData(result);
       stopLoading();
       return result;
-    } catch (error: any) {
-      trackError(error, 'weather_service', 'load_weather_data');
-      setError(error);
+    } catch (error: unknown) {
+      // Don't show errors for cancelled/aborted requests
+      if (error instanceof Error && error.name === 'AbortError') {
+        return [];
+      }
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      trackError(error instanceof Error ? error : new Error(errorMessage), 'weather_service', 'load_weather_data');
+      setError(errorMessage);
       stopLoading();
       throw error;
     }
   }, [dataverseService, trackAction, trackPerformance, trackError, trackMetric, startLoading, stopLoading, setError]);
 
-  // Load data on component mount
+  // Load data on component mount and cleanup on unmount
   useEffect(() => {
-    loadWeatherData();
+    void loadWeatherData();
+    
+    // Cleanup function to dispose of DataverseService
+    return () => {
+      if (dataverseService) {
+        dataverseService.dispose();
+      }
+    };
   }, [loadWeatherData]);
 
-  const handleViewModeChange = (mode: 'grid' | 'table') => {
+  const handleViewModeChange = (mode: 'grid' | 'table'): void => {
     trackAction('click', 'view_mode_change', { mode });
     setViewMode(mode);
   };
@@ -259,7 +269,7 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
   }, [trackAction]);
 
   const handleRefresh = useCallback(() => {
-    loadWeatherData();
+    void loadWeatherData();
   }, [loadWeatherData]);
 
   return (
@@ -334,7 +344,7 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
           <button 
             onClick={() => {
               trackAction('click', 'retry_after_error');
-              loadWeatherData();
+              void loadWeatherData();
             }}
             style={{ 
               marginTop: '12px',
@@ -370,8 +380,8 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
           {viewMode === 'table' ? (
             <DataGrid<IDataverseWeatherData>
               data={data}
-              columns={columns as any}
-              theme={"light" as any}
+              columns={columns as DataGridColumn<IDataverseWeatherData>[]}
+              theme={"light" as unknown}
               pagination
               pageSize={10}
               sortable
@@ -432,10 +442,10 @@ const WeatherDashboard: React.FC<IWeatherDashboardProps> = ({
  * Weather Dashboard with comprehensive error boundaries
  * Wraps the main component with error handling for production resilience
  */
-const WeatherDashboardWithErrorBoundaries: React.FC<IWeatherDashboardProps> = (props) => {
+const WeatherDashboardWithErrorBoundaries: React.FC<IWeatherDashboardProps> = (props): JSX.Element => {
   return (
     <ErrorBoundary
-      fallback={(props: any) => (
+      fallback={(props: {error?: Error; reset?: () => void; retry?: () => void}) => (
         <div style={{ 
           padding: '40px 20px', 
           textAlign: 'center',

@@ -39,13 +39,37 @@ export function useTableColumns() {
       label: 'Authority',
       sortable: true,
       width: '100px',
-      render: (value: string) => (
-        React.createElement(StatusBadge, {
-          status: value,
-          variant: 'info',
-          size: 'small'
-        })
-      )
+      render: (value: string) => {
+        // Determine color based on authority
+        const getAuthorityColor = (authority: string): string => {
+          switch (authority?.toUpperCase()) {
+            case 'NSW': return '#00426d';  // Navy blue
+            case 'VIC': return '#1e88e5';  // Victoria blue
+            case 'QLD': return '#8b0000';  // Maroon
+            case 'SA':  return '#dc3545';  // South Australia red
+            case 'WA':  return '#ffc107';  // Western Australia gold
+            case 'TAS': return '#28a745';  // Tasmania green
+            case 'ACT': return '#6f42c1';  // ACT purple
+            case 'NT':  return '#fd7e14';  // Northern Territory orange
+            default:    return '#6c757d';  // Gray for unknown
+          }
+        };
+        
+        return React.createElement('span', {
+          style: {
+            display: 'inline-block',
+            padding: '2px 8px',
+            borderRadius: '12px',
+            backgroundColor: getAuthorityColor(value),
+            color: value?.toUpperCase() === 'WA' ? '#000' : '#fff',  // Black text for yellow background
+            fontSize: '12px',
+            fontWeight: 600,
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
+            whiteSpace: 'nowrap'
+          }
+        }, value);
+      }
     },
     {
       key: 'cr4cc_timeslot',

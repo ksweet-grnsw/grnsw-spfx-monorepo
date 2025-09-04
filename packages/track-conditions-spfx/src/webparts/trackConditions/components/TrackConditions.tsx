@@ -56,6 +56,11 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
     if (this.refreshInterval) {
       window.clearInterval(this.refreshInterval);
     }
+    
+    // Cancel any pending requests and dispose of service
+    if (this.dataverseService) {
+      this.dataverseService.dispose();
+    }
   }
 
   public componentDidUpdate(prevProps: ITrackConditionsProps): void {
@@ -95,6 +100,10 @@ export default class TrackConditions extends React.Component<ITrackConditionsPro
         // No data found for track
       }
     } catch (error) {
+      // Don't show errors for cancelled/aborted requests
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
       // Error loading weather data
       this.setState({ 
         error: 'Failed to load weather data',

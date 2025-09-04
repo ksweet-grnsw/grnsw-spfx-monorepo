@@ -14,7 +14,17 @@ import Rainfall from './components/Rainfall';
 import { IRainfallProps } from './components/IRainfallProps';
 import { trackOptions } from '../shared/trackOptions';
 
-const packageSolution = require('../../../config/package-solution.json');
+interface IPackageSolution {
+  solution: {
+    version: string;
+    name: string;
+    id: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+const packageSolution: IPackageSolution = require('../../../config/package-solution.json');
 
 export interface IRainfallWebPartProps {
   selectedTrack: string;

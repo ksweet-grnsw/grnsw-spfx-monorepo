@@ -14,7 +14,17 @@ import WindAnalysis from './components/WindAnalysis';
 import { IWindAnalysisProps } from './components/IWindAnalysisProps';
 import { trackOptions } from '../shared/trackOptions';
 
-const packageSolution: any = require('../../../config/package-solution.json');
+interface IPackageSolution {
+  solution: {
+    version: string;
+    name: string;
+    id: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+const packageSolution: IPackageSolution = require('../../../config/package-solution.json');
 
 export interface IWindAnalysisWebPartProps {
   selectedTrack: string;

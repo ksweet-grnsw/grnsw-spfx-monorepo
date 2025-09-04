@@ -182,9 +182,9 @@ export class GAPServiceFacade {
         filtered = hounds.filter(h => 
           h.cr0d3_name?.toLowerCase().includes(searchLower) ||
           h.cr0d3_racingname?.toLowerCase().includes(searchLower) ||
-          h.cr0d3_microchipnumber?.includes(filters.searchText) ||
-          h.cr0d3_earbrandleft?.includes(filters.searchText) ||
-          h.cr0d3_earbrandright?.includes(filters.searchText)
+          h.cr0d3_microchipnumber?.includes(filters.searchText || '') ||
+          h.cr0d3_earbrandleft?.includes(filters.searchText || '') ||
+          h.cr0d3_earbrandright?.includes(filters.searchText || '')
         );
       }
       

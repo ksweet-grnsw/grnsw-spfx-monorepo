@@ -90,6 +90,13 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
     }
   }
 
+  public componentWillUnmount(): void {
+    // Cancel any pending requests and dispose of service
+    if (this.dataverseService) {
+      this.dataverseService.dispose();
+    }
+  }
+
   private async loadTemperatureData(): Promise<void> {
     if (!this.props.selectedTrack) {
       return;
@@ -121,6 +128,10 @@ export default class Temperature extends React.Component<ITemperatureProps, ITem
       
       Logger.info(`Loaded ${data.length} temperature records`, 'Temperature');
     } catch (error) {
+      // Don't show errors for cancelled/aborted requests
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
       const errorObj = ErrorHandler.handleError(error, 'Temperature');
       console.error('Temperature data loading error:', error);
       this.setState({ 

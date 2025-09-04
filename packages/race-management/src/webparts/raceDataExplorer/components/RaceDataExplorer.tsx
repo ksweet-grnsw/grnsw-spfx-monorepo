@@ -45,6 +45,9 @@ import { AnalyticsModal } from './Modals/AnalyticsModal';
 // Import date range filter component
 import { DateRangeFilter } from '../../../components/DateRangeFilter';
 
+// Import diagnostic tool (available in browser console as dataverseDiag)
+import '../../../utils/dataverseDiagnostic';
+
 // Import SVG icons for actions
 const detailsIcon = require('../../../assets/icons/details.svg');
 const downArrowIcon = require('../../../assets/icons/down-arrow.svg');
@@ -113,77 +116,25 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
           showInjuryFilter: filters.showInjuryFilter
         });
         
-        let meetings: IMeeting[] = [];
+        // ALWAYS fetch ALL meetings regardless of injury filter state
+        // The injury filter should only affect display, not data fetching
+        let meetings = await dataService.getMeetings({
+          dateFrom: filters.dateFrom,
+          dateTo: filters.dateTo,
+          authority: filters.selectedAuthority,
+          track: filters.selectedTrack
+        });
         
-        if (filters.showInjuryFilter) {
-          // Get meetings with injuries using the cross-reference method
-          console.log('Fetching meetings with injuries (throttled)...');
-          try {
-            meetings = await dataService.getMeetingsWithInjuries(filters.selectedInjuryCategories || ['Cat D', 'Cat E']);
-            console.log(`Successfully fetched ${meetings.length} meetings with injuries`);
-          } catch (error) {
-            console.error('Failed to fetch meetings with injuries:', error);
-            // Fallback to regular meetings if injury fetch fails
-            console.log('Falling back to regular meetings');
-            meetings = await dataService.getMeetings({
-              dateFrom: filters.dateFrom,
-              dateTo: filters.dateTo,
-              authority: filters.selectedAuthority,
-              track: filters.selectedTrack
-            });
-          }
-          
-          // Apply date, authority, track and day of week filters to injury results
-          if (filters.dateFrom || filters.dateTo || filters.selectedAuthority || filters.selectedTrack || filters.selectedDayOfWeek !== undefined) {
-            meetings = meetings.filter(meeting => {
-              // Date from filter
-              if (filters.dateFrom) {
-                const meetingDate = new Date(meeting.cr4cc_meetingdate);
-                if (meetingDate < filters.dateFrom) return false;
-              }
-              
-              // Date to filter
-              if (filters.dateTo) {
-                const meetingDate = new Date(meeting.cr4cc_meetingdate);
-                if (meetingDate > filters.dateTo) return false;
-              }
-              
-              // Authority filter
-              if (filters.selectedAuthority && filters.selectedAuthority !== '') {
-                if (meeting.cr4cc_authority !== filters.selectedAuthority) return false;
-              }
-              
-              // Track filter
-              if (filters.selectedTrack && filters.selectedTrack !== '') {
-                if (meeting.cr4cc_trackname !== filters.selectedTrack) return false;
-              }
-              
-              // Day of week filter
-              if (filters.selectedDayOfWeek !== undefined) {
-                const meetingDate = new Date(meeting.cr4cc_meetingdate);
-                if (meetingDate.getDay() !== filters.selectedDayOfWeek) return false;
-              }
-              
-              return true;
-            });
-          }
-        } else {
-          // Get regular meetings with standard filters
-          meetings = await dataService.getMeetings({
-            dateFrom: filters.dateFrom,
-            dateTo: filters.dateTo,
-            authority: filters.selectedAuthority,
-            track: filters.selectedTrack
+        // Apply day of week filter if set
+        if (filters.selectedDayOfWeek !== undefined) {
+          meetings = meetings.filter(meeting => {
+            const meetingDate = new Date(meeting.cr4cc_meetingdate);
+            return meetingDate.getDay() === filters.selectedDayOfWeek;
           });
-          
-          // Apply day of week filter if set
-          if (filters.selectedDayOfWeek !== undefined) {
-            meetings = meetings.filter(meeting => {
-              const meetingDate = new Date(meeting.cr4cc_meetingdate);
-              return meetingDate.getDay() === filters.selectedDayOfWeek;
-            });
-          }
         }
+        
+        // Note: When injury filter is active, we'll fetch injury data separately
+        // and filter the display, not the fetched data. This prevents flashing.
         
         console.log('Meetings fetched successfully:', meetings.length, 'meetings');
         return meetings;
@@ -192,11 +143,18 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         throw error;
       }
     },
-    [filters.dateFrom, filters.dateTo, filters.selectedAuthority, filters.selectedTrack, filters.selectedDayOfWeek, filters.showInjuryFilter, filters.selectedInjuryCategories],
+    [filters.dateFrom?.getTime(), filters.dateTo?.getTime(), filters.selectedAuthority, filters.selectedTrack, filters.selectedDayOfWeek],
     { 
       autoFetch: viewState.type === 'meetings',
+      retryCount: 2, // Limit retries to prevent infinite loops
+      retryDelay: 2000, // Start with 2 second delay
+      useExponentialBackoff: true, // Use exponential backoff
+      maxRetryDelay: 10000, // Max 10 second delay
       onError: (error) => {
-        console.error('Meeting fetch error in component:', error);
+        // Only log errors that are not cancellations
+        if (!error.message.includes('cancelled') && !error.message.includes('aborted')) {
+          console.error('Meeting fetch error in component:', error);
+        }
       }
     }
   );
@@ -216,29 +174,41 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         if (ENABLE_INJURY_FEATURE && filters.showInjuryFilter && races && races.length > 0) {
           console.log('Checking for injuries in each race...');
           
-          for (const race of races) {
-            try {
-              // Get injuries for this specific race
-              const raceInjuries = await dataService.getInjuriesForRace(
-                viewState.meeting.cr4cc_trackname || '',
-                viewState.meeting.cr4cc_meetingdate,
-                race.cr616_racenumber
-              );
-              
-              // Calculate summary from health checks
-              const injuryCount = raceInjuries.length;
-              
-              // Store the injury count for this race
-              injuryTracking.updateRaceInjuryCount(race.cr616_racesid, injuryCount);
-              
-              if (injuryCount > 0) {
-                console.log(`Found ${injuryCount} injuries in Race ${race.cr616_racenumber}`);
+          // Process races in smaller batches to prevent overwhelming the API
+          const BATCH_SIZE = 3; // Process 3 races at a time
+          for (let i = 0; i < races.length; i += BATCH_SIZE) {
+            const raceBatch = races.slice(i, i + BATCH_SIZE);
+            
+            // Process this batch with controlled concurrency
+            const racePromises = raceBatch.map(async (race) => {
+              try {
+                // Get injuries for this specific race
+                const raceInjuries = await dataService.getInjuriesForRace(
+                  viewState.meeting?.cr4cc_trackname || '',
+                  viewState.meeting?.cr4cc_meetingdate || new Date(),
+                  race.cr616_racenumber
+                );
+                
+                // Calculate summary from health checks
+                const injuryCount = raceInjuries.length;
+                
+                // Store the injury count for this race
+                injuryTracking.updateRaceInjuryCount(race.cr616_racesid, injuryCount);
+                
+                if (injuryCount > 0) {
+                  console.log(`Found ${injuryCount} injuries in Race ${race.cr616_racenumber}`);
+                }
+              } catch (error) {
+                console.warn(`Could not check injuries for Race ${race.cr616_racenumber}:`, error);
               }
-              
-              // Small delay to be respectful to the API
-              await new Promise(resolve => setTimeout(resolve, 200));
-            } catch (error) {
-              console.warn(`Could not check injuries for Race ${race.cr616_racenumber}:`, error);
+            });
+            
+            // Wait for all promises to complete (ignore individual failures)
+            await Promise.all(racePromises.map(p => p.catch(() => {})));
+            
+            // Longer delay between batches to prevent resource exhaustion
+            if (i + BATCH_SIZE < races.length) {
+              await new Promise(resolve => setTimeout(resolve, 1000));
             }
           }
         }
@@ -249,11 +219,18 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         throw error;
       }
     },
-    [viewState.meeting, filters.showInjuryFilter],
+    [viewState.meeting],
     { 
       autoFetch: viewState.type === 'races' && !!viewState.meeting,
+      retryCount: 2,
+      retryDelay: 2000,
+      useExponentialBackoff: true,
+      maxRetryDelay: 10000,
       onError: (error) => {
-        console.error('Race fetch error in component:', error);
+        // Only log errors that are not cancellations
+        if (!error.message.includes('cancelled') && !error.message.includes('aborted')) {
+          console.error('Race fetch error in component:', error);
+        }
       }
     }
   );
@@ -300,37 +277,48 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
             });
             console.log('Final injured greyhound IDs set:', Array.from(injuredGreyhoundIds));
             
-            // Check each contestant for injuries using greyhound lookup
-            for (const contestant of contestants) {
-              let hasInjury = false;
+            // Check each contestant for injuries using greyhound lookup with throttling
+            const CONTESTANT_BATCH_SIZE = 2; // Process 2 contestants at a time
+            for (let i = 0; i < contestants.length; i += CONTESTANT_BATCH_SIZE) {
+              const contestantBatch = contestants.slice(i, i + CONTESTANT_BATCH_SIZE);
               
-              if (contestant.cr616_greyhoundname && contestant.cr616_leftearbrand) {
-                try {
-                  // Find the greyhound in the injury system
-                  const greyhound = await dataService.getGreyhoundByName(
-                    contestant.cr616_greyhoundname, 
-                    contestant.cr616_leftearbrand
-                  );
-                  
-                  console.log(`Greyhound lookup result for ${contestant.cr616_greyhoundname}:`, greyhound ? greyhound.cra5e_greyhoundid : 'NOT FOUND');
-                  
-                  if (greyhound && injuredGreyhoundIds.has(greyhound.cra5e_greyhoundid)) {
-                    hasInjury = true;
-                    console.log(`✅ INJURY FOUND for ${contestant.cr616_greyhoundname} (ID: ${greyhound.cra5e_greyhoundid})`);
-                  } else if (greyhound) {
-                    console.log(`❌ No injury for ${contestant.cr616_greyhoundname} (ID: ${greyhound.cra5e_greyhoundid})`);
+              // Process this batch with controlled concurrency
+              const contestantPromises = contestantBatch.map(async (contestant) => {
+                let hasInjury = false;
+                
+                if (contestant.cr616_greyhoundname && contestant.cr616_leftearbrand) {
+                  try {
+                    // Find the greyhound in the injury system
+                    const greyhound = await dataService.getGreyhoundByName(
+                      contestant.cr616_greyhoundname, 
+                      contestant.cr616_leftearbrand
+                    );
+                    
+                    console.log(`Greyhound lookup result for ${contestant.cr616_greyhoundname}:`, greyhound ? greyhound.cra5e_greyhoundid : 'NOT FOUND');
+                    
+                    if (greyhound && injuredGreyhoundIds.has(greyhound.cra5e_greyhoundid)) {
+                      hasInjury = true;
+                      console.log(`✅ INJURY FOUND for ${contestant.cr616_greyhoundname} (ID: ${greyhound.cra5e_greyhoundid})`);
+                    } else if (greyhound) {
+                      console.log(`❌ No injury for ${contestant.cr616_greyhoundname} (ID: ${greyhound.cra5e_greyhoundid})`);
+                    }
+                  } catch (error) {
+                    console.warn(`Could not check injury for ${contestant.cr616_greyhoundname}:`, error);
                   }
-                } catch (error) {
-                  console.warn(`Could not check injury for ${contestant.cr616_greyhoundname}:`, error);
                 }
+                
+                // Store the injury result using a consistent key (greyhound name + ear brand)
+                const greyhoundKey = `${contestant.cr616_greyhoundname}_${contestant.cr616_leftearbrand}`;
+                injuryTracking.markGreyhoundInjury(greyhoundKey, hasInjury);
+              });
+              
+              // Wait for all contestant promises to complete (ignore individual failures)
+              await Promise.all(contestantPromises.map(p => p.catch(() => {})));
+              
+              // Longer delay between batches for contestant processing
+              if (i + CONTESTANT_BATCH_SIZE < contestants.length) {
+                await new Promise(resolve => setTimeout(resolve, 1500));
               }
-              
-              // Store the injury result using a consistent key (greyhound name + ear brand)
-              const greyhoundKey = `${contestant.cr616_greyhoundname}_${contestant.cr616_leftearbrand}`;
-              injuryTracking.markGreyhoundInjury(greyhoundKey, hasInjury);
-              
-              // Small delay to be respectful to the API
-              await new Promise(resolve => setTimeout(resolve, 100));
             }
             
           } catch (error) {
@@ -348,8 +336,15 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
     [viewState.race, filters.showInjuryFilter],
     { 
       autoFetch: viewState.type === 'contestants' && !!viewState.race,
+      retryCount: 2,
+      retryDelay: 2000,
+      useExponentialBackoff: true,
+      maxRetryDelay: 10000,
       onError: (error) => {
-        console.error('Contestant fetch error in component:', error);
+        // Only log errors that are not cancellations
+        if (!error.message.includes('cancelled') && !error.message.includes('aborted')) {
+          console.error('Contestant fetch error in component:', error);
+        }
       }
     }
   );
@@ -368,7 +363,13 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
       return await dataService.searchAll(filters.searchTerm);
     },
     [filters.searchTerm],
-    { autoFetch: viewState.type === 'search' }
+    { 
+      autoFetch: viewState.type === 'search',
+      retryCount: 2,
+      retryDelay: 2000,
+      useExponentialBackoff: true,
+      maxRetryDelay: 10000
+    }
   );
 
   // Optimistic Update hooks for data modifications
@@ -552,7 +553,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         if (ENABLE_INJURY_FEATURE && filters.showInjuryFilter && baseData) {
           baseData = baseData.map((race: IRace) => ({
             ...race,
-            hasInjuries: injuryTracking.raceInjurySummaries.get(race.cr616_racesid) > 0
+            hasInjuries: (injuryTracking.raceInjurySummaries.get(race.cr616_racesid) || 0) > 0
           }));
         }
         break;
@@ -633,10 +634,36 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
     }
 
     if (!data || (Array.isArray(data) && data.length === 0)) {
+      // Create a more informative message based on current filters
+      let emptyMessage = 'No data found';
+      
+      if (viewState.type === 'meetings') {
+        // Check if we're filtering by today
+        const isToday = filters.dateFrom && filters.dateTo && 
+          filters.dateFrom.toDateString() === filters.dateTo.toDateString() &&
+          filters.dateFrom.toDateString() === new Date().toDateString();
+        
+        if (isToday) {
+          emptyMessage = `No races in the database for today (${new Date().toLocaleDateString()})`;
+          if (filters.selectedAuthority) {
+            emptyMessage = `No ${filters.selectedAuthority} races in the database for today`;
+          }
+        } else if (filters.dateFrom && filters.dateTo) {
+          const fromStr = filters.dateFrom.toLocaleDateString();
+          const toStr = filters.dateTo.toLocaleDateString();
+          emptyMessage = fromStr === toStr 
+            ? `No races found for ${fromStr}`
+            : `No races found between ${fromStr} and ${toStr}`;
+        }
+      }
+      
       return (
         <div className={styles.emptyState}>
           <span className={styles.emptyIcon}>📭</span>
-          <p>No data found</p>
+          <p>{emptyMessage}</p>
+          {viewState.type === 'meetings' && (
+            <p className={styles.emptyHint}>Try adjusting the date range or filters above</p>
+          )}
         </div>
       );
     }
@@ -671,8 +698,35 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         return renderSearchResults(data as ISearchResults);
     }
 
-    // Use VirtualDataGrid for large datasets
-    const TableComponent = tableData.length > 500 ? VirtualDataGrid : DataGrid;
+    // Apply injury filter to display (only filter what we show, not what we fetch)
+    if (ENABLE_INJURY_FEATURE && filters.showInjuryFilter && tableData.length > 0) {
+      switch (viewState.type) {
+        case 'meetings':
+          // Filter meetings to show only those with injuries
+          tableData = tableData.filter((item: any) => {
+            const hasInjuries = injuryTracking.raceInjurySummaries.has(item.cr4cc_racemeetingid);
+            return hasInjuries;
+          });
+          break;
+        case 'races':
+          // Filter races to show only those with injuries
+          tableData = tableData.filter((item: any) => {
+            const injuryCount = injuryTracking.raceInjurySummaries.get(item.cr616_racesid) || 0;
+            return injuryCount > 0;
+          });
+          break;
+        case 'contestants':
+          // Filter contestants to show only those with injuries
+          tableData = tableData.filter((item: any) => {
+            return item.hasInjuries === true;
+          });
+          break;
+      }
+    }
+
+    // Disable virtual scrolling for now due to performance issues - use regular DataGrid
+    // const TableComponent = tableData.length > 2000 ? VirtualDataGrid : DataGrid;
+    const TableComponent = DataGrid;
     
     return (
       <>
@@ -739,7 +793,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
   };
 
   return (
-    <div className={`${styles.raceDataExplorer} ${styles[`theme-${theme}`]}`}>
+    <div className={`${styles.raceDataExplorer} ${(styles as any)[`theme-${theme}`] || ''}`}>
       {/* Header */}
       <div className={styles.titleHeader}>
         <h1 className={styles.title}>
@@ -1084,7 +1138,7 @@ const RaceDataExplorer: React.FC<IRaceDataExplorerProps> = (props) => {
         <AnalyticsModal
           isOpen={true}
           onClose={() => modalManager.closeModal()}
-          meetings={meetingsData.data}
+          meetings={meetingsData.data || []}
         />
       )}
     </div>

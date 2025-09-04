@@ -120,7 +120,7 @@ export const MeetingDetailsModal: React.FC<MeetingDetailsModalProps> = ({
             <div className={styles.detailRow}>
               <span className={styles.label}>Last Modified:</span>
               <span className={styles.value}>
-                {new Date(meeting.modifiedon).toLocaleString('en-AU')}
+                {meeting.modifiedon ? new Date(meeting.modifiedon).toLocaleString('en-AU') : 'N/A'}
               </span>
             </div>
           </div>

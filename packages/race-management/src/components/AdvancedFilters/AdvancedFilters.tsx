@@ -289,7 +289,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   const hasActiveFilters = filterChips.length > 0;
 
   return (
-    <div className={`${styles.advancedFilters} ${styles[`theme-${theme}`]}`}>
+    <div className={`${styles.advancedFilters} ${(styles as any)[`theme-${theme}`] || ''}`}>
       {/* Filter Header */}
       <div className={styles.filterHeader}>
         <button 

@@ -93,6 +93,11 @@ export default class HistoricalPatternAnalyzer extends React.Component<
     if (this.refreshTimer) {
       clearInterval(this.refreshTimer);
     }
+    
+    // Cancel any pending requests and dispose of service
+    if (this.dataverseService) {
+      this.dataverseService.dispose();
+    }
   }
 
   private startAutoRefresh(): void {
@@ -109,6 +114,8 @@ export default class HistoricalPatternAnalyzer extends React.Component<
     this.setState({ isLoading: true, error: null });
 
     try {
+      console.log('[HistoricalPatternAnalyzer] Starting data load...');
+      
       // Load current conditions for all tracks
       await this.loadCurrentConditions();
 
@@ -133,10 +140,41 @@ export default class HistoricalPatternAnalyzer extends React.Component<
         lastUpdated: new Date() 
       });
 
+      console.log('[HistoricalPatternAnalyzer] Data load completed successfully');
+
     } catch (error) {
-      const errorObj = ErrorHandler.handleError(error, 'HistoricalPatternAnalyzer');
+      // Don't show errors for cancelled/aborted requests
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
+      
+      console.error('[HistoricalPatternAnalyzer] Error loading data:', error);
+      
+      // Format error message properly
+      let errorMessage = 'An unexpected error occurred while loading data';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        
+        // Check for specific error types
+        if (error.message.includes('401') || error.message.includes('403')) {
+          errorMessage = 'Authentication error: Please ensure you have access to the Dataverse environment. You may need to refresh the page or contact your administrator.';
+        } else if (error.message.includes('404')) {
+          errorMessage = 'Data source not found: The weather data table could not be accessed. Please contact your administrator.';
+        } else if (error.message.includes('Network') || error.message.includes('fetch')) {
+          errorMessage = 'Network error: Unable to connect to the data service. Please check your connection and try again.';
+        } else if (error.message.includes('timeout')) {
+          errorMessage = 'Request timeout: The data service is taking too long to respond. Please try again later.';
+        }
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object') {
+        // Handle cases where error is an object but not an Error instance
+        errorMessage = JSON.stringify(error, null, 2);
+      }
+      
       this.setState({
-        error: ErrorHandler.formatErrorMessage(errorObj),
+        error: errorMessage,
         isLoading: false
       });
     }
@@ -145,24 +183,46 @@ export default class HistoricalPatternAnalyzer extends React.Component<
   private async loadCurrentConditions(): Promise<void> {
     // Check if any tracks are selected
     if (this.state.selectedTracks.length === 0) {
+      console.log('[HistoricalPatternAnalyzer] No tracks selected');
       this.setState({ 
         currentConditions: new Map(),
-        error: 'Please select at least one track to view historical patterns'
+        error: null // Don't show as error, just info message
       });
       return;
     }
 
+    console.log('[HistoricalPatternAnalyzer] Loading current conditions for tracks:', this.state.selectedTracks);
+
     // Get latest reading for each selected track
     const currentConditions = new Map<string, IDataverseWeatherData>();
+    const errors: string[] = [];
     
     // Fetch current data for each track separately to ensure we get the latest for each
     for (const track of this.state.selectedTracks) {
-      const trackQuery = `$filter=cr4cc_track_name eq '${track}'&$orderby=createdon desc&$top=1`;
-      const trackData = await this.dataverseService.getWeatherDataWithQuery(trackQuery);
-      
-      if (trackData && trackData.length > 0) {
-        currentConditions.set(track, trackData[0]);
+      try {
+        const trackQuery = `$filter=cr4cc_track_name eq '${track}'&$orderby=createdon desc&$top=1`;
+        console.log(`[HistoricalPatternAnalyzer] Fetching data for ${track} with query:`, trackQuery);
+        
+        const trackData = await this.dataverseService.getWeatherDataWithQuery(trackQuery);
+        
+        if (trackData && trackData.length > 0) {
+          currentConditions.set(track, trackData[0]);
+          console.log(`[HistoricalPatternAnalyzer] Found ${trackData.length} records for ${track}`);
+        } else {
+          console.warn(`[HistoricalPatternAnalyzer] No data found for track: ${track}`);
+          errors.push(`No recent data available for ${track}`);
+        }
+      } catch (trackError) {
+        console.error(`[HistoricalPatternAnalyzer] Error loading data for ${track}:`, trackError);
+        errors.push(`Failed to load data for ${track}`);
       }
+    }
+
+    // If we have some data but also some errors, show warning
+    if (errors.length > 0 && currentConditions.size > 0) {
+      console.warn('[HistoricalPatternAnalyzer] Partial data load:', errors);
+    } else if (errors.length > 0 && currentConditions.size === 0) {
+      throw new Error(`Unable to load track data: ${errors.join(', ')}`);
     }
 
     this.setState({ currentConditions });

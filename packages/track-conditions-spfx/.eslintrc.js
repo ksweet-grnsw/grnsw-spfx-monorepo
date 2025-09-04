@@ -294,6 +294,17 @@ module.exports = {
       }
     },
     {
+      // For Dataverse model files that must preserve null from API responses
+      files: [
+        '**/models/IDataverse*.ts',
+        '**/models/IDataverse*.tsx'
+      ],
+      rules: {
+        '@rushstack/no-new-null': 0, // Dataverse API returns null values that must be preserved
+        '@typescript-eslint/no-explicit-any': 0 // Dataverse API returns unpredictable types
+      }
+    },
+    {
       // For unit tests, we can be a little bit less strict.  The settings below revise the
       // defaults specified in the extended configurations, as well as above.
       files: [

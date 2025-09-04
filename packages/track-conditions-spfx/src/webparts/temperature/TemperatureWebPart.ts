@@ -14,7 +14,17 @@ import Temperature from './components/Temperature';
 import { ITemperatureProps } from './components/ITemperatureProps';
 import { trackOptions } from '../shared/trackOptions';
 
-const packageSolution = require('../../../config/package-solution.json');
+interface IPackageSolution {
+  solution: {
+    version: string;
+    name: string;
+    id: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+const packageSolution: IPackageSolution = require('../../../config/package-solution.json');
 
 export interface ITemperatureWebPartProps {
   selectedTrack: string;

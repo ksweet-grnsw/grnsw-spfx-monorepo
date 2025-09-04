@@ -24,8 +24,8 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     <span 
       className={`
         ${styles.statusBadge} 
-        ${styles[`variant-${variant}`]} 
-        ${styles[`size-${size}`]}
+        ${(styles as any)[`variant-${variant}`] || ''} 
+        ${(styles as any)[`size-${size}`] || ''}
         ${outline ? styles.outline : ''}
         ${className}
       `}

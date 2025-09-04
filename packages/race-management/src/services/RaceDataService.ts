@@ -25,13 +25,13 @@ export class RaceDataService {
   private injuryAadClient: AadHttpClient | null = null;
   private dataverseUrl: string;
   private readonly injuryDataverseUrl = 'https://orgfc8a11f1.crm6.dynamics.com';
-  private readonly apiVersion = 'v9.1';
+  private readonly apiVersion = 'v9.1'; // Racing Data environment uses v9.1
 
   constructor(httpClient: HttpClient, dataverseUrl?: string, context?: WebPartContext) {
     this.httpClient = httpClient;
     this.context = context || null;
-    // Use provided URL or fall back to configured URL
-    this.dataverseUrl = dataverseUrl || dataverseConfig.apiUrl;
+    // Use Racing Data Production environment
+    this.dataverseUrl = dataverseUrl || dataverseConfig.environment || 'https://racingdata.crm6.dynamics.com';
     
   }
 
@@ -173,6 +173,7 @@ export class RaceDataService {
     const cacheKey = `meetings_${JSON.stringify(filters || {})}`;  
     
     // Log for debugging
+    console.log('RaceDataService.getMeetings called with filters:', filters);
     
     // Try to get from cache with stale-while-revalidate
     return cacheService.getOrFetch(
@@ -201,12 +202,6 @@ export class RaceDataService {
           filterParts.push(`cr4cc_status eq '${encodeURIComponent(filters.status)}'`);
         }
         
-        const queryParts: string[] = [];
-        if (filterParts.length > 0) {
-          queryParts.push(`$filter=${filterParts.join(' and ')}`);
-        }
-        queryParts.push('$orderby=cr4cc_meetingdate desc');
-        
         // If no filters provided, get last 90 days of data to ensure we see something
         if (!filters || (!filters.dateFrom && !filters.dateTo)) {
           const ninetyDaysAgo = new Date();
@@ -214,18 +209,21 @@ export class RaceDataService {
           filterParts.push(`cr4cc_meetingdate ge '${ninetyDaysAgo.toISOString()}'`);
         }
         
+        const queryParts: string[] = [];
+        if (filterParts.length > 0) {
+          queryParts.push(`$filter=${filterParts.join(' and ')}`);
+        }
+        queryParts.push('$orderby=cr4cc_meetingdate desc');
+        
         const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?${queryParts.join('&')}`;
+        
+        console.log('Fetching meetings with URL:', url);
+        console.log('Filter parts:', filterParts);
         
         const response = await this.makeRequest<IDataverseResponse<IMeeting>>(url);
         
-        // If still no data, try without any filters at all
-        if ((!response.value || response.value.length === 0) && filterParts.length > 0) {
-          const noFilterUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_racemeetings?$orderby=cr4cc_meetingdate desc&$top=100`;
-          const noFilterResponse = await this.makeRequest<IDataverseResponse<IMeeting>>(noFilterUrl);
-          if (noFilterResponse.value && noFilterResponse.value.length > 0) {
-            return noFilterResponse.value;
-          }
-        }
+        // Don't automatically fallback to no filters - respect the user's filter choices
+        // If they filtered for today and there's no data, show empty state
         
         // Normalize track names - combine "Wentworth" and "Wentworth Park"
         const meetings = (response.value || []).map(meeting => ({
@@ -341,7 +339,7 @@ export class RaceDataService {
           '_cr616_meeting_value'
         ].join(',');
         
-        const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$select=${selectFields}&$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
+        const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?$select=${selectFields}&$filter=_cr616_race_value eq ${raceId}&$orderby=cr616_rugnumber`;
         const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
         return response.value;
       },
@@ -379,7 +377,7 @@ export class RaceDataService {
     queryParts.push('$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_meetingdate,cr4cc_trackname))');
     queryParts.push('$orderby=cr616_rugnumber');
     
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?${queryParts.join('&')}`;
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?${queryParts.join('&')}`;
     
     const response = await this.makeRequest<IDataverseResponse<IContestant>>(url);
     return response.value;
@@ -387,7 +385,7 @@ export class RaceDataService {
 
   public async getContestantById(contestantId: string): Promise<IContestant> {
     const expandQuery = '$expand=cr616_Race($select=cr616_racename,cr616_racenumber;$expand=cr616_Meeting($select=cr4cc_meetingdate,cr4cc_trackname))';
-    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses(${contestantId})?${expandQuery}`;
+    const url = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants(${contestantId})?${expandQuery}`;
     return await this.makeRequest<IContestant>(url);
   }
 
@@ -419,7 +417,7 @@ export class RaceDataService {
     const racesUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_raceses?$filter=startswith(cr616_racename,'${escapedTerm}') or startswith(cr616_racetitle,'${escapedTerm}') or contains(cr616_sfraceid,'${escapedTerm}')&$top=10`;
     
     // Search contestants - include Salesforce ID search
-    const contestantsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$filter=startswith(cr616_greyhoundname,'${escapedTerm}') or startswith(cr616_ownername,'${escapedTerm}') or startswith(cr616_trainername,'${escapedTerm}') or contains(cr616_sfcontestantid,'${escapedTerm}')&$top=10`;
+    const contestantsUrl = `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?$filter=startswith(cr616_greyhoundname,'${escapedTerm}') or startswith(cr616_ownername,'${escapedTerm}') or startswith(cr616_trainername,'${escapedTerm}') or contains(cr616_sfcontestantid,'${escapedTerm}')&$top=10`;
     
     // Search greyhounds in Injury Data environment - include microchip and Salesforce ID
     const greyhoundsUrl = `${this.injuryDataverseUrl}/api/data/${this.apiVersion}/cra5e_greyhounds?$filter=startswith(cra5e_name,'${escapedTerm}') or contains(cra5e_microchip,'${escapedTerm}') or contains(cra5e_sfid,'${escapedTerm}')&$top=10`;
@@ -521,10 +519,8 @@ export class RaceDataService {
       { name: 'Races (cr4cc_races)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_races?$top=1` },
       { name: 'Races (cr4cc_race)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_race?$top=1` },
       
-      // Contestants variations with cr616 prefix
+      // Contestants - correct table name
       { name: 'Contestants (cr616_contestants)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestants?$top=1` },
-      { name: 'Contestants (cr616_contestant)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestant?$top=1` },
-      { name: 'Contestants (cr616_contestantses)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr616_contestantses?$top=1` },
       
       // Contestants variations with cr4cc prefix
       { name: 'Contestants (cr4cc_contestants)', url: `${this.dataverseUrl}/api/data/${this.apiVersion}/cr4cc_contestants?$top=1` },
@@ -807,7 +803,7 @@ export class RaceDataService {
               filteredRecords = filteredRecords.filter(r => {
                 if (!r.cra5e_datechecked) return false;
                 const recordDate = new Date(r.cra5e_datechecked);
-                return recordDate >= filterCriteria.dateFrom;
+                return recordDate >= filterCriteria.dateFrom!;
               });
             }
             
@@ -815,7 +811,7 @@ export class RaceDataService {
               filteredRecords = filteredRecords.filter(r => {
                 if (!r.cra5e_datechecked) return false;
                 const recordDate = new Date(r.cra5e_datechecked);
-                return recordDate <= filterCriteria.dateTo;
+                return recordDate <= filterCriteria.dateTo!;
               });
             }
             
@@ -829,7 +825,7 @@ export class RaceDataService {
             // Filter by categories if specified
             if (filterCriteria.categories && filterCriteria.categories.length > 0) {
               filteredRecords = filteredRecords.filter(r => 
-                filterCriteria.categories.indexOf(r.cra5e_injuryclassification) !== -1
+                filterCriteria.categories!.indexOf(r.cra5e_injuryclassification || '') !== -1
               );
             }
             

@@ -3,7 +3,7 @@
   "solution": {
     "name": "grnsw-gap-spfx-client-side-solution",
     "id": "d4e5f6a7-b8c9-0123-abcd-234567890123",
-    "version": "1.5.2.0",
+    "version": "1.5.3.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
@@ -30,7 +30,7 @@
         "title": "GRNSW GAP Feature",
         "description": "Greyhound Adoption Program management components",
         "id": "c4d5e6f7-a8b9-0123-abcd-234567890123",
-        "version": "1.5.1.0"
+        "version": "1.5.3.0"
       }
     ]
   },

@@ -1,4 +1,15 @@
+// Racing Data Production Environment
 export const dataverseConfig = {
+  environment: 'https://racingdata.crm6.dynamics.com',
+  apiUrl: 'https://racingdata.crm6.dynamics.com/api/data/v9.1',
+  resourceUrl: 'https://racingdata.crm6.dynamics.com',
+  apiVersion: 'v9.1',
+  clientId: '3e9eb05b-3a09-4a77-8b2b-9a714ab84e12',
+  tenantId: '78247cd5-7ce6-4361-bd6c-cadfc9f8f547'
+};
+
+// Weather Data Production Environment (formerly used for racing data)
+export const weatherDataverseConfig = {
   environment: 'https://org98489e5d.crm6.dynamics.com',
   apiUrl: 'https://org98489e5d.crm6.dynamics.com/api/data/v9.2',
   resourceUrl: 'https://org98489e5d.crm6.dynamics.com',

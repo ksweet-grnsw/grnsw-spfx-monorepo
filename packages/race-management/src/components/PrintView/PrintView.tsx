@@ -144,7 +144,7 @@ export const PrintView: React.FC<PrintViewProps> = ({
   }
 
   return (
-    <div className={`${styles.printView} ${styles[orientation]}`}>
+    <div className={`${styles.printView} ${(styles as any)[orientation] || ''}`}>
       {/* Print Controls (hidden in print) */}
       <div className={styles.printControls}>
         <button onClick={handlePrint} className={styles.printButton}>
@@ -171,7 +171,7 @@ export const PrintView: React.FC<PrintViewProps> = ({
         )}
 
         {/* Data Tables */}
-        {Object.entries(groupedData).map(([groupName, groupData]: [string, any[]]) => (
+        {Object.entries(groupedData).map(([groupName, groupData]) => (
           <div key={groupName} className={styles.printGroup}>
             {groupBy && groupName && (
               <h2 className={styles.groupTitle}>{groupName}</h2>
@@ -194,7 +194,7 @@ export const PrintView: React.FC<PrintViewProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {groupData.map((item, index) => (
+                {(groupData as any[]).map((item: any, index: number) => (
                   <tr key={index} className={index % 2 === 0 ? styles.evenRow : ''}>
                     {printColumns.map(col => (
                       <td

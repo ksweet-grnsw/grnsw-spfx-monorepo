@@ -1719,6 +1719,13 @@
   p {
     font-size: $font-size-lg;
   }
+  
+  .emptyHint {
+    margin-top: $spacing-sm;
+    font-size: 14px;
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
 }
 
 .content {

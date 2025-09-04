@@ -48,7 +48,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   
   return (
     <nav 
-      className={`${styles.breadcrumb} ${styles[`theme-${theme}`]} ${className}`}
+      className={`${styles.breadcrumb} ${(styles as any)[`theme-${theme}`] || ''} ${className}`}
       aria-label="Breadcrumb navigation"
     >
       <ol className={styles.list}>

@@ -247,7 +247,7 @@ export const DataGrid = <T extends Record<string, any>>({
   // Render loading state
   if (loading) {
     return (
-      <div className={`${styles.dataGrid} ${styles[`theme-${theme}`]} ${className}`}>
+      <div className={`${styles.dataGrid} ${(styles as any)[`theme-${theme}`] || ''} ${className}`}>
         <div className={styles.loadingState}>
           <div className={styles.loadingSpinner}></div>
           <p>{loadingMessage}</p>
@@ -259,7 +259,7 @@ export const DataGrid = <T extends Record<string, any>>({
   // Render error state
   if (error) {
     return (
-      <div className={`${styles.dataGrid} ${styles[`theme-${theme}`]} ${className}`}>
+      <div className={`${styles.dataGrid} ${(styles as any)[`theme-${theme}`] || ''} ${className}`}>
         <div className={styles.errorState}>
           <h3>{errorTitle}</h3>
           <p>{error}</p>
@@ -276,7 +276,7 @@ export const DataGrid = <T extends Record<string, any>>({
   // Render empty state
   if (data.length === 0) {
     return (
-      <div className={`${styles.dataGrid} ${styles[`theme-${theme}`]} ${className}`}>
+      <div className={`${styles.dataGrid} ${(styles as any)[`theme-${theme}`] || ''} ${className}`}>
         <div className={styles.emptyState}>
           {emptyStateIcon && <div className={styles.emptyIcon}>{emptyStateIcon}</div>}
           <h3>{emptyStateTitle}</h3>
@@ -292,8 +292,8 @@ export const DataGrid = <T extends Record<string, any>>({
     <div 
       className={`
         ${styles.dataGrid} 
-        ${styles[`theme-${theme}`]} 
-        ${styles[`density-${density}`]}
+        ${(styles as any)[`theme-${theme}`] || ''} 
+        ${(styles as any)[`density-${density}`] || ''}
         ${striped ? styles.striped : ''}
         ${bordered ? styles.bordered : ''}
         ${hoverable ? styles.hoverable : ''}

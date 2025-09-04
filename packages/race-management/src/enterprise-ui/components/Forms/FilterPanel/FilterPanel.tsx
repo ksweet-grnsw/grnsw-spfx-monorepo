@@ -34,7 +34,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   };
   
   return (
-    <div className={`${styles.filterPanel} ${styles[`theme-${theme}`]} ${className}`}>
+    <div className={`${styles.filterPanel} ${(styles as any)[`theme-${theme}`] || ''} ${className}`}>
       <div className={styles.header}>
         <div className={styles.headerContent}>
           {collapsible ? (

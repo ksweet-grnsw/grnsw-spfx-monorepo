@@ -1,6 +1,6 @@
 {
   "name": "@grnsw/greyhound-health-spfx",
-  "version": "1.1.8",
+  "version": "1.2.0",
   "private": true,
   "main": "lib/index.js",
   "engines": {

@@ -76,6 +76,13 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
     }
   }
 
+  public componentWillUnmount(): void {
+    // Cancel any pending requests and dispose of service
+    if (this.dataverseService) {
+      this.dataverseService.dispose();
+    }
+  }
+
   private async loadRainfallData(): Promise<void> {
     if (!this.props.selectedTrack) {
       return;
@@ -107,6 +114,10 @@ export default class Rainfall extends React.Component<IRainfallProps, IRainfallS
       
       Logger.info(`Loaded ${data.length} rainfall records`, 'Rainfall');
     } catch (error) {
+      // Don't show errors for cancelled/aborted requests
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
       const errorObj = ErrorHandler.handleError(error, 'Rainfall');
       console.error('Rainfall data loading error:', error);
       this.setState({ 

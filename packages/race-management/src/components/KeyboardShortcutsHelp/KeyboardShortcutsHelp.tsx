@@ -94,7 +94,7 @@ export const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({
       isOpen={isOpen}
       onDismiss={onClose}
       isBlocking={false}
-      containerClassName={`${styles.modalContainer} ${styles[`theme-${theme}`]}`}
+      containerClassName={`${styles.modalContainer} ${(styles as any)[`theme-${theme}`] || ''}`}
     >
       <div className={styles.modalHeader}>
         <h2>Keyboard Shortcuts</h2>

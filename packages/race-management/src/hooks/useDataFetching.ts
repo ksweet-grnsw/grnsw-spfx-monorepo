@@ -12,6 +12,8 @@ export interface DataFetchingOptions {
   cacheTime?: number; // in milliseconds
   retryCount?: number;
   retryDelay?: number; // in milliseconds
+  useExponentialBackoff?: boolean; // Use exponential backoff for retries
+  maxRetryDelay?: number; // Maximum delay between retries (default 30000ms)
   onSuccess?: (data: any) => void;
   onError?: (error: Error) => void;
 }
@@ -30,6 +32,8 @@ export function useDataFetching<T = any>(
     cacheTime = 5 * 60 * 1000, // 5 minutes default
     retryCount = 0,
     retryDelay = 1000,
+    useExponentialBackoff = true,
+    maxRetryDelay = 30000, // 30 seconds max
     onSuccess,
     onError
   } = options;
@@ -44,6 +48,7 @@ export function useDataFetching<T = any>(
   const cacheTimestampRef = useRef<number>(0);
   const retryCountRef = useRef<number>(0);
   const isMountedRef = useRef<boolean>(true);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Check if cache is stale
   const checkCacheStaleness = useCallback(() => {
@@ -55,21 +60,59 @@ export function useDataFetching<T = any>(
     return true;
   }, [cacheTime]);
 
-  // Fetch data with retry logic
+  // Fetch data with retry logic and request throttling
   const fetchData = useCallback(async (force: boolean = false) => {
-    // Skip if already loading (but always allow forced fetches and dependency changes)
+    // Skip if already loading and not forced (let the current request finish)
     if (state.loading && !force) {
+      console.debug('Skipping fetch - already loading and not forced');
       return;
     }
+
+    // Only cancel existing request if we're doing a forced fetch or dependency change
+    if (abortControllerRef.current && force) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new abort controller for this request
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
+    // Check circuit breaker before making request
+    const circuitBreakerKey = 'spfx_circuit_breaker';
+    const circuitBreakerTimeout = (window as any)[circuitBreakerKey];
+    if (circuitBreakerTimeout && Date.now() < circuitBreakerTimeout) {
+      const remainingTime = Math.ceil((circuitBreakerTimeout - Date.now()) / 1000);
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: `Service temporarily unavailable. Please wait ${remainingTime} more seconds.`
+      }));
+      return Promise.reject(new Error('Circuit breaker is open'));
+    }
+
+    // Add global request throttling - prevent too many concurrent requests
+    const globalRequestCount = (window as any).__spfxRequestCount || 0;
+    if (globalRequestCount > 4) { // Further reduced to 4 to be more conservative
+      console.warn('Too many concurrent requests, delaying this one...');
+      await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 2000));
+    }
+    
+    (window as any).__spfxRequestCount = globalRequestCount + 1;
 
     setState(prev => ({ ...prev, loading: true, error: null }));
     retryCountRef.current = 0;
 
     const attemptFetch = async (): Promise<T> => {
       try {
+        // Check if request was aborted before starting
+        if (signal.aborted) {
+          throw new Error('Request was aborted');
+        }
+        
         const result = await fetchFunction();
         
-        if (isMountedRef.current) {
+        // Check if component is still mounted and request wasn't aborted
+        if (isMountedRef.current && !signal.aborted) {
           setState({
             data: result,
             loading: false,
@@ -83,17 +126,65 @@ export function useDataFetching<T = any>(
           }
         }
         
+        // Decrement global request count
+        (window as any).__spfxRequestCount = Math.max(0, ((window as any).__spfxRequestCount || 0) - 1);
+        
         return result;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An error occurred';
         
-        if (retryCountRef.current < retryCount) {
+        // Handle aborted requests - don't show errors for cancelled requests
+        if (signal.aborted || errorMessage.includes('aborted') || errorMessage.includes('cancelled')) {
+          // Silently handle cancelled requests - these are expected during component lifecycle
+          console.debug('Request cancelled (expected behavior)');
+          return Promise.reject(new Error('Request was cancelled'));
+        }
+        
+        // Don't retry on ERR_INSUFFICIENT_RESOURCES - it means we're already overloading
+        if (errorMessage.includes('ERR_INSUFFICIENT_RESOURCES') || errorMessage.includes('Failed to fetch')) {
+          // Activate circuit breaker - pause all new requests for a period
+          const circuitBreakerKey = 'spfx_circuit_breaker';
+          const circuitBreakerTimeout = Date.now() + 30000; // 30 seconds
+          (window as any)[circuitBreakerKey] = circuitBreakerTimeout;
+          
+          if (isMountedRef.current && !signal.aborted) {
+            setState(prev => ({
+              ...prev,
+              loading: false,
+              error: 'Service temporarily overloaded. Please wait 30 seconds and try again.'
+            }));
+            
+            if (onError) {
+              onError(new Error('ERR_INSUFFICIENT_RESOURCES: Circuit breaker activated'));
+            }
+          }
+          throw error;
+        }
+        
+        if (retryCountRef.current < retryCount && !signal.aborted) {
           retryCountRef.current++;
-          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          
+          // Calculate delay with exponential backoff if enabled
+          let delay = retryDelay;
+          if (useExponentialBackoff) {
+            delay = Math.min(retryDelay * Math.pow(2, retryCountRef.current - 1), maxRetryDelay);
+          }
+          
+          console.log(`Retrying request (attempt ${retryCountRef.current}/${retryCount}) after ${delay}ms`);
+          
+          // Use AbortController for timeout as well
+          await new Promise((resolve, reject) => {
+            const timeoutId = setTimeout(resolve, delay);
+            signal.addEventListener('abort', () => {
+              clearTimeout(timeoutId);
+              reject(new Error('Request was cancelled during retry delay'));
+            });
+          });
+          
           return attemptFetch();
         }
         
-        if (isMountedRef.current) {
+        if (isMountedRef.current && !signal.aborted) {
           setState(prev => ({
             ...prev,
             loading: false,
@@ -105,12 +196,15 @@ export function useDataFetching<T = any>(
           }
         }
         
+        // Decrement global request count on error
+        (window as any).__spfxRequestCount = Math.max(0, ((window as any).__spfxRequestCount || 0) - 1);
+        
         throw error;
       }
     };
 
     return attemptFetch();
-  }, [fetchFunction, checkCacheStaleness, state.loading, state.data, retryCount, retryDelay, onSuccess, onError]);
+  }, [fetchFunction, checkCacheStaleness, state.loading, state.data, retryCount, retryDelay, useExponentialBackoff, maxRetryDelay, onSuccess, onError]);
 
   // Refresh data (force fetch)
   const refresh = useCallback(() => {
@@ -119,6 +213,12 @@ export function useDataFetching<T = any>(
 
   // Clear data and errors
   const reset = useCallback(() => {
+    // Cancel any pending requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    
     setState({
       data: null,
       loading: false,
@@ -142,7 +242,12 @@ export function useDataFetching<T = any>(
   // Auto-fetch on mount if enabled, and re-fetch when dependencies change
   useEffect(() => {
     if (autoFetch) {
-      fetchData(true); // Force fetch on dependency changes
+      // Use a small delay to debounce rapid dependency changes
+      const timeoutId = setTimeout(() => {
+        fetchData(true); // Force fetch on dependency changes
+      }, 300); // 300ms debounce
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [fetchData, autoFetch, ...dependencies]);
 
@@ -151,6 +256,11 @@ export function useDataFetching<T = any>(
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      // Cancel any pending requests when component unmounts
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
     };
   }, []);
 

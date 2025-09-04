@@ -13,6 +13,7 @@ import {
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 
+// @ts-ignore - Auto-generated strings file
 import * as strings from 'RaceDataExplorerWebPartStrings';
 import RaceDataExplorer from './components/RaceDataExplorer';
 import { IRaceDataExplorerProps } from './components/IRaceDataExplorerProps';

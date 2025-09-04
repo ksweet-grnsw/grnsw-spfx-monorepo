@@ -37,7 +37,7 @@ export const MobileCardView: React.FC<MobileCardProps> = ({
 }) => {
   return (
     <div 
-      className={`${styles.mobileCard} ${styles[`theme-${theme}`]}`}
+      className={`${styles.mobileCard} ${(styles as any)[`theme-${theme}`] || ''}`}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -180,7 +180,7 @@ export const MobileListView: React.FC<MobileListViewProps> = ({
   }
 
   return (
-    <div className={`${styles.mobileListView} ${styles[`theme-${theme}`]}`}>
+    <div className={`${styles.mobileListView} ${(styles as any)[`theme-${theme}`] || ''}`}>
       <div className={styles.cardList}>
         {items.map((item, index) => (
           <div key={index} className={styles.cardWrapper}>

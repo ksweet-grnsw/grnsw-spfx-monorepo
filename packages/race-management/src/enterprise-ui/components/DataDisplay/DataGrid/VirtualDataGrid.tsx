@@ -55,10 +55,10 @@ export const VirtualDataGrid = <T extends Record<string, any>>({
   
   stickyHeader = true
 }: DataGridProps<T>): JSX.Element => {
-  // Virtual scrolling configuration
+  // Virtual scrolling configuration (optimized)
   const ROW_HEIGHT = density === 'compact' ? 32 : density === 'comfortable' ? 48 : 40;
-  const OVERSCAN = 5; // Number of rows to render outside viewport
-  const VIEWPORT_HEIGHT = 600; // Default viewport height
+  const OVERSCAN = 3; // Reduced overscan for better performance
+  const VIEWPORT_HEIGHT = 400; // Reduced viewport height for better performance
   
   // Refs
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -196,33 +196,41 @@ export const VirtualDataGrid = <T extends Record<string, any>>({
     };
   }, [processedData.length, ROW_HEIGHT]);
   
-  // Handle scroll with debouncing
+  // Handle scroll with optimization
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget;
     const scrollTop = target.scrollTop;
     const containerHeight = target.clientHeight;
     
-    // Immediate update for virtual window
+    // Only update if scroll position changed significantly (reduce re-renders)
+    const newStartIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN);
+    if (Math.abs(newStartIndex - virtualState.startIndex) < 2) {
+      return; // Skip update if change is minimal
+    }
+    
+    // Calculate new state
     const newState = calculateVirtualWindow(scrollTop, containerHeight);
     setVirtualState(newState);
     
-    // Debounced scrolling indicator
+    // Simple scrolling indicator (reduced frequency)
     const now = Date.now();
-    if (now - lastScrollTime.current > 150) {
-      setIsScrolling(true);
+    if (now - lastScrollTime.current > 100) {
+      if (!isScrolling) {
+        setIsScrolling(true);
+      }
+      lastScrollTime.current = now;
+      
+      // Clear existing timeout
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+      
+      // Set scrolling to false after scroll ends
+      scrollTimeout.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 100);
     }
-    lastScrollTime.current = now;
-    
-    // Clear existing timeout
-    if (scrollTimeout.current) {
-      clearTimeout(scrollTimeout.current);
-    }
-    
-    // Set scrolling to false after scroll ends
-    scrollTimeout.current = setTimeout(() => {
-      setIsScrolling(false);
-    }, 150);
-  }, [calculateVirtualWindow]);
+  }, [calculateVirtualWindow, virtualState.startIndex, isScrolling, ROW_HEIGHT]);
   
   // Initialize viewport dimensions
   useEffect(() => {
@@ -233,18 +241,36 @@ export const VirtualDataGrid = <T extends Record<string, any>>({
     }
   }, [calculateVirtualWindow, processedData.length]);
   
-  // Get visible data slice
+  // Get visible data slice (optimized)
   const visibleData = useMemo(() => {
-    return processedData.slice(virtualState.startIndex, virtualState.endIndex);
+    // Only slice if we have meaningful data and valid indices
+    if (processedData.length === 0 || virtualState.startIndex >= processedData.length) {
+      return [];
+    }
+    
+    const startIndex = Math.max(0, virtualState.startIndex);
+    const endIndex = Math.min(processedData.length, virtualState.endIndex);
+    
+    return processedData.slice(startIndex, endIndex);
   }, [processedData, virtualState.startIndex, virtualState.endIndex]);
   
-  // Calculate total height for scrollbar
-  const totalHeight = processedData.length * ROW_HEIGHT;
+  // Calculate total height for scrollbar (memoized)
+  const totalHeight = useMemo(() => processedData.length * ROW_HEIGHT, [processedData.length, ROW_HEIGHT]);
+  
+  // Memoize row class calculations
+  const getRowClasses = useCallback((actualIndex: number, isSelected: boolean, hasRowClick: boolean) => {
+    return `
+      ${styles.row}
+      ${isSelected ? styles.selected : ''}
+      ${hasRowClick ? styles.clickable : ''}
+      ${actualIndex % 2 === 0 && striped ? styles.striped : ''}
+    `;
+  }, [striped, styles]);
   
   // Render loading state
   if (loading) {
     return (
-      <div className={`${styles.virtualDataGrid} ${styles[`theme-${theme}`]} ${className}`}>
+      <div className={`${styles.virtualDataGrid} ${(styles as any)[`theme-${theme}`] || ''} ${className}`}>
         <div className={styles.loadingState}>
           <div className={styles.loadingSpinner}></div>
           <p>{loadingMessage}</p>
@@ -256,7 +282,7 @@ export const VirtualDataGrid = <T extends Record<string, any>>({
   // Render error state
   if (error) {
     return (
-      <div className={`${styles.virtualDataGrid} ${styles[`theme-${theme}`]} ${className}`}>
+      <div className={`${styles.virtualDataGrid} ${(styles as any)[`theme-${theme}`] || ''} ${className}`}>
         <div className={styles.errorState}>
           <h3>{errorTitle}</h3>
           <p>{error}</p>
@@ -273,7 +299,7 @@ export const VirtualDataGrid = <T extends Record<string, any>>({
   // Render empty state
   if (data.length === 0) {
     return (
-      <div className={`${styles.virtualDataGrid} ${styles[`theme-${theme}`]} ${className}`}>
+      <div className={`${styles.virtualDataGrid} ${(styles as any)[`theme-${theme}`] || ''} ${className}`}>
         <div className={styles.emptyState}>
           {emptyStateIcon && <div className={styles.emptyIcon}>{emptyStateIcon}</div>}
           <h3>{emptyStateTitle}</h3>
@@ -289,8 +315,8 @@ export const VirtualDataGrid = <T extends Record<string, any>>({
     <div 
       className={`
         ${styles.virtualDataGrid} 
-        ${styles[`theme-${theme}`]} 
-        ${styles[`density-${density}`]}
+        ${(styles as any)[`theme-${theme}`] || ''} 
+        ${(styles as any)[`density-${density}`] || ''}
         ${striped ? styles.striped : ''}
         ${bordered ? styles.bordered : ''}
         ${hoverable ? styles.hoverable : ''}
@@ -398,12 +424,7 @@ export const VirtualDataGrid = <T extends Record<string, any>>({
                   return (
                     <tr
                       key={key}
-                      className={`
-                        ${styles.row}
-                        ${isSelected ? styles.selected : ''}
-                        ${onRowClick ? styles.clickable : ''}
-                        ${actualIndex % 2 === 0 && striped ? styles.striped : ''}
-                      `}
+                      className={getRowClasses(actualIndex, isSelected, !!onRowClick)}
                       style={{ height: `${ROW_HEIGHT}px` }}
                       onClick={() => onRowClick?.(item, actualIndex)}
                       onDoubleClick={() => onRowDoubleClick?.(item, actualIndex)}

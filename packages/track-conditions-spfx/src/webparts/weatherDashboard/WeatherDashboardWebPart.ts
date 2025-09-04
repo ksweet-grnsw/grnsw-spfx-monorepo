@@ -13,7 +13,17 @@ import * as strings from 'WeatherDashboardWebPartStrings';
 import WeatherDashboard from './components/WeatherDashboard';
 import { IWeatherDashboardProps } from './components/IWeatherDashboardProps';
 
-const packageSolution = require('../../../config/package-solution.json');
+interface IPackageSolution {
+  solution: {
+    version: string;
+    name: string;
+    id: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+const packageSolution: IPackageSolution = require('../../../config/package-solution.json');
 
 export interface IWeatherDashboardWebPartProps {
   description: string;

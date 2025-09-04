@@ -108,8 +108,8 @@ export const OptimisticFeedback: React.FC<OptimisticFeedbackProps> = ({
     <div 
       className={`
         ${styles.optimisticFeedback}
-        ${styles[currentState]}
-        ${styles[position]}
+        ${(styles as any)[currentState] || ''}
+        ${(styles as any)[position] || ''}
         ${isVisible ? styles.visible : styles.hidden}
       `}
       role="status"

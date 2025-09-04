@@ -9,6 +9,7 @@ export interface FilterState {
   showInjuryFilter?: boolean;
   selectedInjuryCategories?: string[];
   searchTerm?: string;
+  filterVersion?: number; // Track filter version for migrations
 }
 
 export interface UseFiltersOptions {
@@ -22,10 +23,20 @@ export interface UseFiltersOptions {
  * Centralizes filter logic and reduces duplication
  */
 export function useFilters(options: UseFiltersOptions = {}) {
+  // Set default filters to Today and NSW authority
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const CURRENT_FILTER_VERSION = 2; // Increment this to force filter reset
+  
   const {
     storageKey = 'raceDataExplorerFilters',
     defaultFilters = {
-      selectedInjuryCategories: ['Cat D', 'Cat E']
+      selectedInjuryCategories: ['Cat D', 'Cat E'],
+      selectedAuthority: 'NSW',  // Default to NSW
+      dateFrom: today,           // Default to today
+      dateTo: today,             // Default to today
+      filterVersion: CURRENT_FILTER_VERSION
     },
     onFiltersChange
   } = options;
@@ -38,19 +49,28 @@ export function useFilters(options: UseFiltersOptions = {}) {
       const saved = localStorage.getItem(storageKey);
       if (saved) {
         const filters = JSON.parse(saved);
+        // Check filter version - if outdated, use new defaults
+        if (!filters.filterVersion || filters.filterVersion < CURRENT_FILTER_VERSION) {
+          console.log(`Filter version outdated (${filters.filterVersion} < ${CURRENT_FILTER_VERSION}) - using new defaults`);
+          localStorage.removeItem(storageKey);
+          return defaultFilters;
+        }
+        // If saved filters exist and are valid, use them (user's preferences)
+        // But preserve date parsing
         return {
           ...defaultFilters,
           ...filters,
-          dateFrom: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
-          dateTo: filters.dateTo ? new Date(filters.dateTo) : undefined
+          dateFrom: filters.dateFrom ? new Date(filters.dateFrom) : defaultFilters.dateFrom,
+          dateTo: filters.dateTo ? new Date(filters.dateTo) : defaultFilters.dateTo
         };
       }
     } catch (e) {
       console.error('Failed to load saved filters:', e);
     }
     
+    // First time user - return defaults with Today and NSW
     return defaultFilters;
-  }, [storageKey, defaultFilters]);
+  }, [storageKey, defaultFilters, CURRENT_FILTER_VERSION]);
 
   // Initialize filter state
   const [filters, setFilters] = useState<FilterState>(() => loadSavedFilters());

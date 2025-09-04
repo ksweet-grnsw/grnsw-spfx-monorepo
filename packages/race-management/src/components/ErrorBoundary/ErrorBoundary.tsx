@@ -166,7 +166,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
       // Default error UI based on level
       return (
-        <div className={`${styles.errorBoundary} ${styles[`level-${level}`]}`}>
+        <div className={`${styles.errorBoundary} ${(styles as any)[`level-${level}`] || ''}`}>
           <div className={styles.errorContent}>
             <div className={styles.errorIcon}>
               {level === 'page' ? '🚨' : level === 'section' ? '⚠️' : '❌'}

@@ -18,14 +18,38 @@ export class AuthService {
 
   public async authenticateToDataverse(dataverseUrl?: string): Promise<string> {
     try {
+      console.log('[AuthService] Getting token provider...');
       const tokenProvider = await this.context.aadTokenProviderFactory.getTokenProvider();
+      
       // Use the specific Dataverse environment URL for authentication
       const url = dataverseUrl || 'https://org98489e5d.crm6.dynamics.com';
+      console.log('[AuthService] Requesting token for:', url);
+      
       const token = await tokenProvider.getToken(url);
-      console.log('Got token for Dataverse');
+      
+      if (!token) {
+        throw new Error('Received empty token from Azure AD');
+      }
+      
+      console.log('[AuthService] Successfully obtained token for Dataverse');
       return token;
     } catch (error) {
-      console.error('Error authenticating to Dataverse:', error);
+      console.error('[AuthService] Error authenticating to Dataverse:', error);
+      
+      if (error instanceof Error) {
+        // Provide more specific error messages
+        if (error.message.includes('interaction_required')) {
+          throw new Error('Authentication required: Please sign in to access Dataverse');
+        } else if (error.message.includes('consent_required')) {
+          throw new Error('Permissions required: Admin consent needed for Dataverse access');
+        } else if (error.message.includes('invalid_grant')) {
+          throw new Error('Authentication expired: Please refresh the page to re-authenticate');
+        } else if (error.message.includes('AADSTS')) {
+          // Azure AD error
+          throw new Error(`Azure AD error: ${error.message}`);
+        }
+      }
+      
       throw error;
     }
   }

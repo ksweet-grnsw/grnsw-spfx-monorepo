@@ -31,6 +31,13 @@ export default class WeatherDashboard extends React.Component<IWeatherDashboardP
     await this.loadWeatherData();
   }
 
+  public componentWillUnmount(): void {
+    // Cancel any pending requests and dispose of service
+    if (this.dataverseService) {
+      this.dataverseService.dispose();
+    }
+  }
+
   private async loadWeatherData(): Promise<void> {
     this.setState({ loading: true, error: undefined });
     
@@ -41,6 +48,10 @@ export default class WeatherDashboard extends React.Component<IWeatherDashboardP
       this.setState({ weatherData: data, loading: false });
       Logger.info(`Loaded ${data.length} weather records`, 'WeatherDashboard');
     } catch (error) {
+      // Don't show errors for cancelled/aborted requests
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
       const errorObj = ErrorHandler.handleError(error, 'WeatherDashboard');
       this.setState({ 
         error: ErrorHandler.formatErrorMessage(errorObj), 

@@ -42,8 +42,9 @@ class RequestThrottle {
             console.warn(`Request failed (attempt ${retries + 1}/${this.maxRetries + 1}):`, error);
             
             // Check if it's a resource exhaustion error
-            if (error?.message?.includes('INSUFFICIENT_RESOURCES') || 
-                error?.message?.includes('Failed to fetch')) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            if (errorMessage.includes('INSUFFICIENT_RESOURCES') || 
+                errorMessage.includes('Failed to fetch')) {
               // Wait longer before retrying resource errors
               await this.delay(1000 * (retries + 1));
             }

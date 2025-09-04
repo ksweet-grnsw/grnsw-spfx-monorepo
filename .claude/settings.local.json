@@ -38,7 +38,9 @@
       "Bash(npm test:*)",
       "Bash(cd:*)",
       "Bash(test:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npm run:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

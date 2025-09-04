@@ -1,0 +1,89 @@
+@import '../../../../styles/variables.module.scss';
+
+.errorBoundary {
+  padding: 20px;
+  background-color: var(--white);
+  border: 1px solid var(--neutralLighter);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  .errorMessage {
+    margin-bottom: 20px;
+  }
+
+  .errorDescription {
+    margin-top: 8px;
+    color: var(--neutralSecondary);
+  }
+
+  .errorDetails {
+    margin: 20px 0;
+  }
+
+  .technicalDetails {
+    background-color: var(--neutralLighter);
+    padding: 12px;
+    border-radius: 4px;
+    
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--themeDark);
+      margin-bottom: 8px;
+      
+      &:hover {
+        color: var(--themePrimary);
+      }
+    }
+    
+    &[open] summary {
+      margin-bottom: 12px;
+    }
+  }
+
+  .errorCode {
+    font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--black);
+    background-color: var(--white);
+    padding: 12px;
+    border-radius: 4px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    border: 1px solid var(--neutralLight);
+  }
+
+  .actions {
+    margin: 20px 0;
+  }
+
+  .helpText {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--neutralLight);
+    color: var(--neutralSecondary);
+  }
+}
+
+// Dark theme support
+.errorBoundary.dark {
+  background-color: var(--black);
+  border-color: var(--neutralDark);
+  
+  .errorCode {
+    background-color: var(--neutralDark);
+    color: var(--white);
+    border-color: var(--neutralSecondary);
+  }
+  
+  .technicalDetails {
+    background-color: var(--neutralDark);
+  }
+  
+  .helpText {
+    border-top-color: var(--neutralDark);
+  }
+}

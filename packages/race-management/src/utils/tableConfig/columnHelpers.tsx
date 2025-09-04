@@ -14,8 +14,8 @@ export const renderPlacement = (placement: number | string | null | undefined): 
     3: { bg: '#CD7F32', color: '#fff', shadow: '0 2px 4px rgba(205, 127, 50, 0.4)' }  // Bronze
   };
   
-  if (place <= 3 && medalColors[place]) {
-    const style = medalColors[place];
+  if (place <= 3 && (medalColors as any)[place]) {
+    const style = (medalColors as any)[place];
     return React.createElement('span', {
       style: {
         display: 'inline-block',
@@ -54,7 +54,7 @@ export const renderRugNumber = (value: number): React.ReactElement => {
     10: { bg: '#0073CF', color: '#000', name: 'Blue/White/Red', tricolor: true } // Blue, white, red vertical stripes
   };
   
-  const rugStyle = rugColors[value] || { bg: '#ccc', color: '#000', name: 'Unknown' };
+  const rugStyle = (rugColors as any)[value] || { bg: '#ccc', color: '#000', name: 'Unknown' };
   
   // Special rendering for rug 2 (black and white stripes)
   if (value === 2) {

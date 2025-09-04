@@ -2,14 +2,6 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
   "version": "2.0",
   "bundles": {
-    "race-meetings-web-part": {
-      "components": [
-        {
-          "entrypoint": "./lib/webparts/raceMeetings/RaceMeetingsWebPart.js",
-          "manifest": "./src/webparts/raceMeetings/RaceMeetingsWebPart.manifest.json"
-        }
-      ]
-    },
     "race-data-explorer-web-part": {
       "components": [
         {
@@ -21,7 +13,6 @@
   },
   "externals": {},
   "localizedResources": {
-    "RaceMeetingsWebPartStrings": "lib/webparts/raceMeetings/loc/{locale}.js",
     "RaceDataExplorerWebPartStrings": "lib/webparts/raceDataExplorer/loc/{locale}.js"
   }
 }

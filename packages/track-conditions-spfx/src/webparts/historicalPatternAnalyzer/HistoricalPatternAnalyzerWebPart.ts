@@ -15,9 +15,20 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as strings from 'HistoricalPatternAnalyzerWebPartStrings';
 import HistoricalPatternAnalyzer from './components/HistoricalPatternAnalyzer';
 import { IHistoricalPatternAnalyzerProps } from './components/IHistoricalPatternAnalyzerProps';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { trackOptions } from '../shared/trackOptions';
 
-const packageSolution = require('../../../config/package-solution.json');
+interface IPackageSolution {
+  solution: {
+    version: string;
+    name: string;
+    id: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+const packageSolution: IPackageSolution = require('../../../config/package-solution.json');
 
 export interface IHistoricalPatternAnalyzerWebPartProps {
   refreshInterval: number;
@@ -38,7 +49,7 @@ export default class HistoricalPatternAnalyzerWebPart extends BaseClientSideWebP
   private _environmentMessage: string = '';
 
   public render(): void {
-    const element: React.ReactElement<IHistoricalPatternAnalyzerProps> = React.createElement(
+    const historicalPatternAnalyzer = React.createElement(
       HistoricalPatternAnalyzer,
       {
         refreshInterval: this.properties.refreshInterval || 5,
@@ -57,10 +68,20 @@ export default class HistoricalPatternAnalyzerWebPart extends BaseClientSideWebP
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName,
         context: this.context,
-        onUpdateProperty: (property: string, value: any) => {
-          (this.properties as any)[property] = value;
+        onUpdateProperty: (property: string, value: unknown) => {
+          (this.properties as unknown as Record<string, unknown>)[property] = value;
           this.render();
         }
+      }
+    );
+
+    // Wrap in error boundary for better error handling
+    const element = React.createElement(
+      ErrorBoundary,
+      {
+        componentName: 'Historical Pattern Analyzer',
+        context: this.context,
+        children: historicalPatternAnalyzer
       }
     );
 
@@ -68,8 +89,19 @@ export default class HistoricalPatternAnalyzerWebPart extends BaseClientSideWebP
   }
 
   protected onInit(): Promise<void> {
+    console.log('[HistoricalPatternAnalyzerWebPart] Initializing...');
+    console.log('[HistoricalPatternAnalyzerWebPart] Context:', {
+      pageUrl: this.context.pageContext.web.absoluteUrl,
+      user: this.context.pageContext.user.displayName,
+      isLocalhost: this.context.pageContext.legacyPageContext?.isAppWeb
+    });
+    
     return this._getEnvironmentMessage().then(message => {
       this._environmentMessage = message;
+      console.log('[HistoricalPatternAnalyzerWebPart] Environment:', message);
+    }).catch(error => {
+      console.error('[HistoricalPatternAnalyzerWebPart] Initialization error:', error);
+      this._environmentMessage = 'Error initializing environment';
     });
   }
 

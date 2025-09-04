@@ -2,14 +2,6 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
   "version": "2.0",
   "bundles": {
-    "schema-explorer-web-part": {
-      "components": [
-        {
-          "entrypoint": "./lib/webparts/schemaExplorer/SchemaExplorerWebPart.js",
-          "manifest": "./src/webparts/schemaExplorer/SchemaExplorerWebPart.manifest.json"
-        }
-      ]
-    },
     "real-time-safety-dashboard-web-part": {
       "components": [
         {
@@ -21,7 +13,6 @@
   },
   "externals": {},
   "localizedResources": {
-    "SchemaExplorerWebPartStrings": "lib/webparts/schemaExplorer/loc/{locale}.js",
     "RealTimeSafetyDashboardWebPartStrings": "lib/webparts/realTimeSafetyDashboard/loc/{locale}.js"
   }
 }

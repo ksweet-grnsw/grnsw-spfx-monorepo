@@ -101,19 +101,19 @@ export const RaceDetailsModal: React.FC<RaceDetailsModalProps> = ({
           <div className={styles.prizeGrid}>
             <div className={styles.prizeItem}>
               <span className={`${styles.placement} ${styles.first}`}>1<sup>st</sup></span>
-              <span className={styles.amount}>{formatCurrency(race.cr616_prize1)}</span>
+              <span className={styles.amount}>{formatCurrency(race.cr616_prize1 || 0)}</span>
             </div>
             <div className={styles.prizeItem}>
               <span className={`${styles.placement} ${styles.second}`}>2<sup>nd</sup></span>
-              <span className={styles.amount}>{formatCurrency(race.cr616_prize2)}</span>
+              <span className={styles.amount}>{formatCurrency(race.cr616_prize2 || 0)}</span>
             </div>
             <div className={styles.prizeItem}>
               <span className={`${styles.placement} ${styles.third}`}>3<sup>rd</sup></span>
-              <span className={styles.amount}>{formatCurrency(race.cr616_prize3)}</span>
+              <span className={styles.amount}>{formatCurrency(race.cr616_prize3 || 0)}</span>
             </div>
             <div className={styles.prizeItem}>
               <span className={`${styles.placement} ${styles.fourth}`}>4<sup>th</sup></span>
-              <span className={styles.amount}>{formatCurrency(race.cr616_prize4)}</span>
+              <span className={styles.amount}>{formatCurrency(race.cr616_prize4 || 0)}</span>
             </div>
           </div>
         </div>
